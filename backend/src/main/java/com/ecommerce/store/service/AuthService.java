@@ -7,6 +7,7 @@ import com.ecommerce.store.entity.User;
 import com.ecommerce.store.exception.BadRequestException;
 import com.ecommerce.store.repository.UserRepository;
 import com.ecommerce.store.security.JwtService;
+import java.util.List;
 import java.util.Map;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -43,7 +44,8 @@ public class AuthService {
         user.setName(request.getEmail());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(userRepository.count() == 0 ? "ROLE_ADMIN" : "ROLE_CUSTOMER");
+        boolean adminExists = userRepository.existsByRoleIn(List.of("ROLE_ADMIN", "ADMIN"));
+        user.setRole(adminExists ? "ROLE_CUSTOMER" : "ROLE_ADMIN");
 
         User savedUser = userRepository.save(user);
         String token = jwtService.generateToken(

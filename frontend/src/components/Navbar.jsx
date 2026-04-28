@@ -1,5 +1,6 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { isAdminRole } from "../utils/roles";
 
 export default function Navbar() {
   const { isAuthenticated, logout, user } = useAuth();
@@ -27,7 +28,7 @@ export default function Navbar() {
         <NavLink className={({ isActive }) => (isActive ? "active" : "")} to="/products">
           Products
         </NavLink>
-        {user?.role === "ROLE_ADMIN" && (
+        {isAdminRole(user?.role) && (
           <NavLink className={({ isActive }) => (isActive ? "active" : "")} to="/admin/add-product">
             Add Product
           </NavLink>
@@ -39,7 +40,7 @@ export default function Navbar() {
           <>
             <div className="welcome-pill">
               <span>{user.fullName}</span>
-              <small>{user.role === "ROLE_ADMIN" ? "Admin" : "Member"}</small>
+              <small>{isAdminRole(user.role) ? "Admin" : "Member"}</small>
             </div>
             <button className="logout-button" onClick={handleLogout}>
               Logout

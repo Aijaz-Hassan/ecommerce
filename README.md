@@ -72,3 +72,4 @@ The frontend will start on `http://localhost:5173`.
 - The first registered user becomes `ROLE_ADMIN`, which unlocks the Add Product page.
 - Product creation requires a valid JWT token from an admin login.
 - The products page shows fallback preview items when the backend is not running yet.
+- A ready-to-import Postman collection is available at [Lumen-Lane-APIs.postman_collection.json](/D:/Front-end/postman/Lumen-Lane-APIs.postman_collection.json).
