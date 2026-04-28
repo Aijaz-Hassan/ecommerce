@@ -21,7 +21,13 @@ export default function RegisterPage() {
       await register(form);
       navigate("/products", { replace: true });
     } catch (requestError) {
-      const message = requestError.response?.data?.message || "Unable to create account right now.";
+      const data = requestError.response?.data;
+      const message =
+        data?.message ||
+        Object.values(data || {})[0] ||
+        (requestError.code === "ERR_NETWORK"
+          ? "Backend is not reachable on http://localhost:8082. Start Spring Boot and MySQL first."
+          : "Unable to create account right now.");
       setError(message);
     } finally {
       setLoading(false);

@@ -24,7 +24,14 @@ export default function LoginPage() {
       await login(form);
       navigate(destination, { replace: true });
     } catch (requestError) {
-      setError(requestError.response?.data?.message || "Unable to sign in right now.");
+      const data = requestError.response?.data;
+      const message =
+        data?.message ||
+        Object.values(data || {})[0] ||
+        (requestError.code === "ERR_NETWORK"
+          ? "Backend is not reachable on http://localhost:8082. Start Spring Boot and MySQL first."
+          : "Unable to sign in right now.");
+      setError(message);
     } finally {
       setLoading(false);
     }
