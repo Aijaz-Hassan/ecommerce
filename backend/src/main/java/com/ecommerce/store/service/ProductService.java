@@ -2,6 +2,7 @@ package com.ecommerce.store.service;
 
 import com.ecommerce.store.dto.product.ProductRequest;
 import com.ecommerce.store.entity.Product;
+import com.ecommerce.store.exception.BadRequestException;
 import com.ecommerce.store.repository.ProductRepository;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,35 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public List<Product> getAllProducts() {
+    public List<Product> getAllProducts(String search, String category) {
+        boolean hasSearch = search != null && !search.isBlank();
+        boolean hasCategory = category != null && !category.isBlank();
+
+        if (hasSearch && hasCategory) {
+            return productRepository.findByNameContainingIgnoreCaseOrCategoryContainingIgnoreCase(search, search).stream()
+                .filter(product -> product.getCategory().equalsIgnoreCase(category))
+                .toList();
+        }
+
+        if (hasSearch) {
+            return productRepository.findByNameContainingIgnoreCaseOrCategoryContainingIgnoreCase(search, search);
+        }
+
+        if (hasCategory) {
+            return productRepository.findByCategoryIgnoreCase(category);
+        }
+
         return productRepository.findAll();
+    }
+
+    public Product getProductById(Long id) {
+        return productRepository.findById(id)
+            .orElseThrow(() -> new BadRequestException("Product not found"));
+    }
+
+    public void deleteProduct(Long id) {
+        Product product = productRepository.findById(id)
+            .orElseThrow(() -> new BadRequestException("Product not found"));
+        productRepository.delete(product);
     }
 }

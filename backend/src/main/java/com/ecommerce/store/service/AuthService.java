@@ -3,6 +3,7 @@ package com.ecommerce.store.service;
 import com.ecommerce.store.dto.auth.AuthResponse;
 import com.ecommerce.store.dto.auth.LoginRequest;
 import com.ecommerce.store.dto.auth.RegisterRequest;
+import com.ecommerce.store.dto.auth.UserResponse;
 import com.ecommerce.store.entity.User;
 import com.ecommerce.store.exception.BadRequestException;
 import com.ecommerce.store.repository.UserRepository;
@@ -75,5 +76,29 @@ public class AuthService {
         );
 
         return new AuthResponse(token, user.getFullName(), user.getEmail(), user.getRole());
+    }
+
+    public List<UserResponse> getAllUsers() {
+        return userRepository.findAll().stream()
+            .map(user -> new UserResponse(user.getId(), user.getFullName(), user.getEmail(), user.getRole()))
+            .toList();
+    }
+
+    public void deleteUser(Long userId, String currentUserEmail) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new BadRequestException("User not found"));
+
+        if (user.getEmail().equalsIgnoreCase(currentUserEmail)) {
+            throw new BadRequestException("You cannot delete your own admin account");
+        }
+
+        if (List.of("ROLE_ADMIN", "ADMIN").contains(user.getRole())) {
+            long adminCount = userRepository.countByRoleIn(List.of("ROLE_ADMIN", "ADMIN"));
+            if (adminCount <= 1) {
+                throw new BadRequestException("At least one admin user must remain");
+            }
+        }
+
+        userRepository.delete(user);
     }
 }

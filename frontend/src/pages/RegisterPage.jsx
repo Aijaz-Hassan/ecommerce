@@ -19,6 +19,7 @@ export default function RegisterPage() {
     setError("");
     try {
       await register(form);
+      window.alert("Registered successfully.");
       navigate("/products", { replace: true });
     } catch (requestError) {
       const data = requestError.response?.data;
@@ -29,6 +30,7 @@ export default function RegisterPage() {
           ? "Backend is not reachable on http://localhost:8082. Start Spring Boot and MySQL first."
           : "Unable to create account right now.");
       setError(message);
+      window.alert(`Registration failed: ${message}`);
     } finally {
       setLoading(false);
     }

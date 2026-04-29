@@ -1,9 +1,11 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import AdminPage from "./pages/AdminPage";
+import CartPage from "./pages/CartPage";
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
-import AddProductPage from "./pages/AddProductPage";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
+import ProductDetailsPage from "./pages/ProductDetailsPage";
 import ProductsPage from "./pages/ProductsPage";
 import RegisterPage from "./pages/RegisterPage";
 
@@ -14,13 +16,15 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/products" element={<ProductsPage />} />
+        <Route path="/products/:id" element={<ProductDetailsPage />} />
+        <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route
-          path="/admin/add-product"
+          path="/admin"
           element={
             <ProtectedRoute adminOnly>
-              <AddProductPage />
+              <AdminPage />
             </ProtectedRoute>
           }
         />
