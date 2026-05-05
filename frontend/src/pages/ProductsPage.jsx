@@ -2,10 +2,13 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/client";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 import { fallbackProducts } from "../data/fallbackProducts";
+import { isAdminRole } from "../utils/roles";
 
 export default function ProductsPage() {
   const { addToCart } = useCart();
+  const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [status, setStatus] = useState("loading");
@@ -13,6 +16,7 @@ export default function ProductsPage() {
   const [searchText, setSearchText] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const isAdmin = isAdminRole(user?.role);
 
   useEffect(() => {
     let ignore = false;
@@ -77,9 +81,24 @@ export default function ProductsPage() {
     setMessage("");
   };
 
-  const handleAddToCart = (product) => {
-    addToCart(product);
-    window.alert(`${product.name} added to cart.`);
+  const handleAddToCart = async (product) => {
+    if (!isAuthenticated) {
+      window.alert("Please login as a customer to use the cart.");
+      navigate("/login");
+      return;
+    }
+
+    if (isAdmin) {
+      window.alert("Admin accounts cannot add items to the cart.");
+      return;
+    }
+
+    try {
+      await addToCart(product);
+      window.alert(`${product.name} added to cart.`);
+    } catch (error) {
+      window.alert(error.response?.data?.message || error.message || "Unable to add product to cart.");
+    }
   };
 
   return (
@@ -150,9 +169,11 @@ export default function ProductsPage() {
                       <button className="ghost-button" type="button" onClick={() => navigate(`/products/${product.id}`)}>
                         View details
                       </button>
-                      <button className="ghost-button" type="button" onClick={() => handleAddToCart(product)}>
-                        Add to cart
-                      </button>
+                      {!isAdmin && (
+                        <button className="ghost-button" type="button" onClick={() => handleAddToCart(product)}>
+                          Add to cart
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>

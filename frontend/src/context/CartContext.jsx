@@ -1,69 +1,118 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import api from "../api/client";
+import { useAuth } from "./AuthContext";
+import { isAdminRole } from "../utils/roles";
 
 const CartContext = createContext(null);
-const storageKey = "lumenlane_cart";
 
 export function CartProvider({ children }) {
-  const [cartItems, setCartItems] = useState(() => {
-    const savedCart = localStorage.getItem(storageKey);
-    return savedCart ? JSON.parse(savedCart) : [];
-  });
+  const { isAuthenticated, user } = useAuth();
+  const [cartItems, setCartItems] = useState([]);
+  const isAdmin = isAdminRole(user?.role);
+
+  const syncCart = async () => {
+    if (!isAuthenticated || isAdmin) {
+      setCartItems([]);
+      return [];
+    }
+
+    const response = await api.get("/cart");
+    const nextItems = (response.data.items || []).map((item) => ({
+      id: item.productId,
+      cartItemId: item.id,
+      name: item.productName,
+      category: item.category,
+      imageUrl: item.imageUrl,
+      price: item.price,
+      quantity: item.quantity
+    }));
+    setCartItems(nextItems);
+    return nextItems;
+  };
 
   useEffect(() => {
-    localStorage.setItem(storageKey, JSON.stringify(cartItems));
-  }, [cartItems]);
-
-  const addToCart = (product) => {
-    setCartItems((current) => {
-      const existingItem = current.find((item) => String(item.id) === String(product.id));
-      if (existingItem) {
-        return current.map((item) =>
-          String(item.id) === String(product.id) ? { ...item, quantity: item.quantity + 1 } : item
-        );
-      }
-
-      return [...current, { ...product, quantity: 1 }];
+    syncCart().catch(() => {
+      setCartItems([]);
     });
+  }, [isAuthenticated, isAdmin]);
+
+  const ensureCustomerSession = () => {
+    if (!isAuthenticated) {
+      throw new Error("Please login to use the cart.");
+    }
+    if (isAdmin) {
+      throw new Error("Admin accounts cannot use the cart.");
+    }
   };
 
-  const removeFromCart = (productId) => {
-    setCartItems((current) => current.filter((item) => String(item.id) !== String(productId)));
+  const addToCart = async (product) => {
+    ensureCustomerSession();
+    await api.post("/cart/items", {
+      productId: Number(product.id),
+      quantity: 1
+    });
+    return syncCart();
   };
 
-  const increaseQuantity = (productId) => {
-    setCartItems((current) =>
-      current.map((item) =>
-        String(item.id) === String(productId) ? { ...item, quantity: item.quantity + 1 } : item
-      )
-    );
+  const removeFromCart = async (productId) => {
+    ensureCustomerSession();
+    await api.delete(`/cart/items/${productId}`);
+    return syncCart();
   };
 
-  const decreaseQuantity = (productId) => {
-    setCartItems((current) =>
-      current.flatMap((item) => {
-        if (String(item.id) !== String(productId)) {
-          return [item];
-        }
-
-        if (item.quantity <= 1) {
-          return [];
-        }
-
-        return [{ ...item, quantity: item.quantity - 1 }];
-      })
-    );
+  const increaseQuantity = async (productId) => {
+    ensureCustomerSession();
+    const item = cartItems.find((entry) => String(entry.id) === String(productId));
+    if (!item) {
+      return;
+    }
+    await api.put(`/cart/items/${productId}`, {
+      productId: Number(productId),
+      quantity: item.quantity + 1
+    });
+    return syncCart();
   };
 
-  const clearCart = () => {
+  const decreaseQuantity = async (productId) => {
+    ensureCustomerSession();
+    const item = cartItems.find((entry) => String(entry.id) === String(productId));
+    if (!item) {
+      return;
+    }
+
+    if (item.quantity <= 1) {
+      await api.delete(`/cart/items/${productId}`);
+    } else {
+      await api.put(`/cart/items/${productId}`, {
+        productId: Number(productId),
+        quantity: item.quantity - 1
+      });
+    }
+    return syncCart();
+  };
+
+  const clearCart = async () => {
+    ensureCustomerSession();
+    await api.delete("/cart");
     setCartItems([]);
   };
 
-  const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
-  const cartTotal = cartItems.reduce((total, item) => total + Number(item.price) * item.quantity, 0);
+  const cartCount = useMemo(() => cartItems.reduce((total, item) => total + item.quantity, 0), [cartItems]);
+  const cartTotal = useMemo(() => cartItems.reduce((total, item) => total + Number(item.price) * item.quantity, 0), [cartItems]);
 
   return (
     <CartContext.Provider
-      value={{ cartItems, addToCart, removeFromCart, clearCart, increaseQuantity, decreaseQuantity, cartCount, cartTotal }}
+      value={{
+        cartItems,
+        addToCart,
+        removeFromCart,
+        clearCart,
+        increaseQuantity,
+        decreaseQuantity,
+        cartCount,
+        cartTotal,
+        refreshCart: syncCart
+      }}
     >
       {children}
     </CartContext.Provider>

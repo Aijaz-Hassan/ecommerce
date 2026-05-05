@@ -8,8 +8,12 @@ import LoginPage from "./pages/LoginPage";
 import ProductDetailsPage from "./pages/ProductDetailsPage";
 import ProductsPage from "./pages/ProductsPage";
 import RegisterPage from "./pages/RegisterPage";
+import { isAdminRole } from "./utils/roles";
+import { useAuth } from "./context/AuthContext";
 
 export default function App() {
+  const { user } = useAuth();
+
   return (
     <div className="app-shell">
       <Navbar />
@@ -17,7 +21,14 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/products/:id" element={<ProductDetailsPage />} />
-        <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRoute>
+              {isAdminRole(user?.role) ? <Navigate to="/admin" replace /> : <CartPage />}
+            </ProtectedRoute>
+          }
+        />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route

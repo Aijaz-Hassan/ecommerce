@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final CartService cartService;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, CartService cartService) {
         this.productRepository = productRepository;
+        this.cartService = cartService;
     }
 
     public Product addProduct(ProductRequest request) {
@@ -53,9 +55,23 @@ public class ProductService {
             .orElseThrow(() -> new BadRequestException("Product not found"));
     }
 
+    public Product updateProduct(Long id, ProductRequest request) {
+        Product product = productRepository.findById(id)
+            .orElseThrow(() -> new BadRequestException("Product not found"));
+
+        product.setName(request.getName());
+        product.setDescription(request.getDescription());
+        product.setPrice(request.getPrice());
+        product.setCategory(request.getCategory());
+        product.setImageUrl(request.getImageUrl());
+        product.setStock(request.getStock());
+        return productRepository.save(product);
+    }
+
     public void deleteProduct(Long id) {
         Product product = productRepository.findById(id)
             .orElseThrow(() -> new BadRequestException("Product not found"));
+        cartService.removeProductFromCarts(product);
         productRepository.delete(product);
     }
 }

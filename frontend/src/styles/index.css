@@ -625,6 +625,14 @@ textarea {
   margin-top: 1.4rem;
 }
 
+.admin-form-actions,
+.admin-row-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .auth-form label,
 .admin-form label {
   display: grid;

@@ -1,8 +1,10 @@
 package com.ecommerce.store;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -200,9 +202,48 @@ class AuthAndProductApiTests {
         JsonNode createdProduct = objectMapper.readTree(createResult.getResponse().getContentAsString());
         long productId = createdProduct.get("id").asLong();
 
-        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete("/api/products/" + productId)
+        mockMvc.perform(delete("/api/products/" + productId)
                 .with(user("admin@example.com").roles("ADMIN")))
             .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void updateProductApiWorksForAdmin() throws Exception {
+        MvcResult createResult = mockMvc.perform(post("/api/products")
+                .with(user("admin@example.com").roles("ADMIN"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "name": "Original Product",
+                      "description": "Original description",
+                      "price": 79.99,
+                      "category": "Lighting",
+                      "imageUrl": "https://example.com/original.jpg",
+                      "stock": 12
+                    }
+                    """))
+            .andExpect(status().isCreated())
+            .andReturn();
+
+        JsonNode createdProduct = objectMapper.readTree(createResult.getResponse().getContentAsString());
+        long productId = createdProduct.get("id").asLong();
+
+        mockMvc.perform(put("/api/products/" + productId)
+                .with(user("admin@example.com").roles("ADMIN"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "name": "Updated Product",
+                      "description": "Updated description",
+                      "price": 89.99,
+                      "category": "Workspace",
+                      "imageUrl": "https://example.com/updated.jpg",
+                      "stock": 9
+                    }
+                    """))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.name").value("Updated Product"))
+            .andExpect(jsonPath("$.category").value("Workspace"));
     }
 
     @Test
@@ -216,13 +257,13 @@ class AuthAndProductApiTests {
     }
 
     @Test
-    void checkoutAndAdminSummaryWork() throws Exception {
+    void cartApisAndAdminSummaryWork() throws Exception {
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                     {
-                      "fullName": "Order User",
-                      "email": "order.user@example.com",
+                      "fullName": "Cart User",
+                      "email": "cart.user@example.com",
                       "password": "Demo1234"
                     }
                     """))
@@ -247,22 +288,45 @@ class AuthAndProductApiTests {
         JsonNode createdProduct = objectMapper.readTree(createResult.getResponse().getContentAsString());
         long productId = createdProduct.get("id").asLong();
 
-        mockMvc.perform(post("/api/orders/checkout")
-                .with(user("order.user@example.com").roles("CUSTOMER"))
+        mockMvc.perform(post("/api/cart/items")
+                .with(user("cart.user@example.com").roles("CUSTOMER"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                     {
-                      "items": [
-                        { "productId": %d, "quantity": 2 }
-                      ]
+                      "productId": %d,
+                      "quantity": 2
                     }
                     """.formatted(productId)))
             .andExpect(status().isCreated())
-            .andExpect(jsonPath("$.customerEmail").value("order.user@example.com"));
+            .andExpect(jsonPath("$.customerEmail").value("cart.user@example.com"))
+            .andExpect(jsonPath("$.items[0].productName").value("Purchase Product"));
 
-        mockMvc.perform(get("/api/orders/admin-summary")
+        mockMvc.perform(get("/api/cart")
+                .with(user("cart.user@example.com").roles("CUSTOMER")))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.items[0].quantity").value(2));
+
+        mockMvc.perform(put("/api/cart/items/" + productId)
+                .with(user("cart.user@example.com").roles("CUSTOMER"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "productId": %d,
+                      "quantity": 3
+                    }
+                    """.formatted(productId)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.items[0].quantity").value(3));
+
+        mockMvc.perform(get("/api/cart/admin-summary")
                 .with(user("admin@example.com").roles("ADMIN")))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$[0].customerEmail").value("order.user@example.com"));
+            .andExpect(jsonPath("$[0].customerEmail").value("cart.user@example.com"))
+            .andExpect(jsonPath("$[0].items[0].quantity").value(3));
+
+        mockMvc.perform(delete("/api/cart/items/" + productId)
+                .with(user("cart.user@example.com").roles("CUSTOMER")))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.items").isEmpty());
     }
 }

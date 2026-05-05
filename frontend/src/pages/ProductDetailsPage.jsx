@@ -1,14 +1,19 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import api from "../api/client";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 import { fallbackProducts } from "../data/fallbackProducts";
+import { isAdminRole } from "../utils/roles";
 
 export default function ProductDetailsPage() {
   const { id } = useParams();
   const { addToCart } = useCart();
+  const { isAuthenticated, user } = useAuth();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [status, setStatus] = useState("loading");
+  const isAdmin = isAdminRole(user?.role);
 
   useEffect(() => {
     let ignore = false;
@@ -48,6 +53,26 @@ export default function ProductDetailsPage() {
     );
   }
 
+  const handleAddToCart = async () => {
+    if (!isAuthenticated) {
+      window.alert("Please login as a customer to use the cart.");
+      navigate("/login");
+      return;
+    }
+
+    if (isAdmin) {
+      window.alert("Admin accounts cannot add items to the cart.");
+      return;
+    }
+
+    try {
+      await addToCart(product);
+      window.alert(`${product.name} added to cart.`);
+    } catch (error) {
+      window.alert(error.response?.data?.message || error.message || "Unable to add product to cart.");
+    }
+  };
+
   return (
     <main className="page">
       <section className="product-page-layout">
@@ -64,12 +89,16 @@ export default function ProductDetailsPage() {
           </div>
           <p className="section-note">{product.stock} item(s) currently in stock.</p>
           <div className="hero-actions">
-            <button className="solid-button" type="button" onClick={() => addToCart(product)}>
-              Add to cart
-            </button>
-            <Link className="ghost-link" to="/cart">
-              View cart
-            </Link>
+            {!isAdmin && (
+              <>
+                <button className="solid-button" type="button" onClick={handleAddToCart}>
+                  Add to cart
+                </button>
+                <Link className="ghost-link" to={isAuthenticated ? "/cart" : "/login"}>
+                  View cart
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </section>

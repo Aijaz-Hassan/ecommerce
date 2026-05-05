@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../api/client";
 
 const initialForm = {
+  id: null,
   name: "",
   description: "",
   category: "",
@@ -14,7 +15,7 @@ export default function AdminPage() {
   const [form, setForm] = useState(initialForm);
   const [products, setProducts] = useState([]);
   const [users, setUsers] = useState([]);
-  const [orders, setOrders] = useState([]);
+  const [carts, setCarts] = useState([]);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -23,14 +24,14 @@ export default function AdminPage() {
   const loadAdminData = async () => {
     setRefreshing(true);
     try {
-      const [productsResponse, usersResponse, ordersResponse] = await Promise.all([
+      const [productsResponse, usersResponse, cartsResponse] = await Promise.all([
         api.get("/products"),
         api.get("/auth/users"),
-        api.get("/orders/admin-summary")
+        api.get("/cart/admin-summary")
       ]);
       setProducts(productsResponse.data);
       setUsers(usersResponse.data);
-      setOrders(ordersResponse.data);
+      setCarts(cartsResponse.data);
       setError("");
     } catch (requestError) {
       setError(requestError.response?.data?.message || "Unable to load admin data.");
@@ -53,19 +54,42 @@ export default function AdminPage() {
     setError("");
     setMessage("");
     try {
-      await api.post("/products", {
+      const payload = {
         ...form,
         price: Number(form.price),
         stock: Number(form.stock)
-      });
-      setMessage("Product created successfully.");
+      };
+      delete payload.id;
+
+      if (form.id) {
+        await api.put(`/products/${form.id}`, payload);
+        setMessage("Product updated successfully.");
+      } else {
+        await api.post("/products", payload);
+        setMessage("Product created successfully.");
+      }
       setForm(initialForm);
       await loadAdminData();
     } catch (requestError) {
-      setError(requestError.response?.data?.message || "Unable to add product.");
+      setError(requestError.response?.data?.message || "Unable to save product.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleEditProduct = (product) => {
+    setForm({
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      category: product.category,
+      imageUrl: product.imageUrl,
+      price: product.price,
+      stock: product.stock
+    });
+    setMessage("");
+    setError("");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleDeleteProduct = async (productId) => {
@@ -100,7 +124,7 @@ export default function AdminPage() {
 
       <section className="admin-console">
         <form className="admin-form" onSubmit={handleSubmit}>
-          <h2>Add Product</h2>
+          <h2>{form.id ? "Update Product" : "Add Product"}</h2>
           <label>
             Product name
             <input name="name" value={form.name} onChange={handleChange} placeholder="Aurora Noise-Cancel Headset" />
@@ -133,38 +157,45 @@ export default function AdminPage() {
           </label>
           {message && <p className="success-text full-span">{message}</p>}
           {error && <p className="error-text full-span">{error}</p>}
-          <button className="solid-button full-span" type="submit" disabled={loading}>
-            {loading ? "Publishing..." : "Add Product"}
-          </button>
+          <div className="admin-form-actions full-span">
+            <button className="solid-button" type="submit" disabled={loading}>
+              {loading ? "Saving..." : form.id ? "Update Product" : "Add Product"}
+            </button>
+            {form.id && (
+              <button className="ghost-button" type="button" onClick={() => setForm(initialForm)}>
+                Cancel edit
+              </button>
+            )}
+          </div>
         </form>
 
         <section className="admin-lists">
           <div className="admin-panel">
             <div className="admin-panel-header">
-              <h2>Customer purchases</h2>
+              <h2>Customer carts</h2>
             </div>
             <div className="admin-table">
-              {orders.length === 0 ? (
+              {carts.length === 0 ? (
                 <article className="admin-row">
                   <div>
-                    <strong>No purchases yet</strong>
-                    <p>Completed orders will appear here with customer name, email, products, and amount.</p>
+                    <strong>No carts yet</strong>
+                    <p>Customer cart items and totals will appear here once users start adding products.</p>
                   </div>
                 </article>
               ) : (
-                orders.map((order) => (
-                  <article className="admin-row admin-order-row" key={order.orderId}>
+                carts.map((cart) => (
+                  <article className="admin-row admin-order-row" key={cart.cartId}>
                     <div>
-                      <strong>{order.customerName}</strong>
-                      <p>{order.customerEmail}</p>
+                      <strong>{cart.customerName}</strong>
+                      <p>{cart.customerEmail}</p>
                     </div>
                     <div>
                       <strong>Products</strong>
-                      <p>{order.purchasedProducts.join(", ")}</p>
+                      <p>{cart.items.length ? cart.items.map((item) => `${item.productName} x${item.quantity}`).join(", ") : "Cart is empty"}</p>
                     </div>
                     <div>
                       <strong>Amount</strong>
-                      <p>${Number(order.totalAmount).toFixed(2)}</p>
+                      <p>${Number(cart.totalAmount).toFixed(2)}</p>
                     </div>
                   </article>
                 ))
@@ -186,9 +217,14 @@ export default function AdminPage() {
                     <strong>{product.name}</strong>
                     <p>{product.category}</p>
                   </div>
-                  <button className="danger-button" type="button" onClick={() => handleDeleteProduct(product.id)}>
-                    Delete
-                  </button>
+                  <div className="admin-row-actions">
+                    <button className="ghost-button" type="button" onClick={() => handleEditProduct(product)}>
+                      Update
+                    </button>
+                    <button className="danger-button" type="button" onClick={() => handleDeleteProduct(product.id)}>
+                      Delete
+                    </button>
+                  </div>
                 </article>
               ))}
             </div>

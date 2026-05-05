@@ -6,6 +6,7 @@ import com.ecommerce.store.dto.auth.RegisterRequest;
 import com.ecommerce.store.dto.auth.UserResponse;
 import com.ecommerce.store.entity.User;
 import com.ecommerce.store.exception.BadRequestException;
+import com.ecommerce.store.repository.CartRepository;
 import com.ecommerce.store.repository.UserRepository;
 import com.ecommerce.store.security.JwtService;
 import java.util.List;
@@ -22,17 +23,20 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final CartRepository cartRepository;
 
     public AuthService(
         UserRepository userRepository,
         PasswordEncoder passwordEncoder,
         AuthenticationManager authenticationManager,
-        JwtService jwtService
+        JwtService jwtService,
+        CartRepository cartRepository
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
+        this.cartRepository = cartRepository;
     }
 
     public AuthResponse register(RegisterRequest request) {
@@ -99,6 +103,7 @@ public class AuthService {
             }
         }
 
+        cartRepository.deleteByUser(user);
         userRepository.delete(user);
     }
 }

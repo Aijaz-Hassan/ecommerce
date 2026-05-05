@@ -7,6 +7,7 @@ export default function Navbar() {
   const { isAuthenticated, logout, user } = useAuth();
   const { cartCount } = useCart();
   const navigate = useNavigate();
+  const isAdmin = isAdminRole(user?.role);
 
   const handleLogout = () => {
     logout();
@@ -30,10 +31,12 @@ export default function Navbar() {
         <NavLink className={({ isActive }) => (isActive ? "active" : "")} to="/products">
           Products
         </NavLink>
-        <NavLink className={({ isActive }) => (isActive ? "active" : "")} to="/cart">
-          Cart
-        </NavLink>
-        {isAdminRole(user?.role) && (
+        {isAuthenticated && !isAdmin && (
+          <NavLink className={({ isActive }) => (isActive ? "active" : "")} to="/cart">
+            Cart
+          </NavLink>
+        )}
+        {isAdmin && (
           <NavLink className={({ isActive }) => (isActive ? "active" : "")} to="/admin">
             Admin
           </NavLink>
@@ -41,15 +44,17 @@ export default function Navbar() {
       </nav>
 
       <div className="nav-actions">
-        <Link className="cart-pill" to={isAuthenticated ? "/cart" : "/login"}>
-          <span>Cart</span>
-          <strong>{cartCount}</strong>
-        </Link>
+        {isAuthenticated && !isAdmin && (
+          <Link className="cart-pill" to="/cart">
+            <span>Cart</span>
+            <strong>{cartCount}</strong>
+          </Link>
+        )}
         {isAuthenticated ? (
           <>
             <div className="welcome-pill">
               <span>{user.fullName}</span>
-              <small>{isAdminRole(user.role) ? "Admin" : "Member"}</small>
+              <small>{isAdmin ? "Admin" : "Member"}</small>
             </div>
             <button className="logout-button" onClick={handleLogout}>
               Logout

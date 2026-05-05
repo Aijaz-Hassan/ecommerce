@@ -1,9 +1,9 @@
-package com.ecommerce.store.dto.order;
+package com.ecommerce.store.dto.cart;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
-public class CheckoutItemRequest {
+public class CartItemRequest {
 
     @NotNull(message = "Product id is required")
     private Long productId;

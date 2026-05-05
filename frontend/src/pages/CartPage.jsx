@@ -1,34 +1,44 @@
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
-import api from "../api/client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function CartPage() {
-  const { cartItems, cartCount, cartTotal, increaseQuantity, decreaseQuantity, removeFromCart, clearCart } = useCart();
+  const { cartItems, cartCount, cartTotal, increaseQuantity, decreaseQuantity, removeFromCart, clearCart, refreshCart } = useCart();
   const [message, setMessage] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+  const [busyItemId, setBusyItemId] = useState(null);
+  const [clearing, setClearing] = useState(false);
 
-  const handleCheckout = async () => {
-    if (!cartItems.length) {
-      return;
-    }
+  useEffect(() => {
+    refreshCart().catch((error) => {
+      setMessage(error.response?.data?.message || "Unable to load cart.");
+    });
+  }, []);
 
-    setSubmitting(true);
+  const runCartAction = async (productId, action, successMessage) => {
+    setBusyItemId(productId);
     setMessage("");
-
     try {
-      await api.post("/orders/checkout", {
-        items: cartItems.map((item) => ({
-          productId: Number(item.id),
-          quantity: item.quantity
-        }))
-      });
-      clearCart();
-      setMessage("Purchase completed successfully.");
+      await action();
+      if (successMessage) {
+        setMessage(successMessage);
+      }
     } catch (error) {
-      setMessage(error.response?.data?.message || "Unable to complete purchase.");
+      setMessage(error.response?.data?.message || "Unable to update cart.");
     } finally {
-      setSubmitting(false);
+      setBusyItemId(null);
+    }
+  };
+
+  const handleClearCart = async () => {
+    setClearing(true);
+    setMessage("");
+    try {
+      await clearCart();
+      setMessage("Cart cleared successfully.");
+    } catch (error) {
+      setMessage(error.response?.data?.message || "Unable to clear cart.");
+    } finally {
+      setClearing(false);
     }
   };
 
@@ -46,8 +56,8 @@ export default function CartPage() {
           <div className="admin-panel-header">
             <h2>Cart items</h2>
             {cartItems.length > 0 && (
-              <button className="ghost-button" type="button" onClick={clearCart}>
-                Clear cart
+              <button className="ghost-button" type="button" onClick={handleClearCart} disabled={clearing}>
+                {clearing ? "Clearing..." : "Clear cart"}
               </button>
             )}
           </div>
@@ -73,15 +83,30 @@ export default function CartPage() {
                     <span>${Number(item.price).toFixed(2)}</span>
                   </div>
                   <div className="cart-qty-controls">
-                    <button className="ghost-button" type="button" onClick={() => decreaseQuantity(item.id)}>
+                    <button
+                      className="ghost-button"
+                      type="button"
+                      onClick={() => runCartAction(item.id, () => decreaseQuantity(item.id))}
+                      disabled={busyItemId === item.id}
+                    >
                       -
                     </button>
                     <strong>{item.quantity}</strong>
-                    <button className="ghost-button" type="button" onClick={() => increaseQuantity(item.id)}>
+                    <button
+                      className="ghost-button"
+                      type="button"
+                      onClick={() => runCartAction(item.id, () => increaseQuantity(item.id))}
+                      disabled={busyItemId === item.id}
+                    >
                       +
                     </button>
                   </div>
-                  <button className="danger-button" type="button" onClick={() => removeFromCart(item.id)}>
+                  <button
+                    className="danger-button"
+                    type="button"
+                    onClick={() => runCartAction(item.id, () => removeFromCart(item.id), "Item removed from cart.")}
+                    disabled={busyItemId === item.id}
+                  >
                     Remove
                   </button>
                 </article>
@@ -92,7 +117,7 @@ export default function CartPage() {
 
         <aside className="cart-aside">
           <div className="admin-panel">
-            <h2>Order summary</h2>
+            <h2>Cart summary</h2>
             <div className="summary-line">
               <span>Items</span>
               <strong>{cartCount}</strong>
@@ -102,14 +127,6 @@ export default function CartPage() {
               <strong>${cartTotal.toFixed(2)}</strong>
             </div>
             {message && <p className={message.includes("successfully") ? "success-text" : "error-text"}>{message}</p>}
-            <button
-              className="solid-button full-width-link"
-              type="button"
-              onClick={handleCheckout}
-              disabled={!cartItems.length || submitting}
-            >
-              {submitting ? "Processing..." : "Buy now"}
-            </button>
             <Link className="solid-link full-width-link" to="/products">
               Continue shopping
             </Link>
