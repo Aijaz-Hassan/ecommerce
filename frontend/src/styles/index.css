@@ -34,7 +34,8 @@ a {
 
 button,
 input,
-textarea {
+textarea,
+select {
   font: inherit;
 }
 
@@ -308,7 +309,8 @@ textarea {
 }
 
 .filter-field input,
-.filter-field select {
+.filter-field select,
+.filter-field textarea {
   width: 100%;
   border: 1px solid rgba(35, 24, 21, 0.12);
   border-radius: 1rem;
@@ -405,6 +407,27 @@ textarea {
   margin: 0.2rem 0 0;
 }
 
+.cart-variant-stack {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.85rem;
+}
+
+.cart-variant-grid,
+.variant-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.compact-field span {
+  font-size: 0.82rem;
+}
+
+.variant-note {
+  grid-column: 1 / -1;
+}
+
 .cart-qty-controls {
   display: flex;
   align-items: center;
@@ -452,10 +475,83 @@ textarea {
   padding: 1.5rem;
 }
 
+.amazon-style-layout {
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.15fr) minmax(280px, 0.7fr);
+  align-items: start;
+}
+
+.product-gallery-panel,
+.product-info-panel,
+.buy-box-panel {
+  border: 1px solid rgba(35, 24, 21, 0.08);
+  border-radius: 1.6rem;
+  background: var(--surface);
+  box-shadow: 0 20px 60px rgba(76, 48, 33, 0.09);
+}
+
+.product-info-panel {
+  padding: 1.5rem;
+}
+
+.buy-box-panel {
+  padding: 1.25rem;
+  display: grid;
+  gap: 1rem;
+  position: sticky;
+  top: 6rem;
+}
+
 .product-page-price {
   display: block;
   margin-top: 0.6rem;
   font-size: 1.6rem;
+}
+
+.buy-box-price {
+  font-size: 2rem;
+}
+
+.buy-box-note,
+.product-rating-line span,
+.buy-box-stock small {
+  color: var(--muted);
+}
+
+.product-rating-line {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.35rem;
+}
+
+.buy-box-stock {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.buy-box-stock span {
+  color: #0f7b58;
+  font-weight: 700;
+}
+
+.buy-box-actions {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.details-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.variant-grid {
+  margin-top: 1rem;
+}
+
+.compact-box {
+  margin-top: 0;
 }
 
 .detail-meta {
@@ -716,6 +812,14 @@ textarea {
   .product-page-layout,
   .cart-item-row {
     grid-template-columns: 1fr;
+  }
+
+  .amazon-style-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .buy-box-panel {
+    position: static;
   }
 
   .hero-copy h1,

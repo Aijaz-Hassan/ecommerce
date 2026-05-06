@@ -21,6 +21,15 @@ public class CartItem {
     @Column(nullable = false)
     private Integer quantity;
 
+    @Column(length = 100)
+    private String selectedColor;
+
+    @Column(length = 100)
+    private String selectedSize;
+
+    @Column(length = 500)
+    private String customizationNote;
+
     public Long getId() {
         return id;
     }
@@ -51,5 +60,29 @@ public class CartItem {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    public String getSelectedColor() {
+        return selectedColor;
+    }
+
+    public void setSelectedColor(String selectedColor) {
+        this.selectedColor = selectedColor;
+    }
+
+    public String getSelectedSize() {
+        return selectedSize;
+    }
+
+    public void setSelectedSize(String selectedSize) {
+        this.selectedSize = selectedSize;
+    }
+
+    public String getCustomizationNote() {
+        return customizationNote;
+    }
+
+    public void setCustomizationNote(String customizationNote) {
+        this.customizationNote = customizationNote;
     }
 }

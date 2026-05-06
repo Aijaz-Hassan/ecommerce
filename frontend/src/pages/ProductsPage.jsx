@@ -25,10 +25,11 @@ export default function ProductsPage() {
       try {
         const response = await api.get("/products");
         if (!ignore) {
-          const incoming = response.data?.length ? response.data : fallbackProducts;
+          const incoming = response.data || [];
           setProducts(incoming);
           setFilteredProducts(incoming);
           setStatus("ready");
+          setMessage(incoming.length ? "" : "No products are available yet.");
         }
       } catch (error) {
         if (!ignore) {
@@ -82,6 +83,11 @@ export default function ProductsPage() {
   };
 
   const handleAddToCart = async (product) => {
+    if (!Number.isFinite(Number(product.id))) {
+      window.alert("Preview products cannot be added to cart until the backend product list is available.");
+      return;
+    }
+
     if (!isAuthenticated) {
       window.alert("Please login as a customer to use the cart.");
       navigate("/login");
@@ -148,37 +154,41 @@ export default function ProductsPage() {
           </section>
 
           <section className="products-grid">
-            {filteredProducts.map((product) => (
-              <article className="product-card" key={product.id}>
-                <div className="product-image-wrap">
-                  <img src={product.imageUrl} alt={product.name} className="product-image" />
-                  <span className="category-chip">{product.category}</span>
-                </div>
-                <div className="product-body">
-                  <div className="product-header">
-                    <h3>{product.name}</h3>
-                    <strong>${Number(product.price).toFixed(2)}</strong>
+            {filteredProducts.length === 0 ? (
+              <div className="loading-panel">No products matched your current search.</div>
+            ) : (
+              filteredProducts.map((product) => (
+                <article className="product-card" key={product.id}>
+                  <div className="product-image-wrap">
+                    <img src={product.imageUrl} alt={product.name} className="product-image" />
+                    <span className="category-chip">{product.category}</span>
                   </div>
-                  <div className="product-description-box">
-                    <strong>Description</strong>
-                    <p>{product.description}</p>
-                  </div>
-                  <div className="product-meta">
-                    <span>{product.stock} in stock</span>
-                    <div className="product-actions">
-                      <button className="ghost-button" type="button" onClick={() => navigate(`/products/${product.id}`)}>
-                        View details
-                      </button>
-                      {!isAdmin && (
-                        <button className="ghost-button" type="button" onClick={() => handleAddToCart(product)}>
-                          Add to cart
+                  <div className="product-body">
+                    <div className="product-header">
+                      <h3>{product.name}</h3>
+                      <strong>${Number(product.price).toFixed(2)}</strong>
+                    </div>
+                    <div className="product-description-box">
+                      <strong>Description</strong>
+                      <p>{product.description}</p>
+                    </div>
+                    <div className="product-meta">
+                      <span>{product.stock} in stock</span>
+                      <div className="product-actions">
+                        <button className="ghost-button" type="button" onClick={() => navigate(`/products/${product.id}`)}>
+                          View details
                         </button>
-                      )}
+                        {!isAdmin && (
+                          <button className="ghost-button" type="button" onClick={() => handleAddToCart(product)}>
+                            Add to cart
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </article>
-            ))}
+                </article>
+              ))
+            )}
           </section>
         </>
       )}

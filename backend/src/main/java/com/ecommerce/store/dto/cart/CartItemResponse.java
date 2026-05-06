@@ -10,6 +10,9 @@ public record CartItemResponse(
     String imageUrl,
     BigDecimal price,
     Integer quantity,
+    String selectedColor,
+    String selectedSize,
+    String customizationNote,
     BigDecimal lineTotal
 ) {
 }

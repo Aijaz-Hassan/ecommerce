@@ -20,7 +20,7 @@ export default function RegisterPage() {
     try {
       await register(form);
       window.alert("Registered successfully.");
-      navigate("/products", { replace: true });
+      navigate("/login", { replace: true });
     } catch (requestError) {
       const data = requestError.response?.data;
       const message =
@@ -41,7 +41,7 @@ export default function RegisterPage() {
       <section className="auth-card">
         <div>
           <p className="eyebrow">Join the store</p>
-          <h1>Create an account and unlock the admin starter seat.</h1>
+          <h1>Create your account to start shopping.</h1>
         </div>
 
         <form className="auth-form" onSubmit={handleSubmit}>

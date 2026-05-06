@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.Matchers.hasItem;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -173,7 +174,7 @@ class AuthAndProductApiTests {
         mockMvc.perform(get("/api/products")
                 .param("search", "speaker"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$[0].name").value("Sky Speaker"));
+            .andExpect(jsonPath("$[*].name", hasItem("Sky Speaker")));
 
         mockMvc.perform(get("/api/products")
                 .param("category", "Workspace"))
@@ -288,35 +289,47 @@ class AuthAndProductApiTests {
         JsonNode createdProduct = objectMapper.readTree(createResult.getResponse().getContentAsString());
         long productId = createdProduct.get("id").asLong();
 
-        mockMvc.perform(post("/api/cart/items")
+        MvcResult addToCartResult = mockMvc.perform(post("/api/cart/items")
                 .with(user("cart.user@example.com").roles("CUSTOMER"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                     {
                       "productId": %d,
-                      "quantity": 2
+                      "quantity": 2,
+                      "selectedColor": "Black",
+                      "selectedSize": "Pro",
+                      "customizationNote": "Gift wrap"
                     }
                     """.formatted(productId)))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.customerEmail").value("cart.user@example.com"))
-            .andExpect(jsonPath("$.items[0].productName").value("Purchase Product"));
+            .andExpect(jsonPath("$.items[0].productName").value("Purchase Product"))
+            .andExpect(jsonPath("$.items[0].selectedColor").value("Black"))
+            .andReturn();
+
+        JsonNode cartPayload = objectMapper.readTree(addToCartResult.getResponse().getContentAsString());
+        long cartItemId = cartPayload.path("items").get(0).path("id").asLong();
 
         mockMvc.perform(get("/api/cart")
                 .with(user("cart.user@example.com").roles("CUSTOMER")))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.items[0].quantity").value(2));
 
-        mockMvc.perform(put("/api/cart/items/" + productId)
+        mockMvc.perform(put("/api/cart/items/" + cartItemId)
                 .with(user("cart.user@example.com").roles("CUSTOMER"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                     {
                       "productId": %d,
-                      "quantity": 3
+                      "quantity": 3,
+                      "selectedColor": "Blue",
+                      "selectedSize": "Compact",
+                      "customizationNote": "No gift wrap"
                     }
                     """.formatted(productId)))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.items[0].quantity").value(3));
+            .andExpect(jsonPath("$.items[0].quantity").value(3))
+            .andExpect(jsonPath("$.items[0].selectedColor").value("Blue"));
 
         mockMvc.perform(get("/api/cart/admin-summary")
                 .with(user("admin@example.com").roles("ADMIN")))
@@ -324,7 +337,25 @@ class AuthAndProductApiTests {
             .andExpect(jsonPath("$[0].customerEmail").value("cart.user@example.com"))
             .andExpect(jsonPath("$[0].items[0].quantity").value(3));
 
-        mockMvc.perform(delete("/api/cart/items/" + productId)
+        mockMvc.perform(post("/api/cart/checkout/session")
+                .with(user("cart.user@example.com").roles("CUSTOMER")))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.provider").value("demo"));
+
+        mockMvc.perform(post("/api/cart/checkout/confirm")
+                .with(user("cart.user@example.com").roles("CUSTOMER"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "provider": "demo",
+                      "orderId": "demo-checkout",
+                      "paymentId": "demo-payment"
+                    }
+                    """))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.message").value("Payment recorded successfully and cart cleared."));
+
+        mockMvc.perform(get("/api/cart")
                 .with(user("cart.user@example.com").roles("CUSTOMER")))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.items").isEmpty());

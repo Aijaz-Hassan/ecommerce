@@ -2,6 +2,9 @@ package com.ecommerce.store.controller;
 
 import com.ecommerce.store.dto.cart.CartItemRequest;
 import com.ecommerce.store.dto.cart.CartResponse;
+import com.ecommerce.store.dto.cart.CheckoutCompleteResponse;
+import com.ecommerce.store.dto.cart.CheckoutConfirmRequest;
+import com.ecommerce.store.dto.cart.CheckoutSessionResponse;
 import com.ecommerce.store.service.CartService;
 import jakarta.validation.Valid;
 import java.security.Principal;
@@ -38,19 +41,18 @@ public class CartController {
         return cartService.addItem(principal.getName(), request);
     }
 
-    @PutMapping("/items/{productId}")
-    public CartResponse updateItemQuantity(
-        @PathVariable Long productId,
+    @PutMapping("/items/{cartItemId}")
+    public CartResponse updateItem(
+        @PathVariable Long cartItemId,
         @Valid @RequestBody CartItemRequest request,
         Principal principal
     ) {
-        request.setProductId(productId);
-        return cartService.updateItemQuantity(principal.getName(), productId, request);
+        return cartService.updateItem(principal.getName(), cartItemId, request);
     }
 
-    @DeleteMapping("/items/{productId}")
-    public CartResponse removeItem(@PathVariable Long productId, Principal principal) {
-        return cartService.removeItem(principal.getName(), productId);
+    @DeleteMapping("/items/{cartItemId}")
+    public CartResponse removeItem(@PathVariable Long cartItemId, Principal principal) {
+        return cartService.removeItem(principal.getName(), cartItemId);
     }
 
     @DeleteMapping
@@ -62,5 +64,15 @@ public class CartController {
     @GetMapping("/admin-summary")
     public List<CartResponse> getAdminSummary() {
         return cartService.getAllCartsForAdmin();
+    }
+
+    @PostMapping("/checkout/session")
+    public CheckoutSessionResponse createCheckoutSession(Principal principal) {
+        return cartService.createCheckoutSession(principal.getName());
+    }
+
+    @PostMapping("/checkout/confirm")
+    public CheckoutCompleteResponse confirmCheckout(@Valid @RequestBody CheckoutConfirmRequest request, Principal principal) {
+        return cartService.confirmCheckout(principal.getName(), request);
     }
 }

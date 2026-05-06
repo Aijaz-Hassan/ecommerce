@@ -24,7 +24,10 @@ export function CartProvider({ children }) {
       category: item.category,
       imageUrl: item.imageUrl,
       price: item.price,
-      quantity: item.quantity
+      quantity: item.quantity,
+      selectedColor: item.selectedColor || "",
+      selectedSize: item.selectedSize || "",
+      customizationNote: item.customizationNote || ""
     }));
     setCartItems(nextItems);
     return nextItems;
@@ -45,49 +48,76 @@ export function CartProvider({ children }) {
     }
   };
 
-  const addToCart = async (product) => {
+  const addToCart = async (product, selections = {}) => {
     ensureCustomerSession();
     await api.post("/cart/items", {
       productId: Number(product.id),
-      quantity: 1
+      quantity: 1,
+      selectedColor: selections.selectedColor || "",
+      selectedSize: selections.selectedSize || "",
+      customizationNote: selections.customizationNote || ""
     });
     return syncCart();
   };
 
-  const removeFromCart = async (productId) => {
+  const removeFromCart = async (cartItemId) => {
     ensureCustomerSession();
-    await api.delete(`/cart/items/${productId}`);
+    await api.delete(`/cart/items/${cartItemId}`);
     return syncCart();
   };
 
-  const increaseQuantity = async (productId) => {
+  const increaseQuantity = async (cartItemId) => {
     ensureCustomerSession();
-    const item = cartItems.find((entry) => String(entry.id) === String(productId));
+    const item = cartItems.find((entry) => String(entry.cartItemId) === String(cartItemId));
     if (!item) {
       return;
     }
-    await api.put(`/cart/items/${productId}`, {
-      productId: Number(productId),
-      quantity: item.quantity + 1
+
+    await api.put(`/cart/items/${cartItemId}`, {
+      productId: Number(item.id),
+      quantity: item.quantity + 1,
+      selectedColor: item.selectedColor || "",
+      selectedSize: item.selectedSize || "",
+      customizationNote: item.customizationNote || ""
     });
     return syncCart();
   };
 
-  const decreaseQuantity = async (productId) => {
+  const decreaseQuantity = async (cartItemId) => {
     ensureCustomerSession();
-    const item = cartItems.find((entry) => String(entry.id) === String(productId));
+    const item = cartItems.find((entry) => String(entry.cartItemId) === String(cartItemId));
     if (!item) {
       return;
     }
 
     if (item.quantity <= 1) {
-      await api.delete(`/cart/items/${productId}`);
+      await api.delete(`/cart/items/${cartItemId}`);
     } else {
-      await api.put(`/cart/items/${productId}`, {
-        productId: Number(productId),
-        quantity: item.quantity - 1
+      await api.put(`/cart/items/${cartItemId}`, {
+        productId: Number(item.id),
+        quantity: item.quantity - 1,
+        selectedColor: item.selectedColor || "",
+        selectedSize: item.selectedSize || "",
+        customizationNote: item.customizationNote || ""
       });
     }
+    return syncCart();
+  };
+
+  const updateCartItem = async (cartItemId, updates) => {
+    ensureCustomerSession();
+    const item = cartItems.find((entry) => String(entry.cartItemId) === String(cartItemId));
+    if (!item) {
+      return;
+    }
+
+    await api.put(`/cart/items/${cartItemId}`, {
+      productId: Number(item.id),
+      quantity: updates.quantity ?? item.quantity,
+      selectedColor: updates.selectedColor ?? item.selectedColor ?? "",
+      selectedSize: updates.selectedSize ?? item.selectedSize ?? "",
+      customizationNote: updates.customizationNote ?? item.customizationNote ?? ""
+    });
     return syncCart();
   };
 
@@ -109,6 +139,7 @@ export function CartProvider({ children }) {
         clearCart,
         increaseQuantity,
         decreaseQuantity,
+        updateCartItem,
         cartCount,
         cartTotal,
         refreshCart: syncCart

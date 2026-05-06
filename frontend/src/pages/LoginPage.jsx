@@ -10,7 +10,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const destination = location.state?.from || "/products";
+  const destination = location.state?.from || "/";
 
   const handleChange = (event) => {
     setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
@@ -44,7 +44,7 @@ export default function LoginPage() {
       <section className="auth-card">
         <div>
           <p className="eyebrow">Welcome back</p>
-          <h1>Sign in to manage your picks and publish products.</h1>
+          <h1>Sign in to continue to your storefront.</h1>
         </div>
 
         <form className="auth-form" onSubmit={handleSubmit}>
