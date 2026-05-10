@@ -44,6 +44,12 @@ export default function CartPage() {
   const [busyItemId, setBusyItemId] = useState(null);
   const [clearing, setClearing] = useState(false);
   const [buying, setBuying] = useState(false);
+  const [showBillDetails, setShowBillDetails] = useState(false);
+
+  const subtotal = cartItems.reduce((total, item) => total + Number(item.price) * item.quantity, 0);
+  const taxAmount = Number((subtotal * 0.18).toFixed(2));
+  const shippingAmount = subtotal >= 500 || subtotal === 0 ? 0 : 49;
+  const grandTotal = Number((subtotal + taxAmount + shippingAmount).toFixed(2));
 
   useEffect(() => {
     refreshCart().catch((error) => {
@@ -286,8 +292,31 @@ export default function CartPage() {
             </div>
             <div className="summary-line">
               <span>Total</span>
-              <strong>${cartTotal.toFixed(2)}</strong>
+              <strong>${grandTotal.toFixed(2)}</strong>
             </div>
+            <button className="ghost-button full-width-link" type="button" onClick={() => setShowBillDetails((current) => !current)}>
+              {showBillDetails ? "Hide bill details" : "Bill details"}
+            </button>
+            {showBillDetails && (
+              <div className="bill-breakdown">
+                <div className="summary-line">
+                  <span>Subtotal</span>
+                  <strong>${subtotal.toFixed(2)}</strong>
+                </div>
+                <div className="summary-line">
+                  <span>Tax (18%)</span>
+                  <strong>${taxAmount.toFixed(2)}</strong>
+                </div>
+                <div className="summary-line">
+                  <span>Shipping</span>
+                  <strong>${shippingAmount.toFixed(2)}</strong>
+                </div>
+                <div className="summary-line">
+                  <span>Payable amount</span>
+                  <strong>${grandTotal.toFixed(2)}</strong>
+                </div>
+              </div>
+            )}
             {message && <p className={message.includes("successful") ? "success-text" : "error-text"}>{message}</p>}
             <button className="solid-button full-width-link" type="button" disabled={!cartItems.length || buying} onClick={handleBuyNow}>
               {buying ? "Starting payment..." : "Buy now"}

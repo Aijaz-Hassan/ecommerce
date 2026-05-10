@@ -355,9 +355,83 @@ class AuthAndProductApiTests {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.message").value("Payment recorded successfully and cart cleared."));
 
+        mockMvc.perform(get("/api/purchases/my")
+                .with(user("cart.user@example.com").roles("CUSTOMER")))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].items[0].productName").value("Purchase Product"))
+            .andExpect(jsonPath("$[0].items[0].selectedColor").value("Blue"));
+
         mockMvc.perform(get("/api/cart")
                 .with(user("cart.user@example.com").roles("CUSTOMER")))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.items").isEmpty());
+    }
+
+    @Test
+    void orderCheckoutApiCreatesOrderAndCalculatesTotalPrice() throws Exception {
+        mockMvc.perform(post("/api/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "fullName": "Order Entity User",
+                      "email": "order.entity.user@example.com",
+                      "password": "Demo1234"
+                    }
+                    """))
+            .andExpect(status().isCreated());
+
+        MvcResult createResult = mockMvc.perform(post("/api/products")
+                .with(user("admin@example.com").roles("ADMIN"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "name": "Checkout Product",
+                      "description": "Checkout item",
+                      "price": 100.00,
+                      "category": "Audio",
+                      "imageUrl": "https://example.com/checkout.jpg",
+                      "stock": 10
+                    }
+                    """))
+            .andExpect(status().isCreated())
+            .andReturn();
+
+        JsonNode createdProduct = objectMapper.readTree(createResult.getResponse().getContentAsString());
+        long productId = createdProduct.get("id").asLong();
+
+        mockMvc.perform(post("/api/cart/items")
+                .with(user("order.entity.user@example.com").roles("CUSTOMER"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "productId": %d,
+                      "quantity": 2,
+                      "selectedColor": "Black",
+                      "selectedSize": "Pro"
+                    }
+                    """.formatted(productId)))
+            .andExpect(status().isCreated());
+
+        mockMvc.perform(post("/api/orders/checkout")
+                .with(user("order.entity.user@example.com").roles("CUSTOMER"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "paymentProvider": "demo",
+                      "paymentReference": "demo-order-payment"
+                    }
+                    """))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.orderNumber").isNotEmpty())
+            .andExpect(jsonPath("$.subtotal").value(200.00))
+            .andExpect(jsonPath("$.taxAmount").value(36.00))
+            .andExpect(jsonPath("$.shippingAmount").value(49.00))
+            .andExpect(jsonPath("$.totalAmount").value(285.00))
+            .andExpect(jsonPath("$.items[0].selectedColor").value("Black"));
+
+        mockMvc.perform(get("/api/orders/my")
+                .with(user("order.entity.user@example.com").roles("CUSTOMER")))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].paymentProvider").value("DEMO"));
     }
 }

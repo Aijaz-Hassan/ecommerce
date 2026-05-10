@@ -450,6 +450,17 @@ select {
   margin-top: 1.25rem;
 }
 
+.bill-breakdown,
+.orders-grid,
+.order-tracker {
+  margin-top: 1rem;
+}
+
+.bill-breakdown {
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(35, 24, 21, 0.08);
+}
+
 .product-page-image-wrap,
 .product-page-copy {
   border: 1px solid rgba(35, 24, 21, 0.08);
@@ -638,6 +649,96 @@ select {
   color: var(--muted);
 }
 
+.orders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.order-card {
+  display: grid;
+  gap: 1rem;
+}
+
+.order-card-header,
+.order-card-meta,
+.order-details-layout {
+  display: grid;
+  gap: 1rem;
+}
+
+.order-card-header {
+  grid-template-columns: 1fr auto;
+  align-items: start;
+}
+
+.order-card-meta {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.order-card-meta div {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(21, 50, 67, 0.12);
+  color: var(--ink-blue);
+  font-weight: 700;
+}
+
+.order-tracker {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 1.5rem;
+  background: rgba(255, 250, 243, 0.68);
+  border: 1px solid rgba(35, 24, 21, 0.06);
+}
+
+.tracker-step {
+  display: grid;
+  gap: 0.5rem;
+  color: var(--muted);
+}
+
+.tracker-step.active {
+  color: var(--text);
+}
+
+.tracker-dot {
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 999px;
+  background: rgba(35, 24, 21, 0.18);
+}
+
+.tracker-step.active .tracker-dot {
+  background: var(--accent);
+}
+
+.order-details-layout {
+  margin-top: 1.5rem;
+  grid-template-columns: 1.2fr 0.8fr;
+  align-items: start;
+}
+
+.order-item-row {
+  grid-template-columns: 84px 1fr auto;
+}
+
+.order-item-meta {
+  display: grid;
+  gap: 0.25rem;
+  text-align: right;
+}
+
 .danger-button {
   display: inline-flex;
   align-items: center;
@@ -809,8 +910,17 @@ select {
   .user-panel-hero,
   .user-panel-grid,
   .cart-layout,
+  .order-details-layout,
   .product-page-layout,
   .cart-item-row {
+    grid-template-columns: 1fr;
+  }
+
+  .order-tracker,
+  .order-card-meta,
+  .order-card-header,
+  .cart-variant-grid,
+  .variant-grid {
     grid-template-columns: 1fr;
   }
 

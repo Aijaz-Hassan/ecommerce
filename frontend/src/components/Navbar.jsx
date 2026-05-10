@@ -36,6 +36,11 @@ export default function Navbar() {
             Cart
           </NavLink>
         )}
+        {isAuthenticated && !isAdmin && (
+          <NavLink className={({ isActive }) => (isActive ? "active" : "")} to="/orders">
+            My Orders
+          </NavLink>
+        )}
         {isAdmin && (
           <NavLink className={({ isActive }) => (isActive ? "active" : "")} to="/admin">
             Admin

@@ -8,6 +8,8 @@ import com.ecommerce.store.dto.cart.CheckoutConfirmRequest;
 import com.ecommerce.store.dto.cart.CheckoutSessionResponse;
 import com.ecommerce.store.entity.Cart;
 import com.ecommerce.store.entity.CartItem;
+import com.ecommerce.store.entity.Purchase;
+import com.ecommerce.store.entity.PurchaseItem;
 import com.ecommerce.store.entity.Product;
 import com.ecommerce.store.entity.User;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -20,6 +22,7 @@ import com.ecommerce.store.exception.BadRequestException;
 import com.ecommerce.store.repository.CartItemRepository;
 import com.ecommerce.store.repository.CartRepository;
 import com.ecommerce.store.repository.ProductRepository;
+import com.ecommerce.store.repository.PurchaseRepository;
 import com.ecommerce.store.repository.UserRepository;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -36,6 +39,7 @@ public class CartService {
     private final CartItemRepository cartItemRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final PurchaseRepository purchaseRepository;
     private final ObjectMapper objectMapper;
     private final HttpClient httpClient = HttpClient.newHttpClient();
 
@@ -50,12 +54,14 @@ public class CartService {
         CartItemRepository cartItemRepository,
         ProductRepository productRepository,
         UserRepository userRepository,
+        PurchaseRepository purchaseRepository,
         ObjectMapper objectMapper
     ) {
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
         this.productRepository = productRepository;
         this.userRepository = userRepository;
+        this.purchaseRepository = purchaseRepository;
         this.objectMapper = objectMapper;
     }
 
@@ -185,6 +191,9 @@ public class CartService {
             }
         }
 
+        Purchase purchase = createPurchaseSnapshot(cart, request);
+        purchaseRepository.save(purchase);
+
         cart.getItems().clear();
         cartRepository.save(cart);
         return new CheckoutCompleteResponse("Payment recorded successfully and cart cleared.");
@@ -299,6 +308,46 @@ public class CartService {
 
     private boolean hasRazorpayKeys() {
         return !isBlank(razorpayKeyId) && !isBlank(razorpayKeySecret);
+    }
+
+    private Purchase createPurchaseSnapshot(Cart cart, CheckoutConfirmRequest request) {
+        BigDecimal subtotal = cart.getItems().stream()
+            .map(item -> item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal taxAmount = subtotal.multiply(new BigDecimal("0.18")).setScale(2, java.math.RoundingMode.HALF_UP);
+        BigDecimal shippingAmount = subtotal.compareTo(new BigDecimal("500.00")) >= 0
+            ? BigDecimal.ZERO
+            : new BigDecimal("49.00");
+        BigDecimal totalAmount = subtotal.add(taxAmount).add(shippingAmount);
+
+        Purchase purchase = new Purchase();
+        purchase.setOrderNumber("LL-" + System.currentTimeMillis());
+        purchase.setUser(cart.getUser());
+        purchase.setSubtotal(subtotal);
+        purchase.setTaxAmount(taxAmount);
+        purchase.setShippingAmount(shippingAmount);
+        purchase.setTotalAmount(totalAmount);
+        purchase.setPaymentProvider(request.getProvider().toUpperCase());
+        purchase.setPaymentReference(isBlank(request.getPaymentId()) ? request.getOrderId() : request.getPaymentId());
+        purchase.setStatus(Purchase.PurchaseStatus.CONFIRMED);
+
+        for (CartItem cartItem : cart.getItems()) {
+            PurchaseItem purchaseItem = new PurchaseItem();
+            purchaseItem.setPurchase(purchase);
+            purchaseItem.setProductId(cartItem.getProduct().getId());
+            purchaseItem.setProductName(cartItem.getProduct().getName());
+            purchaseItem.setCategory(cartItem.getProduct().getCategory());
+            purchaseItem.setImageUrl(cartItem.getProduct().getImageUrl());
+            purchaseItem.setUnitPrice(cartItem.getProduct().getPrice());
+            purchaseItem.setQuantity(cartItem.getQuantity());
+            purchaseItem.setSelectedColor(cartItem.getSelectedColor());
+            purchaseItem.setSelectedSize(cartItem.getSelectedSize());
+            purchaseItem.setCustomizationNote(cartItem.getCustomizationNote());
+            purchaseItem.setLineTotal(cartItem.getProduct().getPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity())));
+            purchase.getItems().add(purchaseItem);
+        }
+
+        return purchase;
     }
 
     private String normalize(String value) {
