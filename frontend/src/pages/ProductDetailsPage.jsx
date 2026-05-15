@@ -4,7 +4,6 @@ import api from "../api/client";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { fallbackProducts } from "../data/fallbackProducts";
-import { getProductOptions } from "../data/productOptions";
 import { isAdminRole } from "../utils/roles";
 
 export default function ProductDetailsPage() {
@@ -14,9 +13,6 @@ export default function ProductDetailsPage() {
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [status, setStatus] = useState("loading");
-  const [selectedColor, setSelectedColor] = useState("");
-  const [selectedSize, setSelectedSize] = useState("");
-  const [customizationNote, setCustomizationNote] = useState("");
   const isAdmin = isAdminRole(user?.role);
   const isPreviewProduct = product ? !Number.isFinite(Number(product.id)) : false;
 
@@ -29,20 +25,12 @@ export default function ProductDetailsPage() {
         const response = await api.get(`/products/${id}`);
         if (!ignore) {
           setProduct(response.data);
-          const options = getProductOptions(response.data);
-          setSelectedColor(options.colors[0] || "");
-          setSelectedSize(options.sizes[0] || "");
-          setCustomizationNote("");
           setStatus("ready");
         }
       } catch (error) {
         if (!ignore) {
           const localProduct = fallbackProducts.find((item) => String(item.id) === String(id));
           setProduct(localProduct || null);
-          const options = getProductOptions(localProduct);
-          setSelectedColor(options.colors[0] || "");
-          setSelectedSize(options.sizes[0] || "");
-          setCustomizationNote("");
           setStatus("ready");
         }
       }
@@ -84,14 +72,12 @@ export default function ProductDetailsPage() {
     }
 
     try {
-      await addToCart(product, { selectedColor, selectedSize, customizationNote });
+      await addToCart(product);
       window.alert(`${product.name} added to cart.`);
     } catch (error) {
       window.alert(error.response?.data?.message || error.message || "Unable to add product to cart.");
     }
   };
-
-  const productOptions = getProductOptions(product);
 
   return (
     <main className="page">
@@ -121,40 +107,6 @@ export default function ProductDetailsPage() {
               <li>Designed for practical daily use with a polished storefront presentation.</li>
             </ul>
           </div>
-
-          {!isAdmin && (
-            <div className="variant-grid">
-              <label className="filter-field">
-                <span>Color</span>
-                <select value={selectedColor} onChange={(event) => setSelectedColor(event.target.value)}>
-                  {productOptions.colors.map((color) => (
-                    <option key={color} value={color}>
-                      {color}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="filter-field">
-                <span>Size</span>
-                <select value={selectedSize} onChange={(event) => setSelectedSize(event.target.value)}>
-                  {productOptions.sizes.map((size) => (
-                    <option key={size} value={size}>
-                      {size}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="filter-field variant-note">
-                <span>Customization note</span>
-                <textarea
-                  rows="3"
-                  value={customizationNote}
-                  onChange={(event) => setCustomizationNote(event.target.value)}
-                  placeholder="Example: matte finish, gift wrap, name engraving"
-                />
-              </label>
-            </div>
-          )}
         </div>
 
         <aside className="buy-box-panel">

@@ -1,10 +1,14 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import AdminPage from "./pages/AdminPage";
+import AdminOrdersPage from "./pages/AdminOrdersPage";
+import AdminProductsPage from "./pages/AdminProductsPage";
+import AdminUsersPage from "./pages/AdminUsersPage";
 import CartPage from "./pages/CartPage";
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
+import OrderHistoryPage from "./pages/OrderHistoryPage";
 import MyOrdersPage from "./pages/MyOrdersPage";
 import OrderDetailsPage from "./pages/OrderDetailsPage";
 import ProductDetailsPage from "./pages/ProductDetailsPage";
@@ -42,6 +46,14 @@ export default function App() {
           }
         />
         <Route
+          path="/orders/history"
+          element={
+            <ProtectedRoute>
+              {isAdminRole(user?.role) ? <Navigate to="/admin" replace /> : <OrderHistoryPage />}
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/orders/:id"
           element={
             <ProtectedRoute>
@@ -54,6 +66,30 @@ export default function App() {
           element={
             <ProtectedRoute adminOnly>
               <AdminPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/products"
+          element={
+            <ProtectedRoute adminOnly>
+              <AdminProductsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            <ProtectedRoute adminOnly>
+              <AdminUsersPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/orders"
+          element={
+            <ProtectedRoute adminOnly>
+              <AdminOrdersPage />
             </ProtectedRoute>
           }
         />

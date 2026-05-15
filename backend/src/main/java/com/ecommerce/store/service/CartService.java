@@ -78,12 +78,7 @@ public class CartService {
         Cart cart = getOrCreateCart(user);
 
         CartItem existingItem = cart.getItems().stream()
-            .filter(item ->
-                item.getProduct().getId().equals(product.getId()) &&
-                normalize(item.getSelectedColor()).equals(normalize(request.getSelectedColor())) &&
-                normalize(item.getSelectedSize()).equals(normalize(request.getSelectedSize())) &&
-                normalize(item.getCustomizationNote()).equals(normalize(request.getCustomizationNote()))
-            )
+            .filter(item -> item.getProduct().getId().equals(product.getId()))
             .findFirst()
             .orElse(null);
 
@@ -96,9 +91,9 @@ public class CartService {
             cartItem.setCart(cart);
             cartItem.setProduct(product);
             cartItem.setQuantity(request.getQuantity());
-            cartItem.setSelectedColor(request.getSelectedColor());
-            cartItem.setSelectedSize(request.getSelectedSize());
-            cartItem.setCustomizationNote(request.getCustomizationNote());
+            cartItem.setSelectedColor(null);
+            cartItem.setSelectedSize(null);
+            cartItem.setCustomizationNote(null);
             cart.getItems().add(cartItem);
         }
 
@@ -118,9 +113,9 @@ public class CartService {
         Product product = cartItem.getProduct();
         validateStock(product, request.getQuantity());
         cartItem.setQuantity(request.getQuantity());
-        cartItem.setSelectedColor(request.getSelectedColor());
-        cartItem.setSelectedSize(request.getSelectedSize());
-        cartItem.setCustomizationNote(request.getCustomizationNote());
+        cartItem.setSelectedColor(null);
+        cartItem.setSelectedSize(null);
+        cartItem.setCustomizationNote(null);
         return toResponse(cartRepository.save(cart));
     }
 
@@ -349,11 +344,6 @@ public class CartService {
 
         return purchase;
     }
-
-    private String normalize(String value) {
-        return value == null ? "" : value.trim();
-    }
-
     private boolean isBlank(String value) {
         return value == null || value.isBlank();
     }

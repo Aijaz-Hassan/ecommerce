@@ -603,6 +603,14 @@ select {
   margin-bottom: 1.5rem;
 }
 
+.admin-select-bar {
+  margin-bottom: 1.5rem;
+}
+
+.admin-select-field {
+  width: min(100%, 20rem);
+}
+
 .admin-console {
   display: grid;
   grid-template-columns: 0.95fr 1.05fr;
@@ -643,6 +651,11 @@ select {
   align-items: start;
 }
 
+.admin-order-block {
+  display: grid;
+  gap: 0.3rem;
+}
+
 .admin-row p,
 .admin-panel p {
   margin: 0.25rem 0 0;
@@ -653,6 +666,34 @@ select {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.25rem;
+}
+
+.order-address-compact,
+.tracking-summary-box,
+.order-address-block,
+.order-update-box,
+.order-cancel-box {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.order-address-compact p,
+.tracking-summary-box p,
+.order-address-block p,
+.order-cancel-box p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.order-cancel-box {
+  padding: 1rem;
+  border: 1px solid rgba(180, 35, 24, 0.14);
+  border-radius: 1rem;
+  background: rgba(255, 246, 244, 0.9);
+}
+
+.details-cancel-box {
+  margin-top: 1rem;
 }
 
 .order-card {
@@ -727,6 +768,69 @@ select {
   margin-top: 1.5rem;
   grid-template-columns: 1.2fr 0.8fr;
   align-items: start;
+}
+
+.tracking-location-layout {
+  margin-top: 1.5rem;
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.tracking-panel,
+.map-panel,
+.address-panel {
+  display: grid;
+  gap: 1rem;
+}
+
+.order-button-row {
+  justify-content: flex-start;
+}
+
+.stock-pill {
+  display: grid;
+  place-items: center;
+  min-width: 7rem;
+  padding: 0.7rem 1rem;
+  border-radius: 1rem;
+  background: rgba(21, 50, 67, 0.08);
+}
+
+.stock-pill strong {
+  font-size: 1.3rem;
+}
+
+.stock-pill span {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.address-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.map-frame-wrap {
+  overflow: hidden;
+  border-radius: 1.2rem;
+  border: 1px solid rgba(35, 24, 21, 0.08);
+  min-height: 280px;
+}
+
+.map-frame-wrap iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  border: 0;
+  display: block;
+}
+
+.compact-map,
+.compact-map iframe {
+  min-height: 220px;
 }
 
 .order-item-row {
@@ -904,12 +1008,14 @@ select {
   .highlights-grid,
   .stats-band,
   .admin-form,
+  .address-form-grid,
   .filter-bar,
   .product-detail-panel,
   .admin-console,
   .user-panel-hero,
   .user-panel-grid,
   .cart-layout,
+  .tracking-location-layout,
   .order-details-layout,
   .product-page-layout,
   .cart-item-row {

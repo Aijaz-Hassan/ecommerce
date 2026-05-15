@@ -1,8 +1,20 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/client";
-import { getProductOptions } from "../data/productOptions";
 import { useCart } from "../context/CartContext";
+
+const addressStorageKey = "store-checkout-address";
+
+const emptyAddress = {
+  recipientName: "",
+  phoneNumber: "",
+  addressLine1: "",
+  addressLine2: "",
+  city: "",
+  state: "",
+  postalCode: "",
+  country: "India"
+};
 
 function loadRazorpayScript() {
   return new Promise((resolve) => {
@@ -32,30 +44,65 @@ export default function CartPage() {
   const {
     cartItems,
     cartCount,
-    cartTotal,
     increaseQuantity,
     decreaseQuantity,
     removeFromCart,
     clearCart,
-    refreshCart,
-    updateCartItem
+    refreshCart
   } = useCart();
   const [message, setMessage] = useState("");
   const [busyItemId, setBusyItemId] = useState(null);
   const [clearing, setClearing] = useState(false);
   const [buying, setBuying] = useState(false);
   const [showBillDetails, setShowBillDetails] = useState(false);
+  const [address, setAddress] = useState(() => {
+    try {
+      const saved = window.localStorage.getItem(addressStorageKey);
+      return saved ? { ...emptyAddress, ...JSON.parse(saved) } : emptyAddress;
+    } catch {
+      return emptyAddress;
+    }
+  });
 
   const subtotal = cartItems.reduce((total, item) => total + Number(item.price) * item.quantity, 0);
   const taxAmount = Number((subtotal * 0.18).toFixed(2));
   const shippingAmount = subtotal >= 500 || subtotal === 0 ? 0 : 49;
   const grandTotal = Number((subtotal + taxAmount + shippingAmount).toFixed(2));
+  const mapQuery = encodeURIComponent(
+    [address.addressLine1, address.addressLine2, address.city, address.state, address.postalCode, address.country]
+      .filter(Boolean)
+      .join(", ")
+  );
 
   useEffect(() => {
     refreshCart().catch((error) => {
       setMessage(error.response?.data?.message || "Unable to load cart.");
     });
   }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem(addressStorageKey, JSON.stringify(address));
+  }, [address]);
+
+  const handleAddressChange = (event) => {
+    const { name, value } = event.target;
+    setAddress((current) => ({ ...current, [name]: value }));
+  };
+
+  const validateAddress = () => {
+    const requiredFields = [
+      ["recipientName", "Please add the recipient name."],
+      ["phoneNumber", "Please add a phone number."],
+      ["addressLine1", "Please add address line 1."],
+      ["city", "Please add the delivery city."],
+      ["state", "Please add the delivery state."],
+      ["postalCode", "Please add the postal code."],
+      ["country", "Please add the country."]
+    ];
+
+    const missing = requiredFields.find(([field]) => !address[field]?.trim());
+    return missing ? missing[1] : "";
+  };
 
   const runCartAction = async (cartItemId, action, successMessage) => {
     setBusyItemId(cartItemId);
@@ -85,24 +132,17 @@ export default function CartPage() {
     }
   };
 
-  const handleVariantChange = async (cartItemId, updates) => {
-    setBusyItemId(cartItemId);
-    setMessage("");
-    try {
-      await updateCartItem(cartItemId, updates);
-      setMessage("Cart item updated successfully.");
-    } catch (error) {
-      setMessage(error.response?.data?.message || "Unable to update item preferences.");
-    } finally {
-      setBusyItemId(null);
-    }
-  };
-
   const handleBuyNow = async () => {
     setBuying(true);
     setMessage("");
 
     try {
+      const validationMessage = validateAddress();
+      if (validationMessage) {
+        setMessage(validationMessage);
+        return;
+      }
+
       const { data } = await api.post("/cart/checkout/session");
 
       if (data.provider === "razorpay") {
@@ -119,21 +159,21 @@ export default function CartPage() {
           description: data.description,
           order_id: data.orderId,
           prefill: {
-            name: data.customerName,
-            email: data.customerEmail
+            name: address.recipientName || data.customerName,
+            email: data.customerEmail,
+            contact: address.phoneNumber
           },
           theme: {
             color: "#e85d3f"
           },
           handler: async (response) => {
-            await api.post("/cart/checkout/confirm", {
-              provider: "razorpay",
-              orderId: response.razorpay_order_id,
-              paymentId: response.razorpay_payment_id,
-              signature: response.razorpay_signature
+            await api.post("/orders/checkout", {
+              paymentProvider: "razorpay",
+              paymentReference: response.razorpay_payment_id,
+              ...address
             });
             await refreshCart();
-            setMessage("Payment successful and cart cleared.");
+            setMessage("Payment successful. Your order is now available in My Orders.");
           }
         });
 
@@ -152,13 +192,13 @@ export default function CartPage() {
           return;
         }
 
-        await api.post("/cart/checkout/confirm", {
-          provider: "demo",
-          orderId: data.orderId,
-          paymentId: `demo-payment-${Date.now()}`
+        await api.post("/orders/checkout", {
+          paymentProvider: "demo",
+          paymentReference: `demo-payment-${Date.now()}`,
+          ...address
         });
         await refreshCart();
-        setMessage("Demo payment successful and cart cleared.");
+        setMessage("Demo payment successful. Your order is now available in My Orders.");
       }
     } catch (error) {
       setMessage(error.response?.data?.message || error.message || "Unable to start checkout.");
@@ -206,48 +246,6 @@ export default function CartPage() {
                     <strong>{item.name}</strong>
                     <p>{item.category}</p>
                     <span>${Number(item.price).toFixed(2)}</span>
-                    <div className="cart-variant-stack">
-                      <div className="cart-variant-grid">
-                        <label className="filter-field compact-field">
-                          <span>Color</span>
-                          <select
-                            value={item.selectedColor || ""}
-                            onChange={(event) => handleVariantChange(item.cartItemId, { selectedColor: event.target.value })}
-                            disabled={busyItemId === item.cartItemId}
-                          >
-                            {getProductOptions(item).colors.map((color) => (
-                              <option key={color} value={color}>
-                                {color}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                        <label className="filter-field compact-field">
-                          <span>Size</span>
-                          <select
-                            value={item.selectedSize || ""}
-                            onChange={(event) => handleVariantChange(item.cartItemId, { selectedSize: event.target.value })}
-                            disabled={busyItemId === item.cartItemId}
-                          >
-                            {getProductOptions(item).sizes.map((size) => (
-                              <option key={size} value={size}>
-                                {size}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                      </div>
-                      <label className="filter-field compact-field">
-                        <span>Customization note</span>
-                        <textarea
-                          rows="2"
-                          value={item.customizationNote || ""}
-                          onChange={(event) => handleVariantChange(item.cartItemId, { customizationNote: event.target.value })}
-                          disabled={busyItemId === item.cartItemId}
-                          placeholder="Add finish, engraving, gift-wrap or special preference"
-                        />
-                      </label>
-                    </div>
                   </div>
 
                   <div className="cart-qty-controls">
@@ -324,6 +322,53 @@ export default function CartPage() {
             <Link className="solid-link full-width-link" to="/products">
               Continue shopping
             </Link>
+          </div>
+
+          <div className="admin-panel address-panel">
+            <h2>Delivery address</h2>
+            <div className="address-form-grid">
+              <label className="filter-field">
+                <span>Recipient name</span>
+                <input name="recipientName" value={address.recipientName} onChange={handleAddressChange} placeholder="Full name" />
+              </label>
+              <label className="filter-field">
+                <span>Phone number</span>
+                <input name="phoneNumber" value={address.phoneNumber} onChange={handleAddressChange} placeholder="10-digit number" />
+              </label>
+              <label className="filter-field full-span">
+                <span>Address line 1</span>
+                <input name="addressLine1" value={address.addressLine1} onChange={handleAddressChange} placeholder="House number and street" />
+              </label>
+              <label className="filter-field full-span">
+                <span>Address line 2</span>
+                <input name="addressLine2" value={address.addressLine2} onChange={handleAddressChange} placeholder="Apartment, landmark, area" />
+              </label>
+              <label className="filter-field">
+                <span>City</span>
+                <input name="city" value={address.city} onChange={handleAddressChange} placeholder="City" />
+              </label>
+              <label className="filter-field">
+                <span>State</span>
+                <input name="state" value={address.state} onChange={handleAddressChange} placeholder="State" />
+              </label>
+              <label className="filter-field">
+                <span>Postal code</span>
+                <input name="postalCode" value={address.postalCode} onChange={handleAddressChange} placeholder="Postal code" />
+              </label>
+              <label className="filter-field">
+                <span>Country</span>
+                <input name="country" value={address.country} onChange={handleAddressChange} placeholder="Country" />
+              </label>
+            </div>
+
+            <div className="map-frame-wrap compact-map">
+              <iframe
+                title="Checkout address map"
+                src={`https://www.google.com/maps?q=${mapQuery}&z=15&output=embed`}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
           </div>
         </aside>
       </section>

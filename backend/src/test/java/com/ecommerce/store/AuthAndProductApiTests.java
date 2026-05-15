@@ -295,16 +295,12 @@ class AuthAndProductApiTests {
                 .content("""
                     {
                       "productId": %d,
-                      "quantity": 2,
-                      "selectedColor": "Black",
-                      "selectedSize": "Pro",
-                      "customizationNote": "Gift wrap"
+                      "quantity": 2
                     }
                     """.formatted(productId)))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.customerEmail").value("cart.user@example.com"))
             .andExpect(jsonPath("$.items[0].productName").value("Purchase Product"))
-            .andExpect(jsonPath("$.items[0].selectedColor").value("Black"))
             .andReturn();
 
         JsonNode cartPayload = objectMapper.readTree(addToCartResult.getResponse().getContentAsString());
@@ -321,15 +317,11 @@ class AuthAndProductApiTests {
                 .content("""
                     {
                       "productId": %d,
-                      "quantity": 3,
-                      "selectedColor": "Blue",
-                      "selectedSize": "Compact",
-                      "customizationNote": "No gift wrap"
+                      "quantity": 3
                     }
                     """.formatted(productId)))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.items[0].quantity").value(3))
-            .andExpect(jsonPath("$.items[0].selectedColor").value("Blue"));
+            .andExpect(jsonPath("$.items[0].quantity").value(3));
 
         mockMvc.perform(get("/api/cart/admin-summary")
                 .with(user("admin@example.com").roles("ADMIN")))
@@ -358,8 +350,7 @@ class AuthAndProductApiTests {
         mockMvc.perform(get("/api/purchases/my")
                 .with(user("cart.user@example.com").roles("CUSTOMER")))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$[0].items[0].productName").value("Purchase Product"))
-            .andExpect(jsonPath("$[0].items[0].selectedColor").value("Blue"));
+            .andExpect(jsonPath("$[0].items[0].productName").value("Purchase Product"));
 
         mockMvc.perform(get("/api/cart")
                 .with(user("cart.user@example.com").roles("CUSTOMER")))
@@ -405,20 +396,26 @@ class AuthAndProductApiTests {
                 .content("""
                     {
                       "productId": %d,
-                      "quantity": 2,
-                      "selectedColor": "Black",
-                      "selectedSize": "Pro"
+                      "quantity": 2
                     }
                     """.formatted(productId)))
             .andExpect(status().isCreated());
 
-        mockMvc.perform(post("/api/orders/checkout")
+        MvcResult checkoutResult = mockMvc.perform(post("/api/orders/checkout")
                 .with(user("order.entity.user@example.com").roles("CUSTOMER"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                     {
                       "paymentProvider": "demo",
-                      "paymentReference": "demo-order-payment"
+                      "paymentReference": "demo-order-payment",
+                      "recipientName": "Order Entity User",
+                      "phoneNumber": "9876543210",
+                      "addressLine1": "221 Market Road",
+                      "addressLine2": "Near River View",
+                      "city": "Hyderabad",
+                      "state": "Telangana",
+                      "postalCode": "500001",
+                      "country": "India"
                     }
                     """))
             .andExpect(status().isCreated())
@@ -427,11 +424,50 @@ class AuthAndProductApiTests {
             .andExpect(jsonPath("$.taxAmount").value(36.00))
             .andExpect(jsonPath("$.shippingAmount").value(49.00))
             .andExpect(jsonPath("$.totalAmount").value(285.00))
-            .andExpect(jsonPath("$.items[0].selectedColor").value("Black"));
+            .andExpect(jsonPath("$.city").value("Hyderabad"))
+            .andExpect(jsonPath("$.trackingLocation").value("Order confirmed at the seller desk"))
+            .andReturn();
+
+        JsonNode checkoutOrder = objectMapper.readTree(checkoutResult.getResponse().getContentAsString());
+        long orderId = checkoutOrder.get("id").asLong();
 
         mockMvc.perform(get("/api/orders/my")
                 .with(user("order.entity.user@example.com").roles("CUSTOMER")))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$[0].paymentProvider").value("DEMO"));
+
+        mockMvc.perform(get("/api/orders/history")
+                .with(user("order.entity.user@example.com").roles("CUSTOMER")))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").isArray());
+
+        mockMvc.perform(get("/api/products/" + productId))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.stock").value(8));
+
+        mockMvc.perform(get("/api/orders/admin-summary")
+                .with(user("admin@example.com").roles("ADMIN")))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].customerEmail").value("order.entity.user@example.com"))
+            .andExpect(jsonPath("$[0].items[0].remainingStock").value(8));
+
+        mockMvc.perform(put("/api/orders/my/" + orderId + "/cancel")
+                .with(user("order.entity.user@example.com").roles("CUSTOMER"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "reason": "Delivery timing no longer works for me."
+                    }
+                    """))
+            .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/api/products/" + productId))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.stock").value(10));
+
+        mockMvc.perform(get("/api/orders/my")
+                .with(user("order.entity.user@example.com").roles("CUSTOMER")))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").isEmpty());
     }
 }

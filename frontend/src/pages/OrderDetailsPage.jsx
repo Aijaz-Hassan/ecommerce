@@ -15,7 +15,7 @@ export default function OrderDetailsPage() {
 
     async function loadOrder() {
       try {
-        const response = await api.get(`/purchases/my/${id}`);
+        const response = await api.get(`/orders/my/${id}`);
         if (!ignore) {
           setOrder(response.data);
           setStatus("ready");
@@ -40,6 +40,18 @@ export default function OrderDetailsPage() {
     }
     const index = trackingSteps.indexOf(order.status);
     return index >= 0 ? index : 0;
+  }, [order]);
+
+  const mapQuery = useMemo(() => {
+    if (!order) {
+      return "";
+    }
+
+    return encodeURIComponent(
+      [order.addressLine1, order.addressLine2, order.city, order.state, order.postalCode, order.country]
+        .filter(Boolean)
+        .join(", ")
+    );
   }, [order]);
 
   if (status === "loading") {
@@ -72,6 +84,40 @@ export default function OrderDetailsPage() {
         ))}
       </section>
 
+      <section className="tracking-location-layout">
+        <div className="admin-panel tracking-panel">
+          <h2>Live tracking</h2>
+          <div className="tracking-summary-box">
+            <strong>{order.trackingLocation}</strong>
+            <p>{order.trackingNote}</p>
+          </div>
+
+          <div className="order-address-block">
+            <strong>Delivering to</strong>
+            <p>{order.recipientName}</p>
+            <p>{order.phoneNumber}</p>
+            <p>{order.addressLine1}</p>
+            {order.addressLine2 && <p>{order.addressLine2}</p>}
+            <p>
+              {order.city}, {order.state} {order.postalCode}
+            </p>
+            <p>{order.country}</p>
+          </div>
+        </div>
+
+        <div className="admin-panel map-panel">
+          <h2>Delivery map</h2>
+          <div className="map-frame-wrap">
+            <iframe
+              title="Delivery address map"
+              src={`https://www.google.com/maps?q=${mapQuery}&z=15&output=embed`}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
+        </div>
+      </section>
+
       <section className="order-details-layout">
         <div className="admin-panel">
           <h2>Purchased items</h2>
@@ -82,10 +128,6 @@ export default function OrderDetailsPage() {
                 <div className="cart-item-info">
                   <strong>{item.productName}</strong>
                   <p>{item.category}</p>
-                  <p>
-                    Color: {item.selectedColor || "Standard"} | Size: {item.selectedSize || "Standard"}
-                  </p>
-                  {item.customizationNote && <p>Note: {item.customizationNote}</p>}
                 </div>
                 <div className="order-item-meta">
                   <strong>Qty {item.quantity}</strong>
@@ -123,6 +165,16 @@ export default function OrderDetailsPage() {
               <span>Status</span>
               <strong>{order.status}</strong>
             </div>
+            <div className="summary-line">
+              <span>Destination</span>
+              <strong>{order.city}</strong>
+            </div>
+            {order.cancellationReason && (
+              <div className="order-cancel-box details-cancel-box">
+                <strong>Cancellation reason</strong>
+                <p>{order.cancellationReason}</p>
+              </div>
+            )}
           </div>
         </aside>
       </section>

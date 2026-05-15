@@ -41,6 +41,11 @@ export default function Navbar() {
             My Orders
           </NavLink>
         )}
+        {isAuthenticated && !isAdmin && (
+          <NavLink className={({ isActive }) => (isActive ? "active" : "")} to="/orders/history">
+            Order History
+          </NavLink>
+        )}
         {isAdmin && (
           <NavLink className={({ isActive }) => (isActive ? "active" : "")} to="/admin">
             Admin
