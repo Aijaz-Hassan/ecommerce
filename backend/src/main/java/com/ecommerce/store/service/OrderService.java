@@ -123,13 +123,7 @@ public class OrderService {
     @Transactional(readOnly = true)
     public List<OrderResponse> getMyOrderHistory(String customerEmail) {
         User user = findUser(customerEmail);
-        List<Order> orders = orderRepository.findByUserOrderByCreatedAtDesc(user);
-        if (orders.size() <= 1) {
-            return List.of();
-        }
-
-        return orders.stream()
-            .skip(1)
+        return orderRepository.findByUserOrderByCreatedAtDesc(user).stream()
             .map(this::toResponse)
             .toList();
     }

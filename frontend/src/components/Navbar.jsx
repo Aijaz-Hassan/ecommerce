@@ -42,8 +42,8 @@ export default function Navbar() {
           </NavLink>
         )}
         {isAuthenticated && !isAdmin && (
-          <NavLink className={({ isActive }) => (isActive ? "active" : "")} to="/orders/history">
-            Order History
+          <NavLink className={({ isActive }) => (isActive ? "active" : "")} to="/profile">
+            Profile
           </NavLink>
         )}
         {isAdmin && (
@@ -63,6 +63,11 @@ export default function Navbar() {
         {isAuthenticated ? (
           <>
             <div className="welcome-pill">
+              {user.profilePictureUrl ? (
+                <img className="welcome-avatar" src={user.profilePictureUrl} alt={user.fullName} />
+              ) : (
+                <span className="welcome-avatar welcome-avatar-fallback">{user.fullName?.[0] || "L"}</span>
+              )}
               <span>{user.fullName}</span>
               <small>{isAdmin ? "Admin" : "Member"}</small>
             </div>

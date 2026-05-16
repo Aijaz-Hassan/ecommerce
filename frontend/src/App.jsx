@@ -8,9 +8,9 @@ import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
-import OrderHistoryPage from "./pages/OrderHistoryPage";
 import MyOrdersPage from "./pages/MyOrdersPage";
 import OrderDetailsPage from "./pages/OrderDetailsPage";
+import ProfilePage from "./pages/ProfilePage";
 import ProductDetailsPage from "./pages/ProductDetailsPage";
 import ProductsPage from "./pages/ProductsPage";
 import RegisterPage from "./pages/RegisterPage";
@@ -49,7 +49,15 @@ export default function App() {
           path="/orders/history"
           element={
             <ProtectedRoute>
-              {isAdminRole(user?.role) ? <Navigate to="/admin" replace /> : <OrderHistoryPage />}
+              {isAdminRole(user?.role) ? <Navigate to="/admin" replace /> : <Navigate to="/orders" replace />}
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              {isAdminRole(user?.role) ? <Navigate to="/admin" replace /> : <ProfilePage />}
             </ProtectedRoute>
           }
         />

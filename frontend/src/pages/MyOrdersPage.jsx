@@ -9,6 +9,9 @@ export default function MyOrdersPage() {
   const [busyOrderId, setBusyOrderId] = useState(null);
   const [cancellingOrderId, setCancellingOrderId] = useState(null);
   const [cancelReasons, setCancelReasons] = useState({});
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historyOrders, setHistoryOrders] = useState([]);
+  const [historyStatus, setHistoryStatus] = useState("idle");
 
   const loadOrders = async (ignore = false) => {
     try {
@@ -60,6 +63,25 @@ export default function MyOrdersPage() {
     }
   };
 
+  const toggleHistory = async () => {
+    const nextOpen = !historyOpen;
+    setHistoryOpen(nextOpen);
+
+    if (!nextOpen || historyStatus === "ready" || historyStatus === "loading") {
+      return;
+    }
+
+    setHistoryStatus("loading");
+    try {
+      const response = await api.get("/orders/history");
+      setHistoryOrders(response.data || []);
+      setHistoryStatus("ready");
+    } catch (error) {
+      setMessage(error.response?.data?.message || "Unable to load order history.");
+      setHistoryStatus("ready");
+    }
+  };
+
   return (
     <main className="page">
       <section className="section-heading">
@@ -67,6 +89,43 @@ export default function MyOrdersPage() {
           <p className="eyebrow">My orders</p>
           <h1>Track active purchases and cancel an order with a proper reason when needed.</h1>
         </div>
+      </section>
+
+      <section className="admin-panel order-history-dropdown">
+        <button className="history-toggle" type="button" onClick={toggleHistory} aria-expanded={historyOpen}>
+          <span>
+            <strong>Order history</strong>
+            <small>Open this dropdown to review every order you have placed.</small>
+          </span>
+          <span>{historyOpen ? "Hide" : "Show"}</span>
+        </button>
+
+        {historyOpen && (
+          <div className="history-list">
+            {historyStatus === "loading" ? (
+              <div className="loading-panel compact-loading">Loading order history...</div>
+            ) : historyOrders.length === 0 ? (
+              <div className="loading-panel compact-loading">No orders in your history yet.</div>
+            ) : (
+              historyOrders.map((order) => (
+                <article className="history-order-row" key={order.id}>
+                  <div>
+                    <p className="eyebrow">Order {order.orderNumber}</p>
+                    <h2>{new Date(order.createdAt).toLocaleString()}</h2>
+                    <p>{order.items.map((item) => `${item.productName} x${item.quantity}`).join(", ")}</p>
+                  </div>
+                  <div className="history-order-actions">
+                    <span className="status-badge">{order.status}</span>
+                    <strong>${Number(order.totalAmount).toFixed(2)}</strong>
+                    <Link className="solid-link" to={`/orders/${order.id}`}>
+                      View
+                    </Link>
+                  </div>
+                </article>
+              ))
+            )}
+          </div>
+        )}
       </section>
 
       {status === "loading" ? (

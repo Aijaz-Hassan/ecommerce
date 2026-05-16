@@ -8,11 +8,35 @@ const storageKeys = {
   user: "lumenlane_user"
 };
 
+const buildUser = (data) => {
+  const source = data?.user || data || {};
+  return {
+    id: source.id,
+    fullName: source.fullName,
+    email: source.email,
+    role: source.role,
+    phoneNumber: source.phoneNumber || "",
+    profilePictureUrl: source.profilePictureUrl || "",
+    addressLine1: source.addressLine1 || "",
+    addressLine2: source.addressLine2 || "",
+    city: source.city || "",
+    state: source.state || "",
+    postalCode: source.postalCode || "",
+    country: source.country || ""
+  };
+};
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem(storageKeys.user);
-    return savedUser ? JSON.parse(savedUser) : null;
+    try {
+      return savedUser ? JSON.parse(savedUser) : null;
+    } catch {
+      localStorage.removeItem(storageKeys.user);
+      return null;
+    }
   });
+  const [sessionChecked, setSessionChecked] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -22,13 +46,50 @@ export function AuthProvider({ children }) {
     }
   }, [user]);
 
+  useEffect(() => {
+    const token = localStorage.getItem(storageKeys.token);
+    if (!token) {
+      setUser(null);
+      setSessionChecked(true);
+      return;
+    }
+
+    let ignore = false;
+    api
+      .get("/auth/me")
+      .then((response) => {
+        if (!ignore) {
+          setUser(buildUser(response.data));
+        }
+      })
+      .catch(() => {
+        if (!ignore) {
+          logout();
+        }
+      })
+      .finally(() => {
+        if (!ignore) {
+          setSessionChecked(true);
+        }
+      });
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleExpiredSession = () => {
+      logout();
+    };
+
+    window.addEventListener("lumenlane:session-expired", handleExpiredSession);
+    return () => window.removeEventListener("lumenlane:session-expired", handleExpiredSession);
+  }, []);
+
   const login = async (values) => {
     const response = await api.post("/auth/login", values);
-    const nextUser = {
-      fullName: response.data.fullName,
-      email: response.data.email,
-      role: response.data.role
-    };
+    const nextUser = buildUser(response.data);
     localStorage.setItem(storageKeys.token, response.data.token);
     setUser(nextUser);
     return nextUser;
@@ -44,6 +105,17 @@ export function AuthProvider({ children }) {
     };
   };
 
+  const updateProfile = async (values) => {
+    const response = await api.put("/auth/me", values);
+    const nextUser = buildUser(response.data);
+    setUser(nextUser);
+    return nextUser;
+  };
+
+  const resetPassword = async (values) => {
+    await api.post("/auth/forgot-password", values);
+  };
+
   const logout = () => {
     localStorage.removeItem(storageKeys.token);
     localStorage.removeItem(storageKeys.user);
@@ -51,7 +123,18 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, isAuthenticated: Boolean(user) }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        register,
+        logout,
+        updateProfile,
+        resetPassword,
+        isAuthenticated: Boolean(user),
+        sessionChecked
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

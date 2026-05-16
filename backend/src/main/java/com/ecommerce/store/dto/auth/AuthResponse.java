@@ -3,30 +3,30 @@ package com.ecommerce.store.dto.auth;
 public class AuthResponse {
 
     private final String token;
-    private final String fullName;
-    private final String email;
-    private final String role;
+    private final UserResponse user;
 
-    public AuthResponse(String token, String fullName, String email, String role) {
+    public AuthResponse(String token, UserResponse user) {
         this.token = token;
-        this.fullName = fullName;
-        this.email = email;
-        this.role = role;
+        this.user = user;
     }
 
     public String getToken() {
         return token;
     }
 
+    public UserResponse getUser() {
+        return user;
+    }
+
     public String getFullName() {
-        return fullName;
+        return user.getFullName();
     }
 
     public String getEmail() {
-        return email;
+        return user.getEmail();
     }
 
     public String getRole() {
-        return role;
+        return user.getRole();
     }
 }

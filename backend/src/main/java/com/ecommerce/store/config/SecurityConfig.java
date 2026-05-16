@@ -53,7 +53,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/orders/checkout").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/orders/my/**").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/purchases/my/**").authenticated()
-                .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
+                .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/forgot-password").permitAll()
                 .anyRequest().authenticated()
             )
             .authenticationProvider(authenticationProvider())

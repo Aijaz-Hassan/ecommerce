@@ -1,8 +1,10 @@
 package com.ecommerce.store.service;
 
 import com.ecommerce.store.dto.auth.AuthResponse;
+import com.ecommerce.store.dto.auth.ForgotPasswordRequest;
 import com.ecommerce.store.dto.auth.LoginRequest;
 import com.ecommerce.store.dto.auth.RegisterRequest;
+import com.ecommerce.store.dto.auth.UpdateProfileRequest;
 import com.ecommerce.store.dto.auth.UserResponse;
 import com.ecommerce.store.entity.User;
 import com.ecommerce.store.exception.BadRequestException;
@@ -60,7 +62,7 @@ public class AuthService {
                 .build(),
             Map.of("role", savedUser.getRole(), "fullName", savedUser.getFullName())
         );
-        return new AuthResponse(token, savedUser.getFullName(), savedUser.getEmail(), savedUser.getRole());
+        return new AuthResponse(token, toUserResponse(savedUser));
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -79,12 +81,37 @@ public class AuthService {
             Map.of("role", user.getRole(), "fullName", user.getFullName())
         );
 
-        return new AuthResponse(token, user.getFullName(), user.getEmail(), user.getRole());
+        return new AuthResponse(token, toUserResponse(user));
+    }
+
+    public UserResponse getCurrentUser(String email) {
+        return toUserResponse(findUser(email));
+    }
+
+    public UserResponse updateProfile(String email, UpdateProfileRequest request) {
+        User user = findUser(email);
+        user.setFullName(request.getFullName().trim());
+        user.setPhoneNumber(clean(request.getPhoneNumber()));
+        user.setProfilePictureUrl(clean(request.getProfilePictureUrl()));
+        user.setAddressLine1(clean(request.getAddressLine1()));
+        user.setAddressLine2(clean(request.getAddressLine2()));
+        user.setCity(clean(request.getCity()));
+        user.setState(clean(request.getState()));
+        user.setPostalCode(clean(request.getPostalCode()));
+        user.setCountry(clean(request.getCountry()));
+        return toUserResponse(userRepository.save(user));
+    }
+
+    public void resetForgottenPassword(ForgotPasswordRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+            .orElseThrow(() -> new BadRequestException("No account exists for this email."));
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
     }
 
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll().stream()
-            .map(user -> new UserResponse(user.getId(), user.getFullName(), user.getEmail(), user.getRole()))
+            .map(this::toUserResponse)
             .toList();
     }
 
@@ -105,5 +132,34 @@ public class AuthService {
 
         cartRepository.deleteByUser(user);
         userRepository.delete(user);
+    }
+
+    private User findUser(String email) {
+        return userRepository.findByEmail(email)
+            .orElseThrow(() -> new BadRequestException("User not found"));
+    }
+
+    private String clean(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return null;
+        }
+        return value.trim();
+    }
+
+    private UserResponse toUserResponse(User user) {
+        return new UserResponse(
+            user.getId(),
+            user.getFullName(),
+            user.getEmail(),
+            user.getRole(),
+            user.getPhoneNumber(),
+            user.getProfilePictureUrl(),
+            user.getAddressLine1(),
+            user.getAddressLine2(),
+            user.getCity(),
+            user.getState(),
+            user.getPostalCode(),
+            user.getCountry()
+        );
     }
 }
