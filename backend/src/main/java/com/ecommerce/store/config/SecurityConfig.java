@@ -49,11 +49,19 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.DELETE, "/api/auth/users/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/cart/admin-summary").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/orders/admin-summary").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/orders/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/cart/**").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/orders/checkout").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/orders/my/**").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/purchases/my/**").authenticated()
-                .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/forgot-password").permitAll()
+                .requestMatchers(
+                    "/api/auth/register",
+                    "/api/auth/login",
+                    "/api/auth/forgot-password",
+                    "/api/auth/forgot-password/resend",
+                    "/api/auth/reset-password",
+                    "/api/auth/reset-password/validate"
+                ).permitAll()
                 .anyRequest().authenticated()
             )
             .authenticationProvider(authenticationProvider())

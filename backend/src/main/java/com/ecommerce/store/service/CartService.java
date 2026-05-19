@@ -214,12 +214,49 @@ public class CartService {
     }
 
     private Cart getOrCreateCart(User user) {
-        return cartRepository.findByUser(user)
-            .orElseGet(() -> {
-                Cart cart = new Cart();
-                cart.setUser(user);
-                return cartRepository.save(cart);
-            });
+        List<Cart> userCarts = cartRepository.findAllByUserOrderByIdAsc(user);
+        if (userCarts.isEmpty()) {
+            Cart cart = new Cart();
+            cart.setUser(user);
+            return cartRepository.save(cart);
+        }
+
+        Cart primaryCart = userCarts.get(0);
+        if (userCarts.size() > 1) {
+            for (int index = 1; index < userCarts.size(); index++) {
+                Cart duplicateCart = userCarts.get(index);
+                for (CartItem duplicateItem : List.copyOf(duplicateCart.getItems())) {
+                    mergeCartItem(primaryCart, duplicateItem);
+                }
+                duplicateCart.getItems().clear();
+                cartRepository.delete(duplicateCart);
+            }
+            primaryCart = cartRepository.save(primaryCart);
+        }
+        return primaryCart;
+    }
+
+    private void mergeCartItem(Cart primaryCart, CartItem incomingItem) {
+        CartItem existingItem = primaryCart.getItems().stream()
+            .filter(item -> item.getProduct().getId().equals(incomingItem.getProduct().getId()))
+            .findFirst()
+            .orElse(null);
+
+        if (existingItem != null) {
+            int mergedQuantity = existingItem.getQuantity() + incomingItem.getQuantity();
+            validateStock(existingItem.getProduct(), mergedQuantity);
+            existingItem.setQuantity(mergedQuantity);
+            return;
+        }
+
+        CartItem cartItem = new CartItem();
+        cartItem.setCart(primaryCart);
+        cartItem.setProduct(incomingItem.getProduct());
+        cartItem.setQuantity(incomingItem.getQuantity());
+        cartItem.setSelectedColor(incomingItem.getSelectedColor());
+        cartItem.setSelectedSize(incomingItem.getSelectedSize());
+        cartItem.setCustomizationNote(incomingItem.getCustomizationNote());
+        primaryCart.getItems().add(cartItem);
     }
 
     private void validateStock(Product product, int quantity) {

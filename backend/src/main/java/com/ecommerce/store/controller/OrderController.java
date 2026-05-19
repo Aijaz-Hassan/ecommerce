@@ -46,6 +46,21 @@ public class OrderController {
         return orderService.getAdminOrderSummary();
     }
 
+    @PutMapping("/admin/{orderId}/status")
+    public AdminOrderSummaryResponse updateAdminOrderStatus(@PathVariable Long orderId, @Valid @RequestBody UpdateOrderRequest request) {
+        return orderService.updateAdminOrderStatus(orderId, request);
+    }
+
+    @PutMapping("/admin/{orderId}/cancel")
+    public AdminOrderSummaryResponse cancelAdminOrder(@PathVariable Long orderId, @Valid @RequestBody CancelOrderRequest request) {
+        return orderService.cancelAdminOrder(orderId, request);
+    }
+
+    @PutMapping("/admin/{orderId}/refund")
+    public AdminOrderSummaryResponse refundAdminOrder(@PathVariable Long orderId, @Valid @RequestBody CancelOrderRequest request) {
+        return orderService.refundAdminOrder(orderId, request);
+    }
+
     @GetMapping("/history")
     public List<OrderResponse> getMyOrderHistory(Principal principal) {
         return orderService.getMyOrderHistory(principal.getName());

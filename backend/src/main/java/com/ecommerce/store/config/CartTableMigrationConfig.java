@@ -20,8 +20,8 @@ public class CartTableMigrationConfig {
                 boolean cartExists = tableExists(metaData, "cart");
                 boolean cartsExists = tableExists(metaData, "carts");
 
-                if (!cartExists && cartsExists) {
-                    jdbcTemplate.execute("ALTER TABLE carts RENAME TO cart");
+                if (cartExists && !cartsExists) {
+                    jdbcTemplate.execute("ALTER TABLE cart RENAME TO carts");
                 }
             }
         };

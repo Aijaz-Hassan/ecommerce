@@ -359,6 +359,88 @@ class AuthAndProductApiTests {
     }
 
     @Test
+    void cartItemsAreIsolatedPerAuthenticatedUser() throws Exception {
+        mockMvc.perform(post("/api/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "fullName": "First Cart User",
+                      "email": "first.cart@example.com",
+                      "password": "Demo1234"
+                    }
+                    """))
+            .andExpect(status().isCreated());
+
+        mockMvc.perform(post("/api/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "fullName": "Second Cart User",
+                      "email": "second.cart@example.com",
+                      "password": "Demo1234"
+                    }
+                    """))
+            .andExpect(status().isCreated());
+
+        MvcResult createResult = mockMvc.perform(post("/api/products")
+                .with(user("admin@example.com").roles("ADMIN"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "name": "Shared Product",
+                      "description": "Same product in separate carts",
+                      "price": 199.99,
+                      "category": "Audio",
+                      "imageUrl": "https://example.com/shared.jpg",
+                      "stock": 20
+                    }
+                    """))
+            .andExpect(status().isCreated())
+            .andReturn();
+
+        JsonNode createdProduct = objectMapper.readTree(createResult.getResponse().getContentAsString());
+        long productId = createdProduct.get("id").asLong();
+
+        mockMvc.perform(post("/api/cart/items")
+                .with(user("first.cart@example.com").roles("CUSTOMER"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "productId": %d,
+                      "quantity": 1
+                    }
+                    """.formatted(productId)))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.customerEmail").value("first.cart@example.com"))
+            .andExpect(jsonPath("$.items[0].quantity").value(1));
+
+        mockMvc.perform(post("/api/cart/items")
+                .with(user("second.cart@example.com").roles("CUSTOMER"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "productId": %d,
+                      "quantity": 3
+                    }
+                    """.formatted(productId)))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.customerEmail").value("second.cart@example.com"))
+            .andExpect(jsonPath("$.items[0].quantity").value(3));
+
+        mockMvc.perform(get("/api/cart")
+                .with(user("first.cart@example.com").roles("CUSTOMER")))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.customerEmail").value("first.cart@example.com"))
+            .andExpect(jsonPath("$.items[0].quantity").value(1));
+
+        mockMvc.perform(get("/api/cart")
+                .with(user("second.cart@example.com").roles("CUSTOMER")))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.customerEmail").value("second.cart@example.com"))
+            .andExpect(jsonPath("$.items[0].quantity").value(3));
+    }
+
+    @Test
     void orderCheckoutApiCreatesOrderAndCalculatesTotalPrice() throws Exception {
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)

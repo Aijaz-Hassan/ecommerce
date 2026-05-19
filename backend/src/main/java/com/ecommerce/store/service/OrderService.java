@@ -131,26 +131,74 @@ public class OrderService {
     @Transactional(readOnly = true)
     public List<AdminOrderSummaryResponse> getAdminOrderSummary() {
         return orderRepository.findAllByOrderByCreatedAtDesc().stream()
-            .map(order -> new AdminOrderSummaryResponse(
-                order.getId(),
-                order.getOrderNumber(),
-                order.getUser().getFullName(),
-                order.getUser().getEmail(),
-                order.getStatus().name(),
-                order.getCreatedAt(),
-                order.getTotalAmount(),
-                order.getItems().stream()
-                    .map(item -> new AdminOrderItemResponse(
-                        item.getProductId(),
-                        item.getProductName(),
-                        item.getQuantity(),
-                        currentStock(item.getProductId()),
-                        item.getUnitPrice(),
-                        item.getLineTotal()
-                    ))
-                    .toList()
-            ))
+            .map(this::toAdminSummary)
             .toList();
+    }
+
+    @Transactional
+    public AdminOrderSummaryResponse updateAdminOrderStatus(Long orderId, UpdateOrderRequest request) {
+        Order order = findOrder(orderId);
+        Order.OrderStatus currentStatus = order.getStatus();
+        Order.OrderStatus nextStatus = parseStatus(request.getStatus());
+
+        if (currentStatus == Order.OrderStatus.CANCELLED && nextStatus != Order.OrderStatus.CANCELLED) {
+            throw new BadRequestException("Cancelled orders cannot be moved back into fulfillment.");
+        }
+
+        if (nextStatus == Order.OrderStatus.CANCELLED) {
+            String reason = request.getCancellationReason() == null ? "" : request.getCancellationReason().trim();
+            if (reason.length() < 5) {
+                throw new BadRequestException("Please provide a cancellation reason with at least 5 characters.");
+            }
+            if (currentStatus != Order.OrderStatus.CANCELLED) {
+                restockOrderItems(order);
+            }
+            order.setCancellationReason(reason);
+        } else {
+            order.setCancellationReason(null);
+        }
+
+        order.setStatus(nextStatus);
+        return toAdminSummary(orderRepository.save(order));
+    }
+
+    @Transactional
+    public AdminOrderSummaryResponse cancelAdminOrder(Long orderId, CancelOrderRequest request) {
+        Order order = findOrder(orderId);
+        if (order.getStatus() == Order.OrderStatus.DELIVERED) {
+            throw new BadRequestException("Delivered orders cannot be cancelled.");
+        }
+        if (order.getStatus() == Order.OrderStatus.CANCELLED) {
+            throw new BadRequestException("This order is already cancelled.");
+        }
+
+        String reason = request.getReason() == null ? "" : request.getReason().trim();
+        if (reason.length() < 5) {
+            throw new BadRequestException("Please provide a valid cancellation reason with at least 5 characters.");
+        }
+
+        restockOrderItems(order);
+        order.setStatus(Order.OrderStatus.CANCELLED);
+        order.setCancellationReason(reason);
+        return toAdminSummary(orderRepository.save(order));
+    }
+
+    @Transactional
+    public AdminOrderSummaryResponse refundAdminOrder(Long orderId, CancelOrderRequest request) {
+        Order order = findOrder(orderId);
+        if (order.getStatus() == Order.OrderStatus.CANCELLED) {
+            throw new BadRequestException("This order is already cancelled or refunded.");
+        }
+
+        String reason = request.getReason() == null ? "" : request.getReason().trim();
+        if (reason.length() < 5) {
+            throw new BadRequestException("Please provide a valid refund reason with at least 5 characters.");
+        }
+
+        restockOrderItems(order);
+        order.setStatus(Order.OrderStatus.CANCELLED);
+        order.setCancellationReason("Refund issued: " + reason);
+        return toAdminSummary(orderRepository.save(order));
     }
 
     @Transactional(readOnly = true)
@@ -237,6 +285,52 @@ public class OrderService {
             .filter(item -> item.getId().equals(orderId))
             .findFirst()
             .orElseThrow(() -> new BadRequestException("Order not found"));
+    }
+
+    private Order findOrder(Long orderId) {
+        return orderRepository.findById(orderId)
+            .orElseThrow(() -> new BadRequestException("Order not found"));
+    }
+
+    private Order.OrderStatus parseStatus(String status) {
+        String nextStatus = status == null ? "" : status.trim().toUpperCase();
+        try {
+            return Order.OrderStatus.valueOf(nextStatus);
+        } catch (IllegalArgumentException exception) {
+            throw new BadRequestException("Invalid order status");
+        }
+    }
+
+    private void restockOrderItems(Order order) {
+        for (OrderItem item : order.getItems()) {
+            Product product = productRepository.findById(item.getProductId()).orElse(null);
+            if (product != null) {
+                product.setStock((product.getStock() == null ? 0 : product.getStock()) + item.getQuantity());
+                productRepository.save(product);
+            }
+        }
+    }
+
+    private AdminOrderSummaryResponse toAdminSummary(Order order) {
+        return new AdminOrderSummaryResponse(
+            order.getId(),
+            order.getOrderNumber(),
+            order.getUser().getFullName(),
+            order.getUser().getEmail(),
+            order.getStatus().name(),
+            order.getCreatedAt(),
+            order.getTotalAmount(),
+            order.getItems().stream()
+                .map(item -> new AdminOrderItemResponse(
+                    item.getProductId(),
+                    item.getProductName(),
+                    item.getQuantity(),
+                    currentStock(item.getProductId()),
+                    item.getUnitPrice(),
+                    item.getLineTotal()
+                ))
+                .toList()
+        );
     }
 
     private OrderResponse toResponse(Order order) {

@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Heart, PackageOpen, ShoppingBag, Tag, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import api from "../api/client";
 import { useCart } from "../context/CartContext";
 
 const addressStorageKey = "store-checkout-address";
+const savedLaterKey = "lumenlane_saved_later";
 
 const emptyAddress = {
   recipientName: "",
@@ -40,21 +42,24 @@ function loadRazorpayScript() {
   });
 }
 
+function readSavedLater() {
+  try {
+    const saved = window.localStorage.getItem(savedLaterKey);
+    return saved ? JSON.parse(saved) : [];
+  } catch {
+    return [];
+  }
+}
+
 export default function CartPage() {
-  const {
-    cartItems,
-    cartCount,
-    increaseQuantity,
-    decreaseQuantity,
-    removeFromCart,
-    clearCart,
-    refreshCart
-  } = useCart();
-  const [message, setMessage] = useState("");
+  const { cartItems, cartCount, cartLoading, increaseQuantity, decreaseQuantity, removeFromCart, clearCart, refreshCart } = useCart();
+  const [toast, setToast] = useState(null);
   const [busyItemId, setBusyItemId] = useState(null);
   const [clearing, setClearing] = useState(false);
   const [buying, setBuying] = useState(false);
-  const [showBillDetails, setShowBillDetails] = useState(false);
+  const [coupon, setCoupon] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState("");
+  const [savedLater, setSavedLater] = useState(readSavedLater);
   const [address, setAddress] = useState(() => {
     try {
       const saved = window.localStorage.getItem(addressStorageKey);
@@ -64,25 +69,33 @@ export default function CartPage() {
     }
   });
 
-  const subtotal = cartItems.reduce((total, item) => total + Number(item.price) * item.quantity, 0);
-  const taxAmount = Number((subtotal * 0.18).toFixed(2));
-  const shippingAmount = subtotal >= 500 || subtotal === 0 ? 0 : 49;
-  const grandTotal = Number((subtotal + taxAmount + shippingAmount).toFixed(2));
+  const subtotal = useMemo(() => cartItems.reduce((total, item) => total + Number(item.price) * item.quantity, 0), [cartItems]);
+  const discount = appliedCoupon === "LUMEN20" ? Number((subtotal * 0.2).toFixed(2)) : appliedCoupon === "FREESHIP" ? 0 : 0;
+  const shippingAmount = subtotal >= 500 || subtotal === 0 || appliedCoupon === "FREESHIP" ? 0 : 49;
+  const taxAmount = Number(((subtotal - discount) * 0.18).toFixed(2));
+  const grandTotal = Number((subtotal - discount + taxAmount + shippingAmount).toFixed(2));
   const mapQuery = encodeURIComponent(
-    [address.addressLine1, address.addressLine2, address.city, address.state, address.postalCode, address.country]
-      .filter(Boolean)
-      .join(", ")
+    [address.addressLine1, address.addressLine2, address.city, address.state, address.postalCode, address.country].filter(Boolean).join(", ")
   );
 
   useEffect(() => {
-    refreshCart().catch((error) => {
-      setMessage(error.response?.data?.message || "Unable to load cart.");
+    refreshCart().catch(() => {
+      showToast("Unable to load cart.", "error");
     });
   }, []);
 
   useEffect(() => {
     window.localStorage.setItem(addressStorageKey, JSON.stringify(address));
   }, [address]);
+
+  useEffect(() => {
+    window.localStorage.setItem(savedLaterKey, JSON.stringify(savedLater));
+  }, [savedLater]);
+
+  const showToast = (message, type = "success") => {
+    setToast({ message, type });
+    window.setTimeout(() => setToast(null), 2600);
+  };
 
   const handleAddressChange = (event) => {
     const { name, value } = event.target;
@@ -106,14 +119,11 @@ export default function CartPage() {
 
   const runCartAction = async (cartItemId, action, successMessage) => {
     setBusyItemId(cartItemId);
-    setMessage("");
     try {
       await action();
-      if (successMessage) {
-        setMessage(successMessage);
-      }
+      showToast(successMessage || "Cart updated.");
     } catch (error) {
-      setMessage(error.response?.data?.message || "Unable to update cart.");
+      showToast(error.response?.data?.message || "Unable to update cart.", "error");
     } finally {
       setBusyItemId(null);
     }
@@ -121,25 +131,38 @@ export default function CartPage() {
 
   const handleClearCart = async () => {
     setClearing(true);
-    setMessage("");
     try {
       await clearCart();
-      setMessage("Cart cleared successfully.");
+      showToast("Cart cleared successfully.");
     } catch (error) {
-      setMessage(error.response?.data?.message || "Unable to clear cart.");
+      showToast(error.response?.data?.message || "Unable to clear cart.", "error");
     } finally {
       setClearing(false);
     }
   };
 
+  const saveForLater = async (item) => {
+    setSavedLater((current) => [item, ...current.filter((entry) => entry.cartItemId !== item.cartItemId)]);
+    await runCartAction(item.cartItemId, () => removeFromCart(item.cartItemId), "Item saved for later.");
+  };
+
+  const applyCoupon = () => {
+    const normalized = coupon.trim().toUpperCase();
+    if (!["LUMEN20", "FREESHIP"].includes(normalized)) {
+      showToast("Use LUMEN20 or FREESHIP for demo discounts.", "error");
+      return;
+    }
+    setAppliedCoupon(normalized);
+    showToast(`${normalized} applied.`);
+  };
+
   const handleBuyNow = async () => {
     setBuying(true);
-    setMessage("");
 
     try {
       const validationMessage = validateAddress();
       if (validationMessage) {
-        setMessage(validationMessage);
+        showToast(validationMessage, "error");
         return;
       }
 
@@ -173,22 +196,20 @@ export default function CartPage() {
               ...address
             });
             await refreshCart();
-            setMessage("Payment successful. Your order is now available in My Orders.");
+            showToast("Payment successful. Your order is now available in My Orders.");
           }
         });
 
         razorpay.on("payment.failed", () => {
-          setMessage("Payment was not completed.");
+          showToast("Payment was not completed.", "error");
         });
 
         razorpay.open();
       } else {
-        const accepted = window.confirm(
-          `Demo payment for INR ${(data.amount / 100).toFixed(2)}. Click OK to simulate a successful payment.`
-        );
+        const accepted = window.confirm(`Demo payment for INR ${(data.amount / 100).toFixed(2)}. Click OK to simulate a successful payment.`);
 
         if (!accepted) {
-          setMessage("Demo payment cancelled.");
+          showToast("Demo payment cancelled.", "error");
           return;
         }
 
@@ -198,134 +219,167 @@ export default function CartPage() {
           ...address
         });
         await refreshCart();
-        setMessage("Demo payment successful. Your order is now available in My Orders.");
+        showToast("Demo payment successful. Your order is now available in My Orders.");
       }
     } catch (error) {
-      setMessage(error.response?.data?.message || error.message || "Unable to start checkout.");
+      showToast(error.response?.data?.message || error.message || "Unable to start checkout.", "error");
     } finally {
       setBuying(false);
     }
   };
 
+  if (cartLoading && cartItems.length === 0) {
+    return (
+      <main className="page premium-cart-page">
+        <section className="empty-cart-state">
+          <div className="empty-cart-illustration">
+            <ShoppingBag size={76} />
+          </div>
+          <p className="eyebrow">Loading cart</p>
+          <h1>Getting your personal cart.</h1>
+          <p>Your cart is loaded securely from your authenticated account.</p>
+        </section>
+      </main>
+    );
+  }
+
+  if (cartItems.length === 0) {
+    return (
+      <main className="page premium-cart-page">
+        {toast && <div className={`floating-toast ${toast.type}`}>{toast.message}</div>}
+        <section className="empty-cart-state">
+          <div className="empty-cart-illustration">
+            <PackageOpen size={76} />
+          </div>
+          <p className="eyebrow">Your cart is empty</p>
+          <h1>Start building a cart worth checking out.</h1>
+          <p>Explore premium products, save favorites, and come back here when you are ready to buy.</p>
+          <Link className="solid-link" to="/products">Continue Shopping</Link>
+        </section>
+        {savedLater.length > 0 && (
+          <section className="saved-later-section">
+            <h2>Saved for later</h2>
+            <div className="saved-later-grid">
+              {savedLater.map((item) => (
+                <article key={item.cartItemId}>
+                  <img src={item.imageUrl} alt={item.name} />
+                  <strong>{item.name}</strong>
+                  <span>${Number(item.price).toFixed(2)}</span>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
+      </main>
+    );
+  }
+
   return (
-    <main className="page">
-      <section className="section-heading">
+    <main className="page premium-cart-page">
+      {toast && <div className={`floating-toast ${toast.type}`}>{toast.message}</div>}
+
+      <section className="cart-hero-bar">
         <div>
-          <p className="eyebrow">Your cart</p>
-          <h1>Review everything you have added before checkout.</h1>
+          <p className="eyebrow">Shopping cart</p>
+          <h1>Review your items and checkout securely.</h1>
+          <p>{cartCount} item(s) ready for delivery.</p>
         </div>
+        <button className="ghost-button" type="button" onClick={handleClearCart} disabled={clearing}>
+          <Trash2 size={17} />
+          {clearing ? "Clearing..." : "Remove All"}
+        </button>
       </section>
 
-      <section className="cart-layout">
-        <div className="cart-summary-panel">
-          <div className="admin-panel-header">
-            <h2>Cart items</h2>
-            {cartItems.length > 0 && (
-              <button className="ghost-button" type="button" onClick={handleClearCart} disabled={clearing}>
-                {clearing ? "Clearing..." : "Clear cart"}
-              </button>
-            )}
-          </div>
-
-          <div className="admin-table">
-            {cartItems.length === 0 ? (
-              <div className="admin-row">
-                <div>
-                  <strong>Your cart is empty</strong>
-                  <p>Browse the catalog and add products to see them here.</p>
+      <section className="premium-cart-layout">
+        <div className="cart-items-panel">
+          {cartItems.map((item) => {
+            const itemTotal = Number(item.price) * item.quantity;
+            return (
+              <article className="premium-cart-item swipe-card" key={item.cartItemId}>
+                <img src={item.imageUrl} alt={item.name} loading="lazy" />
+                <div className="premium-cart-copy">
+                  <span>{item.brand || item.category || "Lumen Lane"}</span>
+                  <h2>{item.name}</h2>
+                  <p>{item.category}</p>
+                  <strong className="stock-text">In stock</strong>
+                  <div className="cart-item-actions">
+                    <button type="button" onClick={() => saveForLater(item)}>
+                      <Heart size={16} />
+                      Save for later
+                    </button>
+                    <button type="button" onClick={() => runCartAction(item.cartItemId, () => removeFromCart(item.cartItemId), "Item removed from cart.")}>
+                      <Trash2 size={16} />
+                      Remove
+                    </button>
+                  </div>
                 </div>
-                <Link className="solid-link" to="/products">
-                  Go to products
-                </Link>
-              </div>
-            ) : (
-              cartItems.map((item) => (
-                <article className="cart-item-row" key={item.cartItemId}>
-                  <img className="cart-item-image" src={item.imageUrl} alt={item.name} />
-                  <div className="cart-item-info">
-                    <strong>{item.name}</strong>
-                    <p>{item.category}</p>
-                    <span>${Number(item.price).toFixed(2)}</span>
+                <div className="cart-quantity-panel">
+                  <strong>${Number(item.price).toFixed(2)}</strong>
+                  <div className="quantity-selector">
+                    <button type="button" onClick={() => runCartAction(item.cartItemId, () => decreaseQuantity(item.cartItemId), "Quantity updated.")} disabled={busyItemId === item.cartItemId}>-</button>
+                    <span>{item.quantity}</span>
+                    <button type="button" onClick={() => runCartAction(item.cartItemId, () => increaseQuantity(item.cartItemId), "Quantity updated.")} disabled={busyItemId === item.cartItemId}>+</button>
                   </div>
+                  <em>${itemTotal.toFixed(2)}</em>
+                </div>
+              </article>
+            );
+          })}
 
-                  <div className="cart-qty-controls">
-                    <button
-                      className="ghost-button"
-                      type="button"
-                      onClick={() => runCartAction(item.cartItemId, () => decreaseQuantity(item.cartItemId))}
-                      disabled={busyItemId === item.cartItemId}
-                    >
-                      -
-                    </button>
-                    <strong>{item.quantity}</strong>
-                    <button
-                      className="ghost-button"
-                      type="button"
-                      onClick={() => runCartAction(item.cartItemId, () => increaseQuantity(item.cartItemId))}
-                      disabled={busyItemId === item.cartItemId}
-                    >
-                      +
-                    </button>
-                  </div>
-                  <button
-                    className="danger-button"
-                    type="button"
-                    onClick={() => runCartAction(item.cartItemId, () => removeFromCart(item.cartItemId), "Item removed from cart.")}
-                    disabled={busyItemId === item.cartItemId}
-                  >
-                    Remove
-                  </button>
-                </article>
-              ))
-            )}
-          </div>
+          {savedLater.length > 0 && (
+            <section className="saved-later-section inline-saved">
+              <h2>Saved for later</h2>
+              <div className="saved-later-grid">
+                {savedLater.map((item) => (
+                  <article key={item.cartItemId}>
+                    <img src={item.imageUrl} alt={item.name} />
+                    <strong>{item.name}</strong>
+                    <span>${Number(item.price).toFixed(2)}</span>
+                  </article>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
 
-        <aside className="cart-aside">
-          <div className="admin-panel">
-            <h2>Cart summary</h2>
-            <div className="summary-line">
-              <span>Items</span>
-              <strong>{cartCount}</strong>
+        <aside className="checkout-column">
+          <section className="order-summary-card">
+            <div className="summary-title-row">
+              <ShoppingBag size={20} />
+              <h2>Order Summary</h2>
+            </div>
+            <div className="coupon-box">
+              <Tag size={17} />
+              <input value={coupon} onChange={(event) => setCoupon(event.target.value)} placeholder="LUMEN20 or FREESHIP" />
+              <button type="button" onClick={applyCoupon}>Apply</button>
             </div>
             <div className="summary-line">
-              <span>Total</span>
+              <span>Subtotal</span>
+              <strong>${subtotal.toFixed(2)}</strong>
+            </div>
+            <div className="summary-line">
+              <span>Discount</span>
+              <strong>-${discount.toFixed(2)}</strong>
+            </div>
+            <div className="summary-line">
+              <span>Shipping</span>
+              <strong>${shippingAmount.toFixed(2)}</strong>
+            </div>
+            <div className="summary-line">
+              <span>Tax</span>
+              <strong>${taxAmount.toFixed(2)}</strong>
+            </div>
+            <div className="summary-line final-total">
+              <span>Final total</span>
               <strong>${grandTotal.toFixed(2)}</strong>
             </div>
-            <button className="ghost-button full-width-link" type="button" onClick={() => setShowBillDetails((current) => !current)}>
-              {showBillDetails ? "Hide bill details" : "Bill details"}
+            <button className="solid-button checkout-button" type="button" disabled={buying} onClick={handleBuyNow}>
+              {buying ? "Starting checkout..." : "Proceed to Checkout"}
             </button>
-            {showBillDetails && (
-              <div className="bill-breakdown">
-                <div className="summary-line">
-                  <span>Subtotal</span>
-                  <strong>${subtotal.toFixed(2)}</strong>
-                </div>
-                <div className="summary-line">
-                  <span>Tax (18%)</span>
-                  <strong>${taxAmount.toFixed(2)}</strong>
-                </div>
-                <div className="summary-line">
-                  <span>Shipping</span>
-                  <strong>${shippingAmount.toFixed(2)}</strong>
-                </div>
-                <div className="summary-line">
-                  <span>Payable amount</span>
-                  <strong>${grandTotal.toFixed(2)}</strong>
-                </div>
-              </div>
-            )}
-            {message && <p className={message.includes("successful") ? "success-text" : "error-text"}>{message}</p>}
-            <button className="solid-button full-width-link" type="button" disabled={!cartItems.length || buying} onClick={handleBuyNow}>
-              {buying ? "Starting payment..." : "Buy now"}
-            </button>
-            <Link className="solid-link full-width-link" to="/products">
-              Continue shopping
-            </Link>
-          </div>
+          </section>
 
-          <div className="admin-panel address-panel">
-            <h2>Delivery address</h2>
+          <section className="delivery-card">
+            <h2>Delivery Address</h2>
             <div className="address-form-grid">
               <label className="filter-field">
                 <span>Recipient name</span>
@@ -360,18 +414,17 @@ export default function CartPage() {
                 <input name="country" value={address.country} onChange={handleAddressChange} placeholder="Country" />
               </label>
             </div>
-
             <div className="map-frame-wrap compact-map">
-              <iframe
-                title="Checkout address map"
-                src={`https://www.google.com/maps?q=${mapQuery}&z=15&output=embed`}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
+              <iframe title="Checkout address map" src={`https://www.google.com/maps?q=${mapQuery}&z=15&output=embed`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
             </div>
-          </div>
+          </section>
         </aside>
       </section>
+
+      <div className="mobile-checkout-bar">
+        <strong>${grandTotal.toFixed(2)}</strong>
+        <button type="button" disabled={buying} onClick={handleBuyNow}>Checkout</button>
+      </div>
     </main>
   );
 }

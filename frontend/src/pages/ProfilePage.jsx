@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import LoadingSpinner from "../components/LoadingSpinner";
 import { useAuth } from "../context/AuthContext";
 
 const emptyProfile = {
@@ -16,7 +17,8 @@ const emptyProfile = {
 export default function ProfilePage() {
   const { user, updateProfile } = useAuth();
   const [form, setForm] = useState(emptyProfile);
-  const [message, setMessage] = useState("");
+  const [editing, setEditing] = useState(false);
+  const [toast, setToast] = useState(null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -34,6 +36,25 @@ export default function ProfilePage() {
       });
     }
   }, [user]);
+
+  const initials = useMemo(
+    () =>
+      (user?.fullName || user?.email || "LL")
+        .split(" ")
+        .map((part) => part[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase(),
+    [user]
+  );
+
+  const address = [user?.addressLine1, user?.addressLine2, user?.city, user?.state, user?.postalCode, user?.country]
+    .filter(Boolean)
+    .join(", ");
+
+  const createdAt = user?.createdAt
+    ? new Intl.DateTimeFormat("en", { dateStyle: "medium", timeStyle: "short" }).format(new Date(user.createdAt))
+    : "Not available";
 
   const handleChange = (event) => {
     setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
@@ -55,99 +76,127 @@ export default function ProfilePage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setSaving(true);
-    setMessage("");
+    setToast(null);
     try {
       await updateProfile(form);
-      setMessage("Profile updated successfully.");
+      setEditing(false);
+      setToast({ type: "success", message: "Profile updated successfully." });
     } catch (error) {
-      setMessage(error.response?.data?.message || "Unable to update profile.");
+      setToast({ type: "error", message: error.response?.data?.message || "Unable to update profile." });
     } finally {
       setSaving(false);
     }
   };
 
-  const initials = (user?.fullName || user?.email || "LL")
-    .split(" ")
-    .map((part) => part[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
+  if (!user) {
+    return (
+      <main className="page">
+        <LoadingSpinner label="Loading profile..." />
+      </main>
+    );
+  }
 
   return (
-    <main className="page">
+    <main className="page account-page">
       <section className="section-heading">
         <div>
           <p className="eyebrow">Profile</p>
-          <h1>Keep your account details and delivery address up to date.</h1>
+          <h1>Your account details, beautifully organized.</h1>
         </div>
+        <button className="solid-button" type="button" onClick={() => setEditing((current) => !current)}>
+          {editing ? "Cancel Edit" : "Edit Profile"}
+        </button>
       </section>
 
-      <section className="profile-layout">
-        <aside className="admin-panel profile-preview">
-          <div className="profile-avatar">
-            {form.profilePictureUrl ? <img src={form.profilePictureUrl} alt={form.fullName || "Profile"} /> : <span>{initials}</span>}
+      {toast && <div className={`toast-message ${toast.type}`}>{toast.message}</div>}
+
+      <section className="profile-detail-layout">
+        <aside className="account-card profile-identity-card">
+          <div className="profile-avatar profile-avatar-large">
+            {user.profilePictureUrl ? <img src={user.profilePictureUrl} alt={user.fullName} /> : <span>{initials}</span>}
           </div>
           <div>
-            <h2>{form.fullName || "Your profile"}</h2>
-            <p>{user?.email}</p>
+            <h2>{user.fullName}</h2>
+            <p>{user.email}</p>
           </div>
-          <label className="ghost-button profile-upload-button">
-            Set profile picture
-            <input type="file" accept="image/*" onChange={handlePictureUpload} />
-          </label>
+          {editing && (
+            <label className="ghost-button profile-upload-button">
+              Upload image
+              <input type="file" accept="image/*" onChange={handlePictureUpload} />
+            </label>
+          )}
         </aside>
 
-        <form className="admin-form profile-form" onSubmit={handleSubmit}>
-          <label>
-            Full name
-            <input name="fullName" value={form.fullName} onChange={handleChange} required />
-          </label>
-          <label>
-            Phone number
-            <input name="phoneNumber" value={form.phoneNumber} onChange={handleChange} placeholder="+91 98765 43210" />
-          </label>
-          <label className="full-span">
-            Profile picture URL
-            <input
-              name="profilePictureUrl"
-              value={form.profilePictureUrl}
-              onChange={handleChange}
-              placeholder="Paste an image URL or use the upload button"
-            />
-          </label>
-          <label>
-            Address line 1
-            <input name="addressLine1" value={form.addressLine1} onChange={handleChange} />
-          </label>
-          <label>
-            Address line 2
-            <input name="addressLine2" value={form.addressLine2} onChange={handleChange} />
-          </label>
-          <label>
-            City
-            <input name="city" value={form.city} onChange={handleChange} />
-          </label>
-          <label>
-            State
-            <input name="state" value={form.state} onChange={handleChange} />
-          </label>
-          <label>
-            Postal code
-            <input name="postalCode" value={form.postalCode} onChange={handleChange} />
-          </label>
-          <label>
-            Country
-            <input name="country" value={form.country} onChange={handleChange} />
-          </label>
-          {message && (
-            <p className={message.includes("successfully") ? "success-text full-span" : "error-text full-span"}>{message}</p>
+        <section className="account-card profile-details-card">
+          {!editing ? (
+            <div className="profile-details-grid">
+              <article>
+                <span>Full name</span>
+                <strong>{user.fullName}</strong>
+              </article>
+              <article>
+                <span>Email</span>
+                <strong>{user.email}</strong>
+              </article>
+              <article>
+                <span>Phone number</span>
+                <strong>{user.phoneNumber || "Not added"}</strong>
+              </article>
+              <article>
+                <span>Account creation date</span>
+                <strong>{createdAt}</strong>
+              </article>
+              <article className="full-span">
+                <span>Address</span>
+                <strong>{address || "No saved address"}</strong>
+              </article>
+            </div>
+          ) : (
+            <form className="admin-form profile-form" onSubmit={handleSubmit}>
+              <label>
+                Full name
+                <input name="fullName" value={form.fullName} onChange={handleChange} required />
+              </label>
+              <label>
+                Phone number
+                <input name="phoneNumber" value={form.phoneNumber} onChange={handleChange} placeholder="+91 98765 43210" />
+              </label>
+              <label className="full-span">
+                Profile image
+                <input name="profilePictureUrl" value={form.profilePictureUrl} onChange={handleChange} placeholder="Paste an image URL or upload one" />
+              </label>
+              <label>
+                Address line 1
+                <input name="addressLine1" value={form.addressLine1} onChange={handleChange} />
+              </label>
+              <label>
+                Address line 2
+                <input name="addressLine2" value={form.addressLine2} onChange={handleChange} />
+              </label>
+              <label>
+                City
+                <input name="city" value={form.city} onChange={handleChange} />
+              </label>
+              <label>
+                State
+                <input name="state" value={form.state} onChange={handleChange} />
+              </label>
+              <label>
+                Postal code
+                <input name="postalCode" value={form.postalCode} onChange={handleChange} />
+              </label>
+              <label>
+                Country
+                <input name="country" value={form.country} onChange={handleChange} />
+              </label>
+              <div className="admin-form-actions full-span">
+                <button className="solid-button" type="submit" disabled={saving}>
+                  {saving ? "Saving..." : "Save Profile"}
+                </button>
+              </div>
+            </form>
           )}
-          <div className="admin-form-actions full-span">
-            <button className="solid-button" type="submit" disabled={saving}>
-              {saving ? "Saving..." : "Update profile"}
-            </button>
-          </div>
-        </form>
+        </section>
       </section>
     </main>
   );

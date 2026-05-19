@@ -23,7 +23,15 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         return User.withUsername(user.getEmail())
             .password(user.getPassword())
-            .roles(user.getRole().replace("ROLE_", ""))
+            .roles(normalizeRole(user.getRole()).replace("ROLE_", ""))
             .build();
+    }
+
+    private String normalizeRole(String role) {
+        String normalizedRole = role == null ? "" : role.trim().toUpperCase();
+        if ("ADMIN".equals(normalizedRole) || "ROLE_ADMIN".equals(normalizedRole)) {
+            return "ROLE_ADMIN";
+        }
+        return "ROLE_CUSTOMER";
     }
 }

@@ -6,7 +6,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
@@ -47,6 +49,28 @@ public class User {
     private String postalCode;
 
     private String country;
+
+    private Boolean darkModeEnabled = false;
+
+    private Boolean orderNotificationsEnabled = true;
+
+    private Boolean marketingNotificationsEnabled = false;
+
+    private String language = "en";
+
+    private LocalDateTime createdAt;
+
+    private LocalDateTime passwordChangedAt;
+
+    @PrePersist
+    void onCreate() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+        if (passwordChangedAt == null) {
+            passwordChangedAt = createdAt;
+        }
+    }
 
     public Long getId() {
         return id;
@@ -158,5 +182,49 @@ public class User {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public Boolean getDarkModeEnabled() {
+        return darkModeEnabled;
+    }
+
+    public void setDarkModeEnabled(Boolean darkModeEnabled) {
+        this.darkModeEnabled = darkModeEnabled;
+    }
+
+    public Boolean getOrderNotificationsEnabled() {
+        return orderNotificationsEnabled;
+    }
+
+    public void setOrderNotificationsEnabled(Boolean orderNotificationsEnabled) {
+        this.orderNotificationsEnabled = orderNotificationsEnabled;
+    }
+
+    public Boolean getMarketingNotificationsEnabled() {
+        return marketingNotificationsEnabled;
+    }
+
+    public void setMarketingNotificationsEnabled(Boolean marketingNotificationsEnabled) {
+        this.marketingNotificationsEnabled = marketingNotificationsEnabled;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getPasswordChangedAt() {
+        return passwordChangedAt;
+    }
+
+    public void setPasswordChangedAt(LocalDateTime passwordChangedAt) {
+        this.passwordChangedAt = passwordChangedAt;
     }
 }

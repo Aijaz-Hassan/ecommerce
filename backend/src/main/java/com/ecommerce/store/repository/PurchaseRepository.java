@@ -14,4 +14,6 @@ public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
 
     @EntityGraph(attributePaths = {"user", "items"})
     Optional<Purchase> findByIdAndUser(Long id, User user);
+
+    boolean existsByUser(User user);
 }

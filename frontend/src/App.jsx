@@ -4,6 +4,7 @@ import AdminOrdersPage from "./pages/AdminOrdersPage";
 import AdminProductsPage from "./pages/AdminProductsPage";
 import AdminUsersPage from "./pages/AdminUsersPage";
 import CartPage from "./pages/CartPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import HomePage from "./pages/HomePage";
@@ -14,6 +15,9 @@ import ProfilePage from "./pages/ProfilePage";
 import ProductDetailsPage from "./pages/ProductDetailsPage";
 import ProductsPage from "./pages/ProductsPage";
 import RegisterPage from "./pages/RegisterPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
+import SettingsPage from "./pages/SettingsPage";
+import UpdatePasswordPage from "./pages/UpdatePasswordPage";
 import { isAdminRole } from "./utils/roles";
 import { useAuth } from "./context/AuthContext";
 
@@ -36,6 +40,8 @@ export default function App() {
           }
         />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route
           path="/orders"
@@ -57,7 +63,23 @@ export default function App() {
           path="/profile"
           element={
             <ProtectedRoute>
-              {isAdminRole(user?.role) ? <Navigate to="/admin" replace /> : <ProfilePage />}
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/account/password"
+          element={
+            <ProtectedRoute>
+              <UpdatePasswordPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <SettingsPage />
             </ProtectedRoute>
           }
         />

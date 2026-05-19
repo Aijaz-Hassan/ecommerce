@@ -13,4 +13,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @EntityGraph(attributePaths = {"items", "user"})
     List<Order> findAllByOrderByCreatedAtDesc();
+
+    boolean existsByUser(User user);
 }

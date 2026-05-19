@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { Ban, CheckCircle2, Search, Trash2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import api from "../api/client";
-import AdminSectionMenu from "../components/AdminSectionMenu";
+import AdminWorkspace from "../components/AdminWorkspace";
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState([]);
+  const [search, setSearch] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -31,42 +33,56 @@ export default function AdminUsersPage() {
     }
   };
 
+  const filteredUsers = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    return users.filter((user) => !query || [user.fullName, user.email, user.role].some((value) => String(value || "").toLowerCase().includes(query)));
+  }, [search, users]);
+
   return (
-    <main className="page">
-      <section className="admin-header">
-        <div>
-          <p className="eyebrow">Admin users</p>
-          <h1>Manage customer and admin accounts on a dedicated page.</h1>
-          <p className="section-note">Use this screen to review users without product or order clutter.</p>
-        </div>
-      </section>
-
-      <AdminSectionMenu value="/admin/users" />
-
+    <AdminWorkspace title="Customers Management" subtitle="Review customer contact details, roles, and account status from the user registry." search={search} onSearchChange={setSearch}>
       <section className="admin-panel">
         {message && <p className="success-text">{message}</p>}
         {error && <p className="error-text">{error}</p>}
         <div className="admin-panel-header">
-          <h2>Users</h2>
+          <div>
+            <h2>Customers</h2>
+            <p>{filteredUsers.length} matching users</p>
+          </div>
+          <label className="compact-admin-filter">
+            <Search size={16} />
+            <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search customers" />
+          </label>
           <button className="ghost-button" type="button" onClick={loadUsers}>
             Refresh
           </button>
         </div>
         <div className="admin-table">
-          {users.map((user) => (
+          {filteredUsers.map((user) => (
             <article className="admin-row" key={user.id}>
               <div>
                 <strong>{user.fullName || user.email}</strong>
                 <p>{user.email}</p>
-                <p>{user.role}</p>
+                <p>{user.phoneNumber || "No phone saved"} | Joined {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "recently"}</p>
               </div>
-              <button className="danger-button" type="button" onClick={() => handleDeleteUser(user.id)}>
-                Delete
-              </button>
+              <span className="status-badge">{user.role}</span>
+              <div className="admin-row-actions">
+                <button className="ghost-button" type="button" disabled title="Requires a backend block/unblock endpoint">
+                  <Ban size={16} />
+                  Block
+                </button>
+                <button className="ghost-button" type="button" disabled title="Requires a backend block/unblock endpoint">
+                  <CheckCircle2 size={16} />
+                  Unblock
+                </button>
+                <button className="danger-button" type="button" onClick={() => handleDeleteUser(user.id)}>
+                  <Trash2 size={16} />
+                  Delete
+                </button>
+              </div>
             </article>
           ))}
         </div>
       </section>
-    </main>
+    </AdminWorkspace>
   );
 }

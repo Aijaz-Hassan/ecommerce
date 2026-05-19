@@ -1,5 +1,7 @@
 package com.ecommerce.store.dto.auth;
 
+import java.time.LocalDateTime;
+
 public class UserResponse {
 
     private final Long id;
@@ -14,6 +16,11 @@ public class UserResponse {
     private final String state;
     private final String postalCode;
     private final String country;
+    private final Boolean darkModeEnabled;
+    private final Boolean orderNotificationsEnabled;
+    private final Boolean marketingNotificationsEnabled;
+    private final String language;
+    private final LocalDateTime createdAt;
 
     public UserResponse(
         Long id,
@@ -27,7 +34,12 @@ public class UserResponse {
         String city,
         String state,
         String postalCode,
-        String country
+        String country,
+        Boolean darkModeEnabled,
+        Boolean orderNotificationsEnabled,
+        Boolean marketingNotificationsEnabled,
+        String language,
+        LocalDateTime createdAt
     ) {
         this.id = id;
         this.fullName = fullName;
@@ -41,6 +53,11 @@ public class UserResponse {
         this.state = state;
         this.postalCode = postalCode;
         this.country = country;
+        this.darkModeEnabled = darkModeEnabled;
+        this.orderNotificationsEnabled = orderNotificationsEnabled;
+        this.marketingNotificationsEnabled = marketingNotificationsEnabled;
+        this.language = language;
+        this.createdAt = createdAt;
     }
 
     public Long getId() {
@@ -89,5 +106,25 @@ public class UserResponse {
 
     public String getCountry() {
         return country;
+    }
+
+    public Boolean getDarkModeEnabled() {
+        return darkModeEnabled;
+    }
+
+    public Boolean getOrderNotificationsEnabled() {
+        return orderNotificationsEnabled;
+    }
+
+    public Boolean getMarketingNotificationsEnabled() {
+        return marketingNotificationsEnabled;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 }

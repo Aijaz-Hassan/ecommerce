@@ -22,7 +22,12 @@ const buildUser = (data) => {
     city: source.city || "",
     state: source.state || "",
     postalCode: source.postalCode || "",
-    country: source.country || ""
+    country: source.country || "",
+    darkModeEnabled: Boolean(source.darkModeEnabled),
+    orderNotificationsEnabled: source.orderNotificationsEnabled ?? true,
+    marketingNotificationsEnabled: Boolean(source.marketingNotificationsEnabled),
+    language: source.language || "en",
+    createdAt: source.createdAt || ""
   };
 };
 
@@ -87,6 +92,10 @@ export function AuthProvider({ children }) {
     return () => window.removeEventListener("lumenlane:session-expired", handleExpiredSession);
   }, []);
 
+  useEffect(() => {
+    document.body.classList.toggle("dark-mode", Boolean(user?.darkModeEnabled));
+  }, [user?.darkModeEnabled]);
+
   const login = async (values) => {
     const response = await api.post("/auth/login", values);
     const nextUser = buildUser(response.data);
@@ -112,13 +121,48 @@ export function AuthProvider({ children }) {
     return nextUser;
   };
 
-  const resetPassword = async (values) => {
+  const updatePassword = async (values) => {
+    const response = await api.put("/auth/me/password", values);
+    const nextUser = buildUser(response.data);
+    setUser(nextUser);
+    return nextUser;
+  };
+
+  const updateSettings = async (values) => {
+    const response = await api.put("/auth/me/settings", values);
+    const nextUser = buildUser(response.data);
+    setUser(nextUser);
+    return nextUser;
+  };
+
+  const deleteAccount = async () => {
+    await api.delete("/auth/me");
+    logout();
+  };
+
+  const requestPasswordReset = async (values) => {
     await api.post("/auth/forgot-password", values);
+  };
+
+  const resendPasswordReset = async (values) => {
+    await api.post("/auth/forgot-password/resend", values);
+  };
+
+  const validateResetToken = async (token) => {
+    const response = await api.get("/auth/reset-password/validate", { params: { token } });
+    return response.data;
+  };
+
+  const resetPassword = async (values) => {
+    await api.post("/auth/reset-password", values);
   };
 
   const logout = () => {
     localStorage.removeItem(storageKeys.token);
     localStorage.removeItem(storageKeys.user);
+    Object.keys(localStorage)
+      .filter((key) => key.startsWith("lumenlane_cart_snapshot"))
+      .forEach((key) => localStorage.removeItem(key));
     setUser(null);
   };
 
@@ -130,6 +174,12 @@ export function AuthProvider({ children }) {
         register,
         logout,
         updateProfile,
+        updatePassword,
+        updateSettings,
+        deleteAccount,
+        requestPasswordReset,
+        resendPasswordReset,
+        validateResetToken,
         resetPassword,
         isAuthenticated: Boolean(user),
         sessionChecked

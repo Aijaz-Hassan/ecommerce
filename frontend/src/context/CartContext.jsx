@@ -4,37 +4,81 @@ import { useAuth } from "./AuthContext";
 import { isAdminRole } from "../utils/roles";
 
 const CartContext = createContext(null);
+const cartStoragePrefix = "lumenlane_cart_snapshot";
+
+const getCartStorageKey = (user) => {
+  const identity = user?.id || user?.email || "anonymous";
+  return `${cartStoragePrefix}_${identity}`;
+};
+
+const readSavedCart = (user) => {
+  if (!user) {
+    return [];
+  }
+  try {
+    const saved = window.localStorage.getItem(getCartStorageKey(user));
+    return saved ? JSON.parse(saved) : [];
+  } catch {
+    return [];
+  }
+};
 
 export function CartProvider({ children }) {
   const { isAuthenticated, user } = useAuth();
   const [cartItems, setCartItems] = useState([]);
+  const [cartLoading, setCartLoading] = useState(false);
   const isAdmin = isAdminRole(user?.role);
 
   const syncCart = async () => {
     if (!isAuthenticated || isAdmin) {
       setCartItems([]);
+      setCartLoading(false);
       return [];
     }
 
-    const response = await api.get("/cart");
-    const nextItems = (response.data.items || []).map((item) => ({
-      id: item.productId,
-      cartItemId: item.id,
-      name: item.productName,
-      category: item.category,
-      imageUrl: item.imageUrl,
-      price: item.price,
-      quantity: item.quantity
-    }));
-    setCartItems(nextItems);
-    return nextItems;
+    setCartLoading(true);
+    try {
+      const response = await api.get("/cart");
+      const nextItems = (response.data.items || []).map((item) => ({
+        id: item.productId,
+        cartItemId: item.id,
+        name: item.productName,
+        brand: item.brand || item.category || "Lumen Lane",
+        category: item.category,
+        imageUrl: item.imageUrl,
+        price: item.price,
+        quantity: item.quantity,
+        selectedColor: item.selectedColor || "",
+        selectedSize: item.selectedSize || "",
+        lineTotal: item.lineTotal
+      }));
+      setCartItems(nextItems);
+      return nextItems;
+    } finally {
+      setCartLoading(false);
+    }
   };
+
+  useEffect(() => {
+    if (isAuthenticated && !isAdmin && user) {
+      setCartItems(readSavedCart(user));
+      return;
+    }
+    setCartItems([]);
+  }, [isAuthenticated, isAdmin, user?.id, user?.email]);
+
+  useEffect(() => {
+    if (isAuthenticated && !isAdmin && user) {
+      window.localStorage.setItem(getCartStorageKey(user), JSON.stringify(cartItems));
+    }
+  }, [cartItems, isAuthenticated, isAdmin, user]);
 
   useEffect(() => {
     syncCart().catch(() => {
       setCartItems([]);
+      setCartLoading(false);
     });
-  }, [isAuthenticated, isAdmin]);
+  }, [isAuthenticated, isAdmin, user?.id, user?.email]);
 
   const ensureCustomerSession = () => {
     if (!isAuthenticated) {
@@ -45,11 +89,11 @@ export function CartProvider({ children }) {
     }
   };
 
-  const addToCart = async (product) => {
+  const addToCart = async (product, quantity = 1) => {
     ensureCustomerSession();
     await api.post("/cart/items", {
       productId: Number(product.id),
-      quantity: 1
+      quantity
     });
     return syncCart();
   };
@@ -112,6 +156,7 @@ export function CartProvider({ children }) {
         decreaseQuantity,
         cartCount,
         cartTotal,
+        cartLoading,
         refreshCart: syncCart
       }}
     >

@@ -1,3 +1,4 @@
 export function isAdminRole(role) {
-  return role === "ROLE_ADMIN" || role === "ADMIN";
+  const normalizedRole = String(role || "").trim().toUpperCase();
+  return normalizedRole === "ROLE_ADMIN" || normalizedRole === "ADMIN";
 }
