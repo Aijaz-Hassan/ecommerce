@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.hamcrest.Matchers.hasItem;
 
 import com.ecommerce.store.entity.User;
+import com.ecommerce.store.security.JwtService;
 import com.ecommerce.store.service.PasswordResetEmailSender;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,6 +26,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import java.util.Map;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -39,6 +41,9 @@ class AuthAndProductApiTests {
     @Autowired
     private CapturingPasswordResetEmailSender emailService;
 
+    @Autowired
+    private JwtService jwtService;
+
     @BeforeEach
     void resetEmailServiceMock() {
         emailService.reset();
@@ -51,6 +56,7 @@ class AuthAndProductApiTests {
         CapturingPasswordResetEmailSender capturingPasswordResetEmailSender() {
             return new CapturingPasswordResetEmailSender();
         }
+
     }
 
     static class CapturingPasswordResetEmailSender implements PasswordResetEmailSender {
@@ -112,6 +118,97 @@ class AuthAndProductApiTests {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.token").isNotEmpty())
             .andExpect(jsonPath("$.email").value("login.user@example.com"));
+    }
+
+    @Test
+    void profileUpdateValidatesFieldsRefreshesEmailTokenAndStoresAlternateAddress() throws Exception {
+        MvcResult registration = mockMvc.perform(post("/api/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "fullName": "Profile User",
+                      "email": "profile.user@example.com",
+                      "password": "Demo1234"
+                    }
+                    """))
+            .andExpect(status().isCreated())
+            .andReturn();
+        String token = objectMapper.readTree(registration.getResponse().getContentAsString()).get("token").asText();
+
+        mockMvc.perform(put("/api/auth/me")
+                .header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "fullName": "Profile User",
+                      "email": "profile.user@example.com",
+                      "phoneNumber": "1234567890123456789012345678901",
+                      "profilePictureUrl": ""
+                    }
+                    """))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.phoneNumber").value("Phone number is too long"));
+
+        mockMvc.perform(put("/api/auth/me")
+                .header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "fullName": "Profile User",
+                      "email": "profile.user@example.com",
+                      "phoneNumber": "9876543210",
+                      "profilePictureUrl": "not-an-image-url"
+                    }
+                    """))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.profilePictureUrl").value("Profile image must be a valid image URL or uploaded image"));
+
+        MvcResult update = mockMvc.perform(put("/api/auth/me")
+                .header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "fullName": "Profile User",
+                      "email": "profile.updated@example.com",
+                      "phoneNumber": "9876543210",
+                      "profilePictureUrl": "https://example.com/avatar.jpg",
+                      "addressLine1": "Primary Road",
+                      "city": "Hyderabad",
+                      "state": "Telangana",
+                      "postalCode": "500001",
+                      "country": "India",
+                      "alternateAddressLine1": "Office Road",
+                      "alternateCity": "Secunderabad",
+                      "alternateState": "Telangana",
+                      "alternatePostalCode": "500003",
+                      "alternateCountry": "India"
+                    }
+                    """))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.token").isNotEmpty())
+            .andExpect(jsonPath("$.user.email").value("profile.updated@example.com"))
+            .andExpect(jsonPath("$.user.alternateCity").value("Secunderabad"))
+            .andReturn();
+
+        String refreshedToken = objectMapper.readTree(update.getResponse().getContentAsString()).get("token").asText();
+        mockMvc.perform(get("/api/auth/me").header("Authorization", "Bearer " + refreshedToken))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.alternateAddressLine1").value("Office Road"));
+    }
+
+    @Test
+    void expiredTokenReceivesUnauthorizedResponseForClientSessionCleanup() throws Exception {
+        String expiredToken = jwtService.generateToken(
+            org.springframework.security.core.userdetails.User.withUsername("expired@example.com")
+                .password("ignored")
+                .roles("CUSTOMER")
+                .build(),
+            Map.of("role", "ROLE_CUSTOMER"),
+            -1000
+        );
+
+        mockMvc.perform(get("/api/auth/me").header("Authorization", "Bearer " + expiredToken))
+            .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -204,7 +301,7 @@ class AuthAndProductApiTests {
                       "stock": 25
                     }
                     """))
-            .andExpect(status().isForbidden());
+            .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -363,7 +460,7 @@ class AuthAndProductApiTests {
     @Test
     void getUsersApiIsAdminOnly() throws Exception {
         mockMvc.perform(get("/api/auth/users"))
-            .andExpect(status().isForbidden());
+            .andExpect(status().isUnauthorized());
 
         mockMvc.perform(get("/api/auth/users")
                 .with(user("admin@example.com").roles("ADMIN")))

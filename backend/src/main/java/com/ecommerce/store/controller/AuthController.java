@@ -75,7 +75,7 @@ public class AuthController {
     }
 
     @PutMapping("/me")
-    public UserResponse updateCurrentUser(@Valid @RequestBody UpdateProfileRequest request, Principal principal) {
+    public AuthResponse updateCurrentUser(@Valid @RequestBody UpdateProfileRequest request, Principal principal) {
         return authService.updateProfile(principal.getName(), request);
     }
 

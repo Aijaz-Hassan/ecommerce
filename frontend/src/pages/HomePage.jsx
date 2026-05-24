@@ -69,7 +69,7 @@ function ProductSkeletonGrid() {
 }
 
 export default function HomePage() {
-  const { products, source, status } = useProducts();
+  const { products, categories, source, status } = useProducts();
   const { addToCart, cartItems, cartTotal } = useCart();
   const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
@@ -81,6 +81,14 @@ export default function HomePage() {
 
   const featuredProducts = useMemo(() => products.slice(0, 8), [products]);
   const bestSellingProducts = useMemo(() => products.slice(4, 10).concat(products.slice(0, 2)).slice(0, 8), [products]);
+  const visibleCategoryCards = useMemo(
+    () =>
+      (categories.length ? categories : categoryCards.map((category) => category.name)).slice(0, 6).map((name, index) => ({
+        name,
+        image: categoryCards.find((category) => category.name.toLowerCase() === name.toLowerCase())?.image || categoryCards[index % categoryCards.length].image
+      })),
+    [categories]
+  );
 
   const showToast = (message, type = "success") => {
     setToast({ message, type });
@@ -225,7 +233,7 @@ export default function HomePage() {
           </Link>
         </div>
         <div className="category-grid">
-          {categoryCards.map((category) => (
+          {visibleCategoryCards.map((category) => (
             <Link className="category-card" key={category.name} to={`/products?category=${encodeURIComponent(category.name)}`}>
               <img src={category.image} alt={category.name} loading="lazy" />
               <span>{category.name}</span>
@@ -350,7 +358,7 @@ export default function HomePage() {
         </nav>
         <nav>
           <strong>Categories</strong>
-          {categoryCards.slice(0, 4).map((category) => (
+          {visibleCategoryCards.slice(0, 4).map((category) => (
             <Link key={category.name} to={`/products?category=${encodeURIComponent(category.name)}`}>
               {category.name}
             </Link>

@@ -50,6 +50,18 @@ public class User {
 
     private String country;
 
+    private String alternateAddressLine1;
+
+    private String alternateAddressLine2;
+
+    private String alternateCity;
+
+    private String alternateState;
+
+    private String alternatePostalCode;
+
+    private String alternateCountry;
+
     private Boolean darkModeEnabled = false;
 
     private Boolean orderNotificationsEnabled = true;
@@ -182,6 +194,54 @@ public class User {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public String getAlternateAddressLine1() {
+        return alternateAddressLine1;
+    }
+
+    public void setAlternateAddressLine1(String alternateAddressLine1) {
+        this.alternateAddressLine1 = alternateAddressLine1;
+    }
+
+    public String getAlternateAddressLine2() {
+        return alternateAddressLine2;
+    }
+
+    public void setAlternateAddressLine2(String alternateAddressLine2) {
+        this.alternateAddressLine2 = alternateAddressLine2;
+    }
+
+    public String getAlternateCity() {
+        return alternateCity;
+    }
+
+    public void setAlternateCity(String alternateCity) {
+        this.alternateCity = alternateCity;
+    }
+
+    public String getAlternateState() {
+        return alternateState;
+    }
+
+    public void setAlternateState(String alternateState) {
+        this.alternateState = alternateState;
+    }
+
+    public String getAlternatePostalCode() {
+        return alternatePostalCode;
+    }
+
+    public void setAlternatePostalCode(String alternatePostalCode) {
+        this.alternatePostalCode = alternatePostalCode;
+    }
+
+    public String getAlternateCountry() {
+        return alternateCountry;
+    }
+
+    public void setAlternateCountry(String alternateCountry) {
+        this.alternateCountry = alternateCountry;
     }
 
     public Boolean getDarkModeEnabled() {

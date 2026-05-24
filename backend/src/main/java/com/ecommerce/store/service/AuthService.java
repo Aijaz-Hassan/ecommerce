@@ -113,24 +113,22 @@ public class AuthService {
         User user = userRepository.findByEmailIgnoreCase(email)
             .orElseThrow(() -> new BadRequestException("User not found"));
 
-        String token = jwtService.generateToken(
-            org.springframework.security.core.userdetails.User.withUsername(user.getEmail())
-                .password(user.getPassword())
-                .roles(normalizeRole(user.getRole()).replace("ROLE_", ""))
-                .build(),
-            Map.of("role", user.getRole(), "fullName", user.getFullName())
-        );
-
-        return new AuthResponse(token, toUserResponse(user));
+        return buildAuthResponse(user);
     }
 
     public UserResponse getCurrentUser(String email) {
         return toUserResponse(findUser(email));
     }
 
-    public UserResponse updateProfile(String email, UpdateProfileRequest request) {
+    public AuthResponse updateProfile(String email, UpdateProfileRequest request) {
         User user = findUser(email);
+        String updatedEmail = clean(request.getEmail()).toLowerCase();
+        if (!user.getEmail().equalsIgnoreCase(updatedEmail) && userRepository.existsByEmailIgnoreCase(updatedEmail)) {
+            throw new BadRequestException("An account with this email already exists");
+        }
         user.setFullName(request.getFullName().trim());
+        user.setEmail(updatedEmail);
+        user.setName(updatedEmail);
         user.setPhoneNumber(clean(request.getPhoneNumber()));
         user.setProfilePictureUrl(clean(request.getProfilePictureUrl()));
         user.setAddressLine1(clean(request.getAddressLine1()));
@@ -139,7 +137,13 @@ public class AuthService {
         user.setState(clean(request.getState()));
         user.setPostalCode(clean(request.getPostalCode()));
         user.setCountry(clean(request.getCountry()));
-        return toUserResponse(userRepository.save(user));
+        user.setAlternateAddressLine1(clean(request.getAlternateAddressLine1()));
+        user.setAlternateAddressLine2(clean(request.getAlternateAddressLine2()));
+        user.setAlternateCity(clean(request.getAlternateCity()));
+        user.setAlternateState(clean(request.getAlternateState()));
+        user.setAlternatePostalCode(clean(request.getAlternatePostalCode()));
+        user.setAlternateCountry(clean(request.getAlternateCountry()));
+        return buildAuthResponse(userRepository.save(user));
     }
 
     public UserResponse updatePassword(String email, Map<String, String> request) {
@@ -298,7 +302,7 @@ public class AuthService {
     }
 
     private User findUser(String email) {
-        return userRepository.findByEmail(email)
+        return userRepository.findByEmailIgnoreCase(email)
             .orElseThrow(() -> new BadRequestException("User not found"));
     }
 
@@ -363,6 +367,12 @@ public class AuthService {
             user.getState(),
             user.getPostalCode(),
             user.getCountry(),
+            user.getAlternateAddressLine1(),
+            user.getAlternateAddressLine2(),
+            user.getAlternateCity(),
+            user.getAlternateState(),
+            user.getAlternatePostalCode(),
+            user.getAlternateCountry(),
             Boolean.TRUE.equals(user.getDarkModeEnabled()),
             user.getOrderNotificationsEnabled() == null || Boolean.TRUE.equals(user.getOrderNotificationsEnabled()),
             Boolean.TRUE.equals(user.getMarketingNotificationsEnabled()),
@@ -370,4 +380,16 @@ public class AuthService {
             user.getCreatedAt()
         );
     }
+
+    private AuthResponse buildAuthResponse(User user) {
+        String token = jwtService.generateToken(
+            org.springframework.security.core.userdetails.User.withUsername(user.getEmail())
+                .password(user.getPassword())
+                .roles(normalizeRole(user.getRole()).replace("ROLE_", ""))
+                .build(),
+            Map.of("role", user.getRole(), "fullName", user.getFullName())
+        );
+        return new AuthResponse(token, toUserResponse(user));
+    }
+
 }

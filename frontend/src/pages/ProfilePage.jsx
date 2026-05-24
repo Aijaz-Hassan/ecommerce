@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 
 const emptyProfile = {
   fullName: "",
+  email: "",
   phoneNumber: "",
   profilePictureUrl: "",
   addressLine1: "",
@@ -11,7 +12,13 @@ const emptyProfile = {
   city: "",
   state: "",
   postalCode: "",
-  country: ""
+  country: "",
+  alternateAddressLine1: "",
+  alternateAddressLine2: "",
+  alternateCity: "",
+  alternateState: "",
+  alternatePostalCode: "",
+  alternateCountry: ""
 };
 
 export default function ProfilePage() {
@@ -25,6 +32,7 @@ export default function ProfilePage() {
     if (user) {
       setForm({
         fullName: user.fullName || "",
+        email: user.email || "",
         phoneNumber: user.phoneNumber || "",
         profilePictureUrl: user.profilePictureUrl || "",
         addressLine1: user.addressLine1 || "",
@@ -32,7 +40,13 @@ export default function ProfilePage() {
         city: user.city || "",
         state: user.state || "",
         postalCode: user.postalCode || "",
-        country: user.country || ""
+        country: user.country || "",
+        alternateAddressLine1: user.alternateAddressLine1 || "",
+        alternateAddressLine2: user.alternateAddressLine2 || "",
+        alternateCity: user.alternateCity || "",
+        alternateState: user.alternateState || "",
+        alternatePostalCode: user.alternatePostalCode || "",
+        alternateCountry: user.alternateCountry || ""
       });
     }
   }, [user]);
@@ -49,6 +63,9 @@ export default function ProfilePage() {
   );
 
   const address = [user?.addressLine1, user?.addressLine2, user?.city, user?.state, user?.postalCode, user?.country]
+    .filter(Boolean)
+    .join(", ");
+  const alternateAddress = [user?.alternateAddressLine1, user?.alternateAddressLine2, user?.alternateCity, user?.alternateState, user?.alternatePostalCode, user?.alternateCountry]
     .filter(Boolean)
     .join(", ");
 
@@ -75,6 +92,10 @@ export default function ProfilePage() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (form.profilePictureUrl && !/^(https?:\/\/.+|data:image\/(png|jpeg|jpg|gif|webp);base64,.+)$/.test(form.profilePictureUrl)) {
+      setToast({ type: "error", message: "Profile image must be a valid image URL or uploaded image." });
+      return;
+    }
     setSaving(true);
     setToast(null);
     try {
@@ -82,7 +103,8 @@ export default function ProfilePage() {
       setEditing(false);
       setToast({ type: "success", message: "Profile updated successfully." });
     } catch (error) {
-      setToast({ type: "error", message: error.response?.data?.message || "Unable to update profile." });
+      const data = error.response?.data;
+      setToast({ type: "error", message: data?.message || Object.values(data || {})[0] || "Unable to update profile." });
     } finally {
       setSaving(false);
     }
@@ -147,8 +169,12 @@ export default function ProfilePage() {
                 <strong>{createdAt}</strong>
               </article>
               <article className="full-span">
-                <span>Address</span>
+                <span>Primary address</span>
                 <strong>{address || "No saved address"}</strong>
+              </article>
+              <article className="full-span">
+                <span>Alternate address</span>
+                <strong>{alternateAddress || "No saved alternate address"}</strong>
               </article>
             </div>
           ) : (
@@ -156,6 +182,10 @@ export default function ProfilePage() {
               <label>
                 Full name
                 <input name="fullName" value={form.fullName} onChange={handleChange} required />
+              </label>
+              <label>
+                Email
+                <input name="email" type="email" value={form.email} onChange={handleChange} required />
               </label>
               <label>
                 Phone number
@@ -188,6 +218,31 @@ export default function ProfilePage() {
               <label>
                 Country
                 <input name="country" value={form.country} onChange={handleChange} />
+              </label>
+              <h3 className="full-span profile-address-heading">Alternate address</h3>
+              <label>
+                Alternate address line 1
+                <input name="alternateAddressLine1" value={form.alternateAddressLine1} onChange={handleChange} />
+              </label>
+              <label>
+                Alternate address line 2
+                <input name="alternateAddressLine2" value={form.alternateAddressLine2} onChange={handleChange} />
+              </label>
+              <label>
+                Alternate city
+                <input name="alternateCity" value={form.alternateCity} onChange={handleChange} />
+              </label>
+              <label>
+                Alternate state
+                <input name="alternateState" value={form.alternateState} onChange={handleChange} />
+              </label>
+              <label>
+                Alternate postal code
+                <input name="alternatePostalCode" value={form.alternatePostalCode} onChange={handleChange} />
+              </label>
+              <label>
+                Alternate country
+                <input name="alternateCountry" value={form.alternateCountry} onChange={handleChange} />
               </label>
               <div className="admin-form-actions full-span">
                 <button className="solid-button" type="submit" disabled={saving}>

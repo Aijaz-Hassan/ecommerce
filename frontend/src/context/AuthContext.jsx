@@ -23,6 +23,12 @@ const buildUser = (data) => {
     state: source.state || "",
     postalCode: source.postalCode || "",
     country: source.country || "",
+    alternateAddressLine1: source.alternateAddressLine1 || "",
+    alternateAddressLine2: source.alternateAddressLine2 || "",
+    alternateCity: source.alternateCity || "",
+    alternateState: source.alternateState || "",
+    alternatePostalCode: source.alternatePostalCode || "",
+    alternateCountry: source.alternateCountry || "",
     darkModeEnabled: Boolean(source.darkModeEnabled),
     orderNotificationsEnabled: source.orderNotificationsEnabled ?? true,
     marketingNotificationsEnabled: Boolean(source.marketingNotificationsEnabled),
@@ -117,6 +123,9 @@ export function AuthProvider({ children }) {
   const updateProfile = async (values) => {
     const response = await api.put("/auth/me", values);
     const nextUser = buildUser(response.data);
+    if (response.data.token) {
+      localStorage.setItem(storageKeys.token, response.data.token);
+    }
     setUser(nextUser);
     return nextUser;
   };

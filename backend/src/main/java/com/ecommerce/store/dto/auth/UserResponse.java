@@ -16,6 +16,12 @@ public class UserResponse {
     private final String state;
     private final String postalCode;
     private final String country;
+    private final String alternateAddressLine1;
+    private final String alternateAddressLine2;
+    private final String alternateCity;
+    private final String alternateState;
+    private final String alternatePostalCode;
+    private final String alternateCountry;
     private final Boolean darkModeEnabled;
     private final Boolean orderNotificationsEnabled;
     private final Boolean marketingNotificationsEnabled;
@@ -35,6 +41,12 @@ public class UserResponse {
         String state,
         String postalCode,
         String country,
+        String alternateAddressLine1,
+        String alternateAddressLine2,
+        String alternateCity,
+        String alternateState,
+        String alternatePostalCode,
+        String alternateCountry,
         Boolean darkModeEnabled,
         Boolean orderNotificationsEnabled,
         Boolean marketingNotificationsEnabled,
@@ -53,6 +65,12 @@ public class UserResponse {
         this.state = state;
         this.postalCode = postalCode;
         this.country = country;
+        this.alternateAddressLine1 = alternateAddressLine1;
+        this.alternateAddressLine2 = alternateAddressLine2;
+        this.alternateCity = alternateCity;
+        this.alternateState = alternateState;
+        this.alternatePostalCode = alternatePostalCode;
+        this.alternateCountry = alternateCountry;
         this.darkModeEnabled = darkModeEnabled;
         this.orderNotificationsEnabled = orderNotificationsEnabled;
         this.marketingNotificationsEnabled = marketingNotificationsEnabled;
@@ -106,6 +124,30 @@ public class UserResponse {
 
     public String getCountry() {
         return country;
+    }
+
+    public String getAlternateAddressLine1() {
+        return alternateAddressLine1;
+    }
+
+    public String getAlternateAddressLine2() {
+        return alternateAddressLine2;
+    }
+
+    public String getAlternateCity() {
+        return alternateCity;
+    }
+
+    public String getAlternateState() {
+        return alternateState;
+    }
+
+    public String getAlternatePostalCode() {
+        return alternatePostalCode;
+    }
+
+    public String getAlternateCountry() {
+        return alternateCountry;
     }
 
     public Boolean getDarkModeEnabled() {

@@ -8,6 +8,7 @@ import io.jsonwebtoken.JwtException;
 import com.ecommerce.store.repository.UserRepository;
 import java.io.IOException;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -71,7 +72,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     return true;
                 }
                 return !jwtService.extractIssuedAt(token).toInstant()
-                    .isBefore(user.getPasswordChangedAt().atZone(ZoneId.systemDefault()).toInstant());
+                    .isBefore(user.getPasswordChangedAt().atZone(ZoneId.systemDefault()).toInstant().truncatedTo(ChronoUnit.SECONDS));
             })
             .orElse(false);
     }
