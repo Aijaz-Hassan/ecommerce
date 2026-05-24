@@ -122,10 +122,8 @@ export function AuthProvider({ children }) {
   };
 
   const updatePassword = async (values) => {
-    const response = await api.put("/auth/me/password", values);
-    const nextUser = buildUser(response.data);
-    setUser(nextUser);
-    return nextUser;
+    await api.put("/auth/me/password", values);
+    logout();
   };
 
   const updateSettings = async (values) => {

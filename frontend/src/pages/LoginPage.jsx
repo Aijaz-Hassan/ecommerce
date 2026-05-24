@@ -9,7 +9,7 @@ export default function LoginPage() {
   const { login } = useAuth();
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [success, setSuccess] = useState(location.state?.message || "");
   const [loading, setLoading] = useState(false);
 
   const destination = location.state?.from || "/";

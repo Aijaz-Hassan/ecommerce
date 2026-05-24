@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const initialForm = {
@@ -8,6 +9,7 @@ const initialForm = {
 };
 
 export default function UpdatePasswordPage() {
+  const navigate = useNavigate();
   const { updatePassword } = useAuth();
   const [form, setForm] = useState(initialForm);
   const [message, setMessage] = useState(null);
@@ -42,8 +44,10 @@ export default function UpdatePasswordPage() {
     setMessage(null);
     try {
       await updatePassword(form);
-      setForm(initialForm);
-      setMessage({ type: "success", text: "Password updated successfully." });
+      navigate("/login", {
+        replace: true,
+        state: { message: "Password updated successfully. Please login with your new password." }
+      });
     } catch (error) {
       setMessage({ type: "error", text: error.response?.data?.message || "Unable to update password." });
     } finally {
