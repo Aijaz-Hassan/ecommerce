@@ -12,6 +12,7 @@ import com.ecommerce.store.entity.PasswordResetToken;
 import com.ecommerce.store.entity.User;
 import com.ecommerce.store.exception.BadRequestException;
 import com.ecommerce.store.repository.CartRepository;
+import com.ecommerce.store.repository.DeliveryAddressRepository;
 import com.ecommerce.store.repository.OrderRepository;
 import com.ecommerce.store.repository.PasswordResetTokenRepository;
 import com.ecommerce.store.repository.PurchaseRepository;
@@ -41,6 +42,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final CartRepository cartRepository;
+    private final DeliveryAddressRepository deliveryAddressRepository;
     private final OrderRepository orderRepository;
     private final PurchaseRepository purchaseRepository;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
@@ -57,6 +59,7 @@ public class AuthService {
         AuthenticationManager authenticationManager,
         JwtService jwtService,
         CartRepository cartRepository,
+        DeliveryAddressRepository deliveryAddressRepository,
         OrderRepository orderRepository,
         PurchaseRepository purchaseRepository,
         PasswordResetTokenRepository passwordResetTokenRepository,
@@ -70,6 +73,7 @@ public class AuthService {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.cartRepository = cartRepository;
+        this.deliveryAddressRepository = deliveryAddressRepository;
         this.orderRepository = orderRepository;
         this.purchaseRepository = purchaseRepository;
         this.passwordResetTokenRepository = passwordResetTokenRepository;
@@ -283,6 +287,7 @@ public class AuthService {
         }
 
         cartRepository.deleteByUser(user);
+        deliveryAddressRepository.deleteByUser(user);
         userRepository.delete(user);
     }
 
@@ -298,6 +303,7 @@ public class AuthService {
             throw new BadRequestException("Accounts with order history cannot be deleted automatically");
         }
         cartRepository.deleteByUser(user);
+        deliveryAddressRepository.deleteByUser(user);
         userRepository.delete(user);
     }
 

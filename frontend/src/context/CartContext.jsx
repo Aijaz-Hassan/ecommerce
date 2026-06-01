@@ -23,6 +23,11 @@ const readSavedCart = (user) => {
   }
 };
 
+const normalizeQuantity = (quantity) => {
+  const nextQuantity = Number(quantity);
+  return Number.isInteger(nextQuantity) && nextQuantity > 0 ? nextQuantity : 1;
+};
+
 export function CartProvider({ children }) {
   const { isAuthenticated, user } = useAuth();
   const [cartItems, setCartItems] = useState([]);
@@ -93,7 +98,7 @@ export function CartProvider({ children }) {
     ensureCustomerSession();
     await api.post("/cart/items", {
       productId: Number(product.id),
-      quantity
+      quantity: normalizeQuantity(quantity)
     });
     return syncCart();
   };

@@ -3111,6 +3111,137 @@ html {
   margin: 0;
 }
 
+.shipping-method-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0.55rem 0 0.75rem;
+  padding: 0.8rem;
+  border: 1px solid rgba(232, 93, 63, 0.22);
+  border-radius: 0.95rem;
+  background: rgba(232, 93, 63, 0.06);
+}
+
+.shipping-method-card div {
+  display: grid;
+  gap: 0.18rem;
+}
+
+.shipping-method-card span {
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.shipping-method-card em {
+  color: var(--accent);
+  font-style: normal;
+  font-weight: 900;
+}
+
+.delivery-title-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  align-items: start;
+  margin-bottom: 1rem;
+}
+
+.delivery-title-row p {
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.delivery-title-row .ghost-button {
+  flex-shrink: 0;
+  padding: 0.65rem 0.9rem;
+}
+
+.saved-address-grid {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.saved-address-loading {
+  margin: 0 0 1rem;
+  color: var(--muted);
+}
+
+.saved-address-card {
+  border: 1px solid rgba(35, 24, 21, 0.1);
+  border-radius: 1rem;
+  padding: 0.85rem;
+  background: rgba(255, 255, 255, 0.62);
+  display: grid;
+  gap: 0.4rem;
+}
+
+.saved-address-card.selected {
+  border-color: rgba(232, 93, 63, 0.52);
+  background: rgba(232, 93, 63, 0.06);
+}
+
+.saved-address-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.saved-address-header span {
+  border-radius: 999px;
+  padding: 0.28rem 0.55rem;
+  background: rgba(19, 117, 103, 0.1);
+  color: #0f766e;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.saved-address-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.42;
+}
+
+.saved-address-actions,
+.address-form-actions {
+  display: flex;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  margin-top: 0.35rem;
+}
+
+.saved-address-actions button {
+  border: 1px solid rgba(35, 24, 21, 0.12);
+  border-radius: 999px;
+  padding: 0.42rem 0.72rem;
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.saved-address-actions .delete-address-button {
+  color: #b42318;
+}
+
+.address-editor-header {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0.35rem 0 0.9rem;
+}
+
+.address-editor-header small {
+  color: var(--muted);
+}
+
+.address-form-actions {
+  margin: 1rem 0;
+}
+
 .coupon-box {
   margin: 1rem 0;
   padding: 0.55rem;

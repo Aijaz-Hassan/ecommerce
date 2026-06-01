@@ -23,6 +23,20 @@ const colorOptions = ["Black", "White", "Blue", "Gold", "Green", "Silver"];
 const sizeOptions = ["XS", "S", "M", "L", "XL", "One Size"];
 const clothingCategories = ["Clothes", "Clothing", "Fashion", "Apparel"];
 
+const normalizeSearchValue = (value = "") => value.toString().trim().toLowerCase().replace(/\s+/g, " ");
+
+const productMatchesSearch = (product, query) => {
+  if (!query) {
+    return true;
+  }
+
+  const searchableText = normalizeSearchValue(
+    [product.name, product.description, product.category, product.brand].filter(Boolean).join(" ")
+  );
+
+  return query.split(" ").every((token) => searchableText.includes(token));
+};
+
 function enrichProduct(product, index) {
   const discount = [15, 20, 25, 30, 35][index % 5];
   const price = Number(product.price);
@@ -99,14 +113,9 @@ export default function ProductsPage() {
   }, [highestPrice]);
 
   const filteredProducts = useMemo(() => {
-    const normalizedSearch = searchText.trim().toLowerCase();
+    const normalizedSearch = normalizeSearchValue(searchText);
     const nextProducts = enrichedProducts.filter((product) => {
-      const matchesSearch =
-        !normalizedSearch ||
-        product.name.toLowerCase().includes(normalizedSearch) ||
-        product.description.toLowerCase().includes(normalizedSearch) ||
-        product.category.toLowerCase().includes(normalizedSearch) ||
-        product.brand.toLowerCase().includes(normalizedSearch);
+      const matchesSearch = productMatchesSearch(product, normalizedSearch);
       const matchesCategory = selectedCategory === "All" || product.category === selectedCategory;
       const matchesBrand = selectedBrands.length === 0 || selectedBrands.includes(product.brand);
       const matchesRating = selectedRating === "All" || product.rating >= Number(selectedRating);
@@ -122,7 +131,7 @@ export default function ProductsPage() {
       if (sortBy === "price-high") return Number(b.price) - Number(a.price);
       if (sortBy === "latest") return a.createdRank - b.createdRank;
       if (sortBy === "rated") return b.rating - a.rating;
-      return b.popularity - a.popularity;
+      return b.popularity - a.popularity || a.createdRank - b.createdRank;
     });
   }, [availability, enrichedProducts, maxPrice, searchText, selectedBrands, selectedCategory, selectedColor, selectedRating, selectedSize, sortBy]);
 

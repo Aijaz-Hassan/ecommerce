@@ -197,6 +197,97 @@ class AuthAndProductApiTests {
     }
 
     @Test
+    void deliveryAddressApisCreateUpdateListAndDeleteMultipleAddresses() throws Exception {
+        mockMvc.perform(post("/api/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "fullName": "Address User",
+                      "email": "address.user@example.com",
+                      "password": "Demo1234"
+                    }
+                    """))
+            .andExpect(status().isCreated());
+
+        MvcResult firstAddressResult = mockMvc.perform(post("/api/addresses")
+                .with(user("address.user@example.com").roles("CUSTOMER"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "label": "Home",
+                      "recipientName": "Address User",
+                      "phoneNumber": "9876543210",
+                      "addressLine1": "10 Lake Road",
+                      "city": "Hyderabad",
+                      "state": "Telangana",
+                      "postalCode": "500001",
+                      "country": "India"
+                    }
+                    """))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.label").value("Home"))
+            .andReturn();
+        long firstAddressId = objectMapper.readTree(firstAddressResult.getResponse().getContentAsString()).get("id").asLong();
+
+        MvcResult secondAddressResult = mockMvc.perform(post("/api/addresses")
+                .with(user("address.user@example.com").roles("CUSTOMER"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "label": "Office",
+                      "recipientName": "Address User",
+                      "phoneNumber": "9876543210",
+                      "addressLine1": "22 Market Street",
+                      "city": "Secunderabad",
+                      "state": "Telangana",
+                      "postalCode": "500003",
+                      "country": "India"
+                    }
+                    """))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.label").value("Office"))
+            .andReturn();
+        long secondAddressId = objectMapper.readTree(secondAddressResult.getResponse().getContentAsString()).get("id").asLong();
+
+        mockMvc.perform(get("/api/addresses")
+                .with(user("address.user@example.com").roles("CUSTOMER")))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].label").value("Home"))
+            .andExpect(jsonPath("$[1].label").value("Office"));
+
+        mockMvc.perform(put("/api/addresses/" + firstAddressId)
+                .with(user("address.user@example.com").roles("CUSTOMER"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "label": "Home",
+                      "recipientName": "Address User",
+                      "phoneNumber": "9876543210",
+                      "addressLine1": "11 Updated Lake Road",
+                      "city": "Hyderabad",
+                      "state": "Telangana",
+                      "postalCode": "500002",
+                      "country": "India"
+                    }
+                    """))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.addressLine1").value("11 Updated Lake Road"));
+
+        mockMvc.perform(delete("/api/addresses/" + secondAddressId)
+                .with(user("address.user@example.com").roles("CUSTOMER")))
+            .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/api/addresses")
+                .with(user("address.user@example.com").roles("CUSTOMER")))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].addressLine1").value("11 Updated Lake Road"))
+            .andExpect(jsonPath("$[1]").doesNotExist());
+
+        mockMvc.perform(get("/api/addresses"))
+            .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void expiredTokenReceivesUnauthorizedResponseForClientSessionCleanup() throws Exception {
         String expiredToken = jwtService.generateToken(
             org.springframework.security.core.userdetails.User.withUsername("expired@example.com")
@@ -499,6 +590,17 @@ class AuthAndProductApiTests {
         JsonNode createdProduct = objectMapper.readTree(createResult.getResponse().getContentAsString());
         long productId = createdProduct.get("id").asLong();
 
+        mockMvc.perform(post("/api/cart/items")
+                .with(user("cart.user@example.com").roles("CUSTOMER"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "productId": %d,
+                      "quantity": 0
+                    }
+                    """.formatted(productId)))
+            .andExpect(status().isBadRequest());
+
         MvcResult addToCartResult = mockMvc.perform(post("/api/cart/items")
                 .with(user("cart.user@example.com").roles("CUSTOMER"))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -542,7 +644,8 @@ class AuthAndProductApiTests {
         mockMvc.perform(post("/api/cart/checkout/session")
                 .with(user("cart.user@example.com").roles("CUSTOMER")))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.provider").value("demo"));
+            .andExpect(jsonPath("$.provider").value("demo"))
+            .andExpect(jsonPath("$.amount").value(40296));
 
         mockMvc.perform(post("/api/cart/checkout/confirm")
                 .with(user("cart.user@example.com").roles("CUSTOMER"))

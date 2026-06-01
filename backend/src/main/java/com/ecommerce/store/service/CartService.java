@@ -25,6 +25,7 @@ import com.ecommerce.store.repository.ProductRepository;
 import com.ecommerce.store.repository.PurchaseRepository;
 import com.ecommerce.store.repository.UserRepository;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
@@ -76,13 +77,14 @@ public class CartService {
         User user = findUser(customerEmail);
         Product product = findProduct(request.getProductId());
         Cart cart = getOrCreateCart(user);
+        int requestedQuantity = requirePositiveQuantity(request.getQuantity());
 
         CartItem existingItem = cart.getItems().stream()
             .filter(item -> item.getProduct().getId().equals(product.getId()))
             .findFirst()
             .orElse(null);
 
-        int nextQuantity = request.getQuantity();
+        int nextQuantity = requestedQuantity;
         if (existingItem != null) {
             nextQuantity += existingItem.getQuantity();
             existingItem.setQuantity(nextQuantity);
@@ -90,7 +92,7 @@ public class CartService {
             CartItem cartItem = new CartItem();
             cartItem.setCart(cart);
             cartItem.setProduct(product);
-            cartItem.setQuantity(request.getQuantity());
+            cartItem.setQuantity(requestedQuantity);
             cartItem.setSelectedColor(null);
             cartItem.setSelectedSize(null);
             cartItem.setCustomizationNote(null);
@@ -111,8 +113,9 @@ public class CartService {
             .orElseThrow(() -> new BadRequestException("Cart item not found"));
 
         Product product = cartItem.getProduct();
-        validateStock(product, request.getQuantity());
-        cartItem.setQuantity(request.getQuantity());
+        int requestedQuantity = requirePositiveQuantity(request.getQuantity());
+        validateStock(product, requestedQuantity);
+        cartItem.setQuantity(requestedQuantity);
         cartItem.setSelectedColor(null);
         cartItem.setSelectedSize(null);
         cartItem.setCustomizationNote(null);
@@ -153,10 +156,7 @@ public class CartService {
     @Transactional
     public CheckoutSessionResponse createCheckoutSession(String customerEmail) {
         Cart cart = getCartWithItems(customerEmail);
-        BigDecimal totalAmount = cart.getItems().stream()
-            .map(item -> item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
-
+        BigDecimal totalAmount = calculateCartTotals(cart).totalAmount();
         long amountInSubunits = totalAmount.multiply(BigDecimal.valueOf(100)).longValue();
 
         if (hasRazorpayKeys()) {
@@ -260,9 +260,19 @@ public class CartService {
     }
 
     private void validateStock(Product product, int quantity) {
+        if (quantity < 1) {
+            throw new BadRequestException("Quantity must be at least 1");
+        }
         if (quantity > product.getStock()) {
             throw new BadRequestException("Only " + product.getStock() + " item(s) available for " + product.getName());
         }
+    }
+
+    private int requirePositiveQuantity(Integer quantity) {
+        if (quantity == null || quantity < 1) {
+            throw new BadRequestException("Quantity must be at least 1");
+        }
+        return quantity;
     }
 
     private CartResponse toResponse(Cart cart) {
@@ -343,22 +353,15 @@ public class CartService {
     }
 
     private Purchase createPurchaseSnapshot(Cart cart, CheckoutConfirmRequest request) {
-        BigDecimal subtotal = cart.getItems().stream()
-            .map(item -> item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal taxAmount = subtotal.multiply(new BigDecimal("0.18")).setScale(2, java.math.RoundingMode.HALF_UP);
-        BigDecimal shippingAmount = subtotal.compareTo(new BigDecimal("500.00")) >= 0
-            ? BigDecimal.ZERO
-            : new BigDecimal("49.00");
-        BigDecimal totalAmount = subtotal.add(taxAmount).add(shippingAmount);
+        CartTotals totals = calculateCartTotals(cart);
 
         Purchase purchase = new Purchase();
         purchase.setOrderNumber("LL-" + System.currentTimeMillis());
         purchase.setUser(cart.getUser());
-        purchase.setSubtotal(subtotal);
-        purchase.setTaxAmount(taxAmount);
-        purchase.setShippingAmount(shippingAmount);
-        purchase.setTotalAmount(totalAmount);
+        purchase.setSubtotal(totals.subtotal());
+        purchase.setTaxAmount(totals.taxAmount());
+        purchase.setShippingAmount(totals.shippingAmount());
+        purchase.setTotalAmount(totals.totalAmount());
         purchase.setPaymentProvider(request.getProvider().toUpperCase());
         purchase.setPaymentReference(isBlank(request.getPaymentId()) ? request.getOrderId() : request.getPaymentId());
         purchase.setStatus(Purchase.PurchaseStatus.CONFIRMED);
@@ -381,6 +384,23 @@ public class CartService {
 
         return purchase;
     }
+
+    private CartTotals calculateCartTotals(Cart cart) {
+        BigDecimal subtotal = cart.getItems().stream()
+            .map(item -> item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal taxAmount = subtotal.multiply(new BigDecimal("0.18")).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal shippingAmount = subtotal.compareTo(new BigDecimal("500.00")) >= 0
+            ? BigDecimal.ZERO
+            : new BigDecimal("49.00");
+        BigDecimal totalAmount = subtotal.add(taxAmount).add(shippingAmount);
+
+        return new CartTotals(subtotal, taxAmount, shippingAmount, totalAmount);
+    }
+
+    private record CartTotals(BigDecimal subtotal, BigDecimal taxAmount, BigDecimal shippingAmount, BigDecimal totalAmount) {
+    }
+
     private boolean isBlank(String value) {
         return value == null || value.isBlank();
     }

@@ -2,10 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import { Heart, PackageOpen, ShoppingBag, Tag, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import api from "../api/client";
+import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { formatCurrency } from "../utils/currency";
 
-const addressStorageKey = "store-checkout-address";
+const legacyAddressStorageKey = "store-checkout-address";
+const legacyAddressMigrationPrefix = "lumenlane_address_migrated";
 const savedLaterKey = "lumenlane_saved_later";
 
 const emptyAddress = {
@@ -17,6 +19,32 @@ const emptyAddress = {
   state: "",
   postalCode: "",
   country: "India"
+};
+
+const addressFields = ["recipientName", "phoneNumber", "addressLine1", "addressLine2", "city", "state", "postalCode", "country"];
+
+const getLegacyMigrationKey = (user) => `${legacyAddressMigrationPrefix}_${user?.id || user?.email || "anonymous"}`;
+
+const toCheckoutAddress = (source = {}) =>
+  addressFields.reduce((result, field) => ({ ...result, [field]: source[field] || emptyAddress[field] }), {});
+
+const hasAddressContent = (address) =>
+  ["addressLine1", "city", "state", "postalCode", "country"].some((field) => String(address?.[field] || "").trim());
+
+const hasRequiredAddressFields = (address) =>
+  ["recipientName", "phoneNumber", "addressLine1", "city", "state", "postalCode", "country"].every((field) => String(address?.[field] || "").trim());
+
+const readLegacyAddress = () => {
+  try {
+    const saved = window.localStorage.getItem(legacyAddressStorageKey);
+    if (!saved) {
+      return null;
+    }
+    const address = toCheckoutAddress(JSON.parse(saved));
+    return hasAddressContent(address) ? { label: "Saved checkout address", ...address } : null;
+  } catch {
+    return null;
+  }
 };
 
 function loadRazorpayScript() {
@@ -53,6 +81,7 @@ function readSavedLater() {
 }
 
 export default function CartPage() {
+  const { user } = useAuth();
   const { cartItems, cartCount, cartLoading, increaseQuantity, decreaseQuantity, removeFromCart, clearCart, refreshCart } = useCart();
   const [toast, setToast] = useState(null);
   const [busyItemId, setBusyItemId] = useState(null);
@@ -61,14 +90,12 @@ export default function CartPage() {
   const [coupon, setCoupon] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState("");
   const [savedLater, setSavedLater] = useState(readSavedLater);
-  const [address, setAddress] = useState(() => {
-    try {
-      const saved = window.localStorage.getItem(addressStorageKey);
-      return saved ? { ...emptyAddress, ...JSON.parse(saved) } : emptyAddress;
-    } catch {
-      return emptyAddress;
-    }
-  });
+  const [savedAddresses, setSavedAddresses] = useState([]);
+  const [addressesLoading, setAddressesLoading] = useState(true);
+  const [savingAddress, setSavingAddress] = useState(false);
+  const [selectedAddressId, setSelectedAddressId] = useState("");
+  const [editingAddressId, setEditingAddressId] = useState("");
+  const [address, setAddress] = useState(emptyAddress);
 
   const subtotal = useMemo(() => cartItems.reduce((total, item) => total + Number(item.price) * item.quantity, 0), [cartItems]);
   const discount = appliedCoupon === "LUMEN20" ? Number((subtotal * 0.2).toFixed(2)) : appliedCoupon === "FREESHIP" ? 0 : 0;
@@ -86,8 +113,51 @@ export default function CartPage() {
   }, []);
 
   useEffect(() => {
-    window.localStorage.setItem(addressStorageKey, JSON.stringify(address));
-  }, [address]);
+    if (!user) {
+      return;
+    }
+    let ignore = false;
+
+    async function loadAddresses() {
+      setAddressesLoading(true);
+      try {
+        const response = await api.get("/addresses");
+        let nextAddresses = response.data || [];
+        const migrationKey = getLegacyMigrationKey(user);
+        const legacyAddress = !window.localStorage.getItem(migrationKey) ? readLegacyAddress() : null;
+
+        if (nextAddresses.length === 0 && legacyAddress && hasRequiredAddressFields(legacyAddress)) {
+          const migrationResponse = await api.post("/addresses", legacyAddress);
+          nextAddresses = [migrationResponse.data];
+        }
+        if (!legacyAddress || nextAddresses.length > 0) {
+          window.localStorage.setItem(migrationKey, "true");
+          window.localStorage.removeItem(legacyAddressStorageKey);
+        }
+
+        if (!ignore) {
+          const firstAddress = nextAddresses[0];
+          setSavedAddresses(nextAddresses);
+          setSelectedAddressId(firstAddress?.id || "");
+          setEditingAddressId("");
+          setAddress(firstAddress ? toCheckoutAddress(firstAddress) : legacyAddress || toCheckoutAddress({ recipientName: user.fullName, phoneNumber: user.phoneNumber }));
+        }
+      } catch (error) {
+        if (!ignore) {
+          showToast(error.response?.data?.message || "Unable to load saved addresses.", "error");
+        }
+      } finally {
+        if (!ignore) {
+          setAddressesLoading(false);
+        }
+      }
+    }
+
+    loadAddresses();
+    return () => {
+      ignore = true;
+    };
+  }, [user?.id, user?.email]);
 
   useEffect(() => {
     window.localStorage.setItem(savedLaterKey, JSON.stringify(savedLater));
@@ -100,10 +170,13 @@ export default function CartPage() {
 
   const handleAddressChange = (event) => {
     const { name, value } = event.target;
+    if (selectedAddressId && !editingAddressId) {
+      setSelectedAddressId("");
+    }
     setAddress((current) => ({ ...current, [name]: value }));
   };
 
-  const validateAddress = () => {
+  const validateAddress = (candidate = address) => {
     const requiredFields = [
       ["recipientName", "Please add the recipient name."],
       ["phoneNumber", "Please add a phone number."],
@@ -114,8 +187,89 @@ export default function CartPage() {
       ["country", "Please add the country."]
     ];
 
-    const missing = requiredFields.find(([field]) => !address[field]?.trim());
+    const missing = requiredFields.find(([field]) => !candidate[field]?.trim());
     return missing ? missing[1] : "";
+  };
+
+  const useSavedAddress = (savedAddress) => {
+    if (!savedAddress) {
+      startNewAddress();
+      return;
+    }
+    setSelectedAddressId(savedAddress.id);
+    setEditingAddressId("");
+    setAddress(toCheckoutAddress(savedAddress));
+    showToast(`${savedAddress.label} selected for delivery.`);
+  };
+
+  const startNewAddress = () => {
+    setSelectedAddressId("");
+    setEditingAddressId("");
+    setAddress(toCheckoutAddress({ recipientName: user?.fullName, phoneNumber: user?.phoneNumber }));
+  };
+
+  const startAddressEdit = (savedAddress) => {
+    setSelectedAddressId(savedAddress.id);
+    setEditingAddressId(savedAddress.id);
+    setAddress(toCheckoutAddress(savedAddress));
+  };
+
+  const saveAddress = async () => {
+    const validationMessage = validateAddress();
+    if (validationMessage) {
+      showToast(validationMessage, "error");
+      return;
+    }
+
+    const existingIndex = savedAddresses.findIndex((entry) => entry.id === editingAddressId);
+    const nextAddressNumber = savedAddresses.reduce((highest, entry) => {
+      const match = /^Address (\d+)$/.exec(entry.label || "");
+      return match ? Math.max(highest, Number(match[1])) : highest;
+    }, 0) + 1;
+    const payload = {
+      label: existingIndex >= 0 ? savedAddresses[existingIndex].label : `Address ${nextAddressNumber}`,
+      ...toCheckoutAddress(address)
+    };
+
+    setSavingAddress(true);
+    try {
+      const response = editingAddressId
+        ? await api.put(`/addresses/${editingAddressId}`, payload)
+        : await api.post("/addresses", payload);
+      const savedAddress = response.data;
+      setSavedAddresses((current) =>
+        existingIndex >= 0 ? current.map((entry) => (entry.id === savedAddress.id ? savedAddress : entry)) : [...current, savedAddress]
+      );
+      setSelectedAddressId(savedAddress.id);
+      setEditingAddressId("");
+      setAddress(toCheckoutAddress(savedAddress));
+      showToast(existingIndex >= 0 ? "Delivery address updated." : "Delivery address saved.");
+    } catch (error) {
+      showToast(error.response?.data?.message || "Unable to save delivery address.", "error");
+    } finally {
+      setSavingAddress(false);
+    }
+  };
+
+  const deleteAddress = async (savedAddress) => {
+    if (!window.confirm(`Delete ${savedAddress.label}?`)) {
+      return;
+    }
+
+    try {
+      await api.delete(`/addresses/${savedAddress.id}`);
+      const remainingAddresses = savedAddresses.filter((entry) => entry.id !== savedAddress.id);
+      setSavedAddresses(remainingAddresses);
+      if (selectedAddressId === savedAddress.id) {
+        const nextAddress = remainingAddresses[0];
+        setSelectedAddressId(nextAddress?.id || "");
+        setEditingAddressId("");
+        setAddress(nextAddress ? toCheckoutAddress(nextAddress) : toCheckoutAddress({ recipientName: user?.fullName, phoneNumber: user?.phoneNumber }));
+      }
+      showToast("Delivery address deleted.");
+    } catch (error) {
+      showToast(error.response?.data?.message || "Unable to delete delivery address.", "error");
+    }
   };
 
   const runCartAction = async (cartItemId, action, successMessage) => {
@@ -366,6 +520,13 @@ export default function CartPage() {
               <span>Shipping</span>
               <strong>{formatCurrency(shippingAmount)}</strong>
             </div>
+            <div className="shipping-method-card">
+              <div>
+                <strong>Standard delivery</strong>
+                <span>3-5 business days</span>
+              </div>
+              <em>{shippingAmount === 0 ? "Free" : formatCurrency(shippingAmount)}</em>
+            </div>
             <div className="summary-line">
               <span>Tax</span>
               <strong>{formatCurrency(taxAmount)}</strong>
@@ -380,7 +541,40 @@ export default function CartPage() {
           </section>
 
           <section className="delivery-card">
-            <h2>Delivery Address</h2>
+            <div className="delivery-title-row">
+              <div>
+                <h2>Delivery Address</h2>
+                <p>Save multiple addresses and choose one for this order.</p>
+              </div>
+              <button className="ghost-button" type="button" onClick={startNewAddress}>Add new</button>
+            </div>
+            {addressesLoading ? (
+              <p className="saved-address-loading">Loading saved addresses...</p>
+            ) : savedAddresses.length > 0 && (
+              <div className="saved-address-grid">
+                {savedAddresses.map((savedAddress) => (
+                  <article className={`saved-address-card${selectedAddressId === savedAddress.id ? " selected" : ""}`} key={savedAddress.id}>
+                    <div className="saved-address-header">
+                      <strong>{savedAddress.label}</strong>
+                      {selectedAddressId === savedAddress.id && <span>Using</span>}
+                    </div>
+                    <p>{savedAddress.recipientName} {savedAddress.phoneNumber && `| ${savedAddress.phoneNumber}`}</p>
+                    <p>
+                      {savedAddress.addressLine1}{savedAddress.addressLine2 ? `, ${savedAddress.addressLine2}` : ""}, {savedAddress.city}, {savedAddress.state} {savedAddress.postalCode}, {savedAddress.country}
+                    </p>
+                    <div className="saved-address-actions">
+                      <button type="button" onClick={() => useSavedAddress(savedAddress)}>Use</button>
+                      <button type="button" onClick={() => startAddressEdit(savedAddress)}>Edit</button>
+                      <button className="delete-address-button" type="button" onClick={() => deleteAddress(savedAddress)}>Delete</button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
+            <div className="address-editor-header">
+              <strong>{editingAddressId ? "Update saved address" : selectedAddressId ? "Selected delivery address" : "New delivery address"}</strong>
+              {selectedAddressId && !editingAddressId && <small>Editing a field creates a new address unless you click Edit above.</small>}
+            </div>
             <div className="address-form-grid">
               <label className="filter-field">
                 <span>Recipient name</span>
@@ -414,6 +608,12 @@ export default function CartPage() {
                 <span>Country</span>
                 <input name="country" value={address.country} onChange={handleAddressChange} placeholder="Country" />
               </label>
+            </div>
+            <div className="address-form-actions">
+              <button className="solid-button" type="button" onClick={saveAddress} disabled={savingAddress}>
+                {savingAddress ? "Saving..." : editingAddressId ? "Update Address" : "Save Address"}
+              </button>
+              {editingAddressId && <button className="ghost-button" type="button" onClick={() => useSavedAddress(savedAddresses.find((entry) => entry.id === editingAddressId))}>Cancel Edit</button>}
             </div>
             <div className="map-frame-wrap compact-map">
               <iframe title="Checkout address map" src={`https://www.google.com/maps?q=${mapQuery}&z=15&output=embed`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
