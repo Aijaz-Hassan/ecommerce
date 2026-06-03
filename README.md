@@ -4,6 +4,7 @@ This workspace contains a full-stack ecommerce project built with:
 
 - React + Vite frontend
 - Spring Boot + Maven backend
+- Selenium + TestNG UI automation
 - MySQL database
 - JWT authentication with Spring Security
 
@@ -45,6 +46,7 @@ The email account you use for `MAIL_USERNAME` should be the real support mailbox
 
 - `backend` - Spring Boot API
 - `frontend` - React storefront
+- `selenium-automation` - Maven Selenium TestNG browser tests
 
 ## MySQL setup
 
@@ -82,6 +84,23 @@ npm run dev
 ```
 
 The frontend will start on `http://localhost:5173`.
+
+## Selenium automation run
+
+The Selenium framework is in [selenium-automation](/D:/Front-end/selenium-automation). It uses `testing.xml` as the TestNG suite file. Install Maven, start the frontend, then run:
+
+```powershell
+cd D:\Front-end\selenium-automation
+mvn test
+```
+
+Optional flags:
+
+```powershell
+mvn test -Dbrowser=edge
+mvn test -Dheadless=true
+mvn test -DbaseUrl=http://localhost:5173
+```
 
 ## Notes
 

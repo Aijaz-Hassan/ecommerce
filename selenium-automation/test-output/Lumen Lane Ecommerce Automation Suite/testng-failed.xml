@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Failed suite [Lumen Lane Ecommerce Automation Suite]" guice-stage="DEVELOPMENT">
+  <test thread-count="5" name="Register and Login Tests(failed)">
+    <classes>
+      <class name="com.ecommerce.automation.tests.AuthFlowTests">
+        <methods>
+          <include name="setUp"/>
+          <include name="tearDown"/>
+          <include name="userCanRegisterAndLogin"/>
+          <include name="invalidLoginShowsError"/>
+        </methods>
+      </class> <!-- com.ecommerce.automation.tests.AuthFlowTests -->
+    </classes>
+  </test> <!-- Register and Login Tests(failed) -->
+</suite> <!-- Failed suite [Lumen Lane Ecommerce Automation Suite] -->
