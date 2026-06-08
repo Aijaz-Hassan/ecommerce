@@ -39,6 +39,11 @@ public class LoginPage {
         return driver.findElement(accountButton).isDisplayed();
     }
 
+    public boolean isOnLoginPage() {
+        wait.until(ExpectedConditions.urlContains("/login"));
+        return driver.getCurrentUrl().contains("/login");
+    }
+
     public String accountName() {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(accountButton)).getText();
     }

@@ -30,12 +30,31 @@ public class RegisterPage {
     }
 
     public LoginPage register(String fullName, String email, String password) {
+        fillAndSubmit(fullName, email, password);
+        acceptSuccessAlertIfPresent();
+        wait.until(currentDriver ->
+                currentDriver.getCurrentUrl().contains("/login") || !currentDriver.findElements(errorMessage).isEmpty());
+        if (!driver.findElements(errorMessage).isEmpty()) {
+            throw new AssertionError("Registration should succeed, but error was shown: " + driver.findElement(errorMessage).getText());
+        }
+        return new LoginPage(driver);
+    }
+
+    public RegisterPage registerExpectingError(String fullName, String email, String password) {
+        fillAndSubmit(fullName, email, password);
+        acceptAlertIfPresent();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(errorMessage));
+        return this;
+    }
+
+    public boolean isOnRegisterPage() {
+        return driver.getCurrentUrl().contains("/register");
+    }
+
+    private void fillAndSubmit(String fullName, String email, String password) {
         wait.until(ExpectedConditions.elementToBeClickable(fullNameInput)).sendKeys(fullName);
         driver.findElement(emailInput).sendKeys(email);
         driver.findElement(passwordInput).sendKeys(password, Keys.ENTER);
-        acceptSuccessAlertIfPresent();
-        wait.until(ExpectedConditions.urlContains("/login"));
-        return new LoginPage(driver);
     }
 
     public String errorText() {
@@ -43,12 +62,16 @@ public class RegisterPage {
     }
 
     private void acceptSuccessAlertIfPresent() {
+        acceptAlertIfPresent();
+    }
+
+    private void acceptAlertIfPresent() {
         try {
             Alert alert = new WebDriverWait(driver, Duration.ofSeconds(3))
                     .until(ExpectedConditions.alertIsPresent());
             alert.accept();
         } catch (TimeoutException ignored) {
-            // The app may navigate to login before Chrome exposes the alert in headless runs.
+
         }
     }
 }

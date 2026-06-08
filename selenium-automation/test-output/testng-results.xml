@@ -1,33 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testng-results ignored="0" total="2" passed="2" failed="0" skipped="0">
+<testng-results ignored="0" total="4" passed="4" failed="0" skipped="0">
   <reporter-output>
   </reporter-output>
-  <suite started-at="2026-06-03T18:09:32 IST" name="Default suite" finished-at="2026-06-03T18:09:44 IST" duration-ms="11869">
+  <suite started-at="2026-06-07T21:26:15 IST" name="Default suite" finished-at="2026-06-07T21:26:37 IST" duration-ms="22442">
     <groups>
     </groups>
-    <test started-at="2026-06-03T18:09:32 IST" name="Default test" finished-at="2026-06-03T18:09:44 IST" duration-ms="11869">
+    <test started-at="2026-06-07T21:26:15 IST" name="Default test" finished-at="2026-06-07T21:26:37 IST" duration-ms="22442">
       <class name="com.ecommerce.automation.tests.AuthFlowTests">
-        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.AuthFlowTests@4567f35d]" started-at="2026-06-03T18:09:32 IST" name="setUp" finished-at="2026-06-03T18:09:34 IST" duration-ms="2308" status="PASS">
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.AuthFlowTests@1fa268de]" started-at="2026-06-07T21:26:15 IST" name="setUp" finished-at="2026-06-07T21:26:17 IST" duration-ms="2226" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- setUp -->
-        <test-method signature="invalidLoginShowsError()[pri:0, instance:com.ecommerce.automation.tests.AuthFlowTests@4567f35d]" started-at="2026-06-03T18:09:34 IST" name="invalidLoginShowsError" description="Login page should show an error for invalid credentials" finished-at="2026-06-03T18:09:38 IST" duration-ms="3955" status="PASS">
+        <test-method signature="invalidLoginShowsError()[pri:0, instance:com.ecommerce.automation.tests.AuthFlowTests@1fa268de]" started-at="2026-06-07T21:26:17 IST" name="invalidLoginShowsError" description="Login page should show an error for invalid credentials" finished-at="2026-06-07T21:26:20 IST" duration-ms="3257" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- invalidLoginShowsError -->
-        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.AuthFlowTests@4567f35d]" started-at="2026-06-03T18:09:38 IST" name="tearDown" finished-at="2026-06-03T18:09:39 IST" duration-ms="301" status="PASS">
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.AuthFlowTests@1fa268de]" started-at="2026-06-07T21:26:20 IST" name="tearDown" finished-at="2026-06-07T21:26:21 IST" duration-ms="298" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- tearDown -->
-        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.AuthFlowTests@4567f35d]" started-at="2026-06-03T18:09:39 IST" name="setUp" finished-at="2026-06-03T18:09:40 IST" duration-ms="1214" status="PASS">
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.AuthFlowTests@1fa268de]" started-at="2026-06-07T21:26:21 IST" name="setUp" finished-at="2026-06-07T21:26:22 IST" duration-ms="1073" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- setUp -->
-        <test-method signature="userCanRegisterAndLogin()[pri:0, instance:com.ecommerce.automation.tests.AuthFlowTests@4567f35d]" started-at="2026-06-03T18:09:40 IST" name="userCanRegisterAndLogin" description="User should register successfully and then log in with the same credentials" finished-at="2026-06-03T18:09:43 IST" duration-ms="3634" status="PASS">
+        <test-method signature="invalidRegistrationShowsError()[pri:0, instance:com.ecommerce.automation.tests.AuthFlowTests@1fa268de]" started-at="2026-06-07T21:26:22 IST" name="invalidRegistrationShowsError" description="Registration should show an error for invalid details" finished-at="2026-06-07T21:26:23 IST" duration-ms="1745" status="PASS">
           <reporter-output>
           </reporter-output>
-        </test-method> <!-- userCanRegisterAndLogin -->
-        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.AuthFlowTests@4567f35d]" started-at="2026-06-03T18:09:43 IST" name="tearDown" finished-at="2026-06-03T18:09:44 IST" duration-ms="378" status="PASS">
+        </test-method> <!-- invalidRegistrationShowsError -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.AuthFlowTests@1fa268de]" started-at="2026-06-07T21:26:23 IST" name="tearDown" finished-at="2026-06-07T21:26:24 IST" duration-ms="299" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.AuthFlowTests@1fa268de]" started-at="2026-06-07T21:26:24 IST" name="setUp" finished-at="2026-06-07T21:26:25 IST" duration-ms="1206" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method signature="validLoginShowsAccountMenu()[pri:0, instance:com.ecommerce.automation.tests.AuthFlowTests@1fa268de]" started-at="2026-06-07T21:26:25 IST" name="validLoginShowsAccountMenu" description="Login should succeed with valid credentials" finished-at="2026-06-07T21:26:30 IST" duration-ms="5205" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- validLoginShowsAccountMenu -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.AuthFlowTests@1fa268de]" started-at="2026-06-07T21:26:30 IST" name="tearDown" finished-at="2026-06-07T21:26:32 IST" duration-ms="2017" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.AuthFlowTests@1fa268de]" started-at="2026-06-07T21:26:32 IST" name="setUp" finished-at="2026-06-07T21:26:33 IST" duration-ms="1146" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method signature="validRegistrationRedirectsToLogin()[pri:0, instance:com.ecommerce.automation.tests.AuthFlowTests@1fa268de]" started-at="2026-06-07T21:26:33 IST" name="validRegistrationRedirectsToLogin" description="Registration should succeed with valid details" finished-at="2026-06-07T21:26:37 IST" duration-ms="3647" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- validRegistrationRedirectsToLogin -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.AuthFlowTests@1fa268de]" started-at="2026-06-07T21:26:37 IST" name="tearDown" finished-at="2026-06-07T21:26:37 IST" duration-ms="254" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- tearDown -->
