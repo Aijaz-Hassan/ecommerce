@@ -50,7 +50,7 @@
               <ul>
                 <li>
                   <a href="#" panel-name="test-xml-Default_suite" class="navigator-link ">
-                    <span>C:\Users\AIJAZ HASSAN\AppData\Local\Temp\testng-eclipse-433812124\testng-customsuite.xml</span>
+                    <span>C:\Users\AIJAZ HASSAN\AppData\Local\Temp\testng-eclipse--72794074\testng-customsuite.xml</span>
                   </a> <!-- navigator-link  -->
                 </li>
                 <li>
@@ -92,7 +92,7 @@
               <div class="suite-section-content">
                 <ul>
                   <li>
-                    <span class="method-stats">4 methods,   4 passed</span>
+                    <span class="method-stats">6 methods,   6 passed</span>
                   </li>
                   <li>
                     <span class="method-list-title passed">Passed methods</span>
@@ -109,6 +109,16 @@
                       <span>
                         <img src="passed.png" width="3%"/>
                         <a href="#" panel-name="suite-Default_suite" title="com.ecommerce.automation.tests.AuthFlowTests" class="method navigator-link" hash-for-method="invalidRegistrationShowsError">invalidRegistrationShowsError</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                      <span>
+                        <img src="passed.png" width="3%"/>
+                        <a href="#" panel-name="suite-Default_suite" title="com.ecommerce.automation.tests.AuthFlowTests" class="method navigator-link" hash-for-method="loggedOutSessionCannotAccessProtectedPage">loggedOutSessionCannotAccessProtectedPage</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                      <span>
+                        <img src="passed.png" width="3%"/>
+                        <a href="#" panel-name="suite-Default_suite" title="com.ecommerce.automation.tests.AuthFlowTests" class="method navigator-link" hash-for-method="logoutClearsSessionAndRedirectsToLogin">logoutClearsSessionAndRedirectsToLogin</a> <!-- method navigator-link -->
                       </span>
                       <br/>
                       <span>
@@ -159,6 +169,24 @@
               </div> <!-- method -->
               <div class="method">
                 <div class="method-content">
+                  <a name="loggedOutSessionCannotAccessProtectedPage">
+                  </a> <!-- loggedOutSessionCannotAccessProtectedPage -->
+                  <span class="method-name">loggedOutSessionCannotAccessProtectedPage</span>
+                  <em>
+(Logged-out users should be redirected away from protected pages)                  </em>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
+                  <a name="logoutClearsSessionAndRedirectsToLogin">
+                  </a> <!-- logoutClearsSessionAndRedirectsToLogin -->
+                  <span class="method-name">logoutClearsSessionAndRedirectsToLogin</span>
+                  <em>
+(Logout should end the active user session)                  </em>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
                   <a name="validLoginShowsAccountMenu">
                   </a> <!-- validLoginShowsAccountMenu -->
                   <span class="method-name">validLoginShowsAccountMenu</span>
@@ -180,7 +208,7 @@
         </div> <!-- panel Default_suite -->
         <div panel-name="test-xml-Default_suite" class="panel">
           <div class="main-panel-header rounded-window-top">
-            <span class="header-content">C:\Users\AIJAZ HASSAN\AppData\Local\Temp\testng-eclipse-433812124\testng-customsuite.xml</span>
+            <span class="header-content">C:\Users\AIJAZ HASSAN\AppData\Local\Temp\testng-eclipse--72794074\testng-customsuite.xml</span>
           </div> <!-- main-panel-header rounded-window-top -->
           <div class="main-panel-content rounded-window-bottom">
             <pre>
@@ -191,8 +219,8 @@
     &lt;classes&gt;
       &lt;class name=&quot;com.ecommerce.automation.pages.RegisterPage&quot;/&gt;
       &lt;class name=&quot;com.ecommerce.automation.tests.AuthFlowTests&quot;/&gt;
-      &lt;class name=&quot;com.ecommerce.automation.pages.LoginPage&quot;/&gt;
       &lt;class name=&quot;com.ecommerce.automation.base.BaseTest&quot;/&gt;
+      &lt;class name=&quot;com.ecommerce.automation.pages.LoginPage&quot;/&gt;
     &lt;/classes&gt;
   &lt;/test&gt; &lt;!-- Default test --&gt;
 &lt;/suite&gt; &lt;!-- Default suite --&gt;
@@ -232,28 +260,36 @@ data.addColumn('number', 'Number');
 data.addColumn('string', 'Method');
 data.addColumn('string', 'Class');
 data.addColumn('number', 'Time (ms)');
-data.addRows(4);
+data.addRows(6);
 data.setCell(0, 0, 0)
-data.setCell(0, 1, 'validLoginShowsAccountMenu')
+data.setCell(0, 1, 'loggedOutSessionCannotAccessProtectedPage')
 data.setCell(0, 2, 'com.ecommerce.automation.tests.AuthFlowTests')
-data.setCell(0, 3, 5205);
+data.setCell(0, 3, 4136);
 data.setCell(1, 0, 1)
 data.setCell(1, 1, 'validRegistrationRedirectsToLogin')
 data.setCell(1, 2, 'com.ecommerce.automation.tests.AuthFlowTests')
-data.setCell(1, 3, 3647);
+data.setCell(1, 3, 4061);
 data.setCell(2, 0, 2)
-data.setCell(2, 1, 'invalidLoginShowsError')
+data.setCell(2, 1, 'logoutClearsSessionAndRedirectsToLogin')
 data.setCell(2, 2, 'com.ecommerce.automation.tests.AuthFlowTests')
-data.setCell(2, 3, 3257);
+data.setCell(2, 3, 3714);
 data.setCell(3, 0, 3)
-data.setCell(3, 1, 'invalidRegistrationShowsError')
+data.setCell(3, 1, 'invalidLoginShowsError')
 data.setCell(3, 2, 'com.ecommerce.automation.tests.AuthFlowTests')
-data.setCell(3, 3, 1745);
+data.setCell(3, 3, 3706);
+data.setCell(4, 0, 4)
+data.setCell(4, 1, 'invalidRegistrationShowsError')
+data.setCell(4, 2, 'com.ecommerce.automation.tests.AuthFlowTests')
+data.setCell(4, 3, 2279);
+data.setCell(5, 0, 5)
+data.setCell(5, 1, 'validLoginShowsAccountMenu')
+data.setCell(5, 2, 'com.ecommerce.automation.tests.AuthFlowTests')
+data.setCell(5, 3, 2024);
 window.suiteTableData['Default_suite']= { tableData: data, tableDiv: 'times-div-Default_suite'}
 return data;
 }
               </script>
-              <span class="suite-total-time">Total running time: 13 seconds</span>
+              <span class="suite-total-time">Total running time: 19 seconds</span>
               <div id="times-div-Default_suite">
               </div> <!-- times-div-Default_suite -->
             </div> <!-- times-div -->
@@ -286,47 +322,71 @@ return data;
               </div> <!-- configuration-method before -->
               <div class="test-method">
                 <span class="method-name">invalidLoginShowsError</span>
-                <span class="method-start">2230 ms</span>
+                <span class="method-start">3462 ms</span>
               </div> <!-- test-method -->
               <div class="configuration-method after">
                 <span class="method-name">tearDown</span>
-                <span class="method-start">5493 ms</span>
+                <span class="method-start">7175 ms</span>
               </div> <!-- configuration-method after -->
               <div class="configuration-method before">
                 <span class="method-name">setUp</span>
-                <span class="method-start">5792 ms</span>
+                <span class="method-start">7489 ms</span>
               </div> <!-- configuration-method before -->
               <div class="test-method">
                 <span class="method-name">invalidRegistrationShowsError</span>
-                <span class="method-start">6866 ms</span>
+                <span class="method-start">8685 ms</span>
               </div> <!-- test-method -->
               <div class="configuration-method after">
                 <span class="method-name">tearDown</span>
-                <span class="method-start">8614 ms</span>
+                <span class="method-start">10966 ms</span>
               </div> <!-- configuration-method after -->
               <div class="configuration-method before">
                 <span class="method-name">setUp</span>
-                <span class="method-start">8914 ms</span>
-              </div> <!-- configuration-method before -->
-              <div class="test-method">
-                <span class="method-name">validLoginShowsAccountMenu</span>
-                <span class="method-start">10120 ms</span>
-              </div> <!-- test-method -->
-              <div class="configuration-method after">
-                <span class="method-name">tearDown</span>
-                <span class="method-start">15328 ms</span>
-              </div> <!-- configuration-method after -->
-              <div class="configuration-method before">
-                <span class="method-name">setUp</span>
-                <span class="method-start">17345 ms</span>
+                <span class="method-start">11315 ms</span>
               </div> <!-- configuration-method before -->
               <div class="test-method">
                 <span class="method-name">validRegistrationRedirectsToLogin</span>
-                <span class="method-start">18491 ms</span>
+                <span class="method-start">12651 ms</span>
               </div> <!-- test-method -->
               <div class="configuration-method after">
                 <span class="method-name">tearDown</span>
-                <span class="method-start">22140 ms</span>
+                <span class="method-start">16714 ms</span>
+              </div> <!-- configuration-method after -->
+              <div class="configuration-method before">
+                <span class="method-name">setUp</span>
+                <span class="method-start">17095 ms</span>
+              </div> <!-- configuration-method before -->
+              <div class="test-method">
+                <span class="method-name">validLoginShowsAccountMenu</span>
+                <span class="method-start">18311 ms</span>
+              </div> <!-- test-method -->
+              <div class="configuration-method after">
+                <span class="method-name">tearDown</span>
+                <span class="method-start">20337 ms</span>
+              </div> <!-- configuration-method after -->
+              <div class="configuration-method before">
+                <span class="method-name">setUp</span>
+                <span class="method-start">20711 ms</span>
+              </div> <!-- configuration-method before -->
+              <div class="test-method">
+                <span class="method-name">logoutClearsSessionAndRedirectsToLogin</span>
+                <span class="method-start">21884 ms</span>
+              </div> <!-- test-method -->
+              <div class="configuration-method after">
+                <span class="method-name">tearDown</span>
+                <span class="method-start">25599 ms</span>
+              </div> <!-- configuration-method after -->
+              <div class="configuration-method before">
+                <span class="method-name">setUp</span>
+                <span class="method-start">25941 ms</span>
+              </div> <!-- configuration-method before -->
+              <div class="test-method">
+                <span class="method-name">loggedOutSessionCannotAccessProtectedPage</span>
+                <span class="method-start">27178 ms</span>
+              </div> <!-- test-method -->
+              <div class="configuration-method after">
+                <span class="method-name">tearDown</span>
+                <span class="method-start">31317 ms</span>
               </div> <!-- configuration-method after -->
           </div> <!-- main-panel-content rounded-window-bottom -->
         </div> <!-- panel -->
