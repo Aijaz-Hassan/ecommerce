@@ -1,32 +1,29 @@
 package com.ecommerce.automation.tests;
 
 import com.ecommerce.automation.base.BaseTest;
+import com.ecommerce.automation.pages.AdminDashboardPage;
 import com.ecommerce.automation.pages.LoginPage;
 import com.ecommerce.automation.pages.RegisterPage;
-import java.time.Instant;
+import com.ecommerce.automation.support.AuthTestHelper;
+import com.ecommerce.automation.support.TestUser;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class AuthFlowTests extends BaseTest {
-    private static final String VALID_PASSWORD = "Test12345";
-    private static TestUser registeredUser;
+    private static TestUser registeredCustomer;
 
     @Test(priority = 1, description = "Login page should show an error for invalid credentials")
     public void invalidLoginShowsError() {
-        LoginPage loginPage = new LoginPage(driver)
-                .open(baseUrl)
-                .login("missing.user@example.com", "Wrong12345");
+        LoginPage loginPage = auth()
+                .loginWithCredentials("missing.user@example.com", "Wrong12345");
 
         Assert.assertFalse(loginPage.errorText().isBlank(), "Invalid login should show an error message.");
     }
 
     @Test(priority = 2, description = "Registration should show an error for invalid details")
     public void invalidRegistrationShowsError() {
-        TestUser user = uniqueUser();
-
-        RegisterPage registerPage = new RegisterPage(driver)
-                .open(baseUrl)
-                .registerExpectingError(user.fullName(), user.email(), "short1");
+        RegisterPage registerPage = auth()
+                .registerExpectingError(AuthTestHelper.invalidCustomer());
 
         Assert.assertTrue(registerPage.isOnRegisterPage(), "Invalid registration should keep the user on register page.");
         Assert.assertFalse(registerPage.errorText().isBlank(), "Invalid registration should show an error message.");
@@ -34,34 +31,40 @@ public class AuthFlowTests extends BaseTest {
 
     @Test(priority = 3, description = "Registration should succeed with valid details")
     public void validRegistrationRedirectsToLogin() {
-        registeredUser = uniqueUser();
+        registeredCustomer = AuthTestHelper.uniqueCustomer();
 
-        LoginPage loginPage = new RegisterPage(driver)
-                .open(baseUrl)
-                .register(registeredUser.fullName(), registeredUser.email(), VALID_PASSWORD);
+        LoginPage loginPage = auth().register(registeredCustomer);
 
         Assert.assertTrue(loginPage.isOnLoginPage(), "Valid registration should redirect to the login page.");
     }
 
-    @Test(priority = 4, description = "Login should succeed with valid credentials")
-    public void validLoginShowsAccountMenu() {
-        TestUser user = ensureRegisteredUser();
+    @Test(priority = 4, description = "Customer login should succeed with valid credentials")
+    public void userLoginUsesSharedLoginUtility() {
+        TestUser user = ensureRegisteredCustomer();
 
-        LoginPage loginPage = new LoginPage(driver)
-                .open(baseUrl)
-                .login(user.email(), VALID_PASSWORD);
+        LoginPage loginPage = auth().loginAs(user);
 
         Assert.assertTrue(loginPage.isAccountMenuVisible(), "Account menu should be visible after login.");
         Assert.assertTrue(loginPage.accountName().contains(user.fullName()), "Logged-in user's full name should be shown.");
     }
 
-    @Test(priority = 5, description = "Logout should end the active user session")
-    public void logoutClearsSessionAndRedirectsToLogin() {
-        TestUser user = ensureRegisteredUser();
+    @Test(priority = 5, description = "Admin login should succeed through the same login utility")
+    public void adminLoginUsesSharedLoginUtility() {
+        TestUser admin = AuthTestHelper.defaultAdmin();
 
-        LoginPage loginPage = new LoginPage(driver)
-                .open(baseUrl)
-                .login(user.email(), VALID_PASSWORD);
+        AdminDashboardPage adminDashboardPage = auth()
+                .loginAs(admin)
+                .adminDashboard();
+
+        Assert.assertTrue(adminDashboardPage.isOpen(), "Admin users should land on the admin dashboard.");
+        Assert.assertTrue(adminDashboardPage.profileName().contains(admin.fullName()), "Admin profile name should be visible.");
+    }
+
+    @Test(priority = 6, description = "Logout should end the active user session")
+    public void logoutClearsSessionAndRedirectsToLogin() {
+        TestUser user = ensureRegisteredCustomer();
+
+        LoginPage loginPage = auth().loginAs(user);
 
         Assert.assertTrue(loginPage.hasStoredSession(), "Login should store the active session.");
 
@@ -71,13 +74,12 @@ public class AuthFlowTests extends BaseTest {
         Assert.assertFalse(loginPage.hasStoredSession(), "Logout should clear token and user session data.");
     }
 
-    @Test(priority = 6, description = "Logged-out users should be redirected away from protected pages")
+    @Test(priority = 7, description = "Logged-out users should be redirected away from protected pages")
     public void loggedOutSessionCannotAccessProtectedPage() {
-        TestUser user = ensureRegisteredUser();
+        TestUser user = ensureRegisteredCustomer();
 
-        LoginPage loginPage = new LoginPage(driver)
-                .open(baseUrl)
-                .login(user.email(), VALID_PASSWORD)
+        LoginPage loginPage = auth()
+                .loginAs(user)
                 .logout()
                 .openProtectedPageExpectingLogin(baseUrl, "/profile");
 
@@ -85,24 +87,15 @@ public class AuthFlowTests extends BaseTest {
         Assert.assertFalse(loginPage.hasStoredSession(), "Logged-out users should not keep local session data.");
     }
 
-    private TestUser ensureRegisteredUser() {
-        if (registeredUser == null) {
-            registeredUser = uniqueUser();
-            new RegisterPage(driver)
-                    .open(baseUrl)
-                    .register(registeredUser.fullName(), registeredUser.email(), VALID_PASSWORD);
+    private AuthTestHelper auth() {
+        return new AuthTestHelper(driver, baseUrl);
+    }
+
+    private TestUser ensureRegisteredCustomer() {
+        if (registeredCustomer == null) {
+            registeredCustomer = AuthTestHelper.uniqueCustomer();
+            auth().register(registeredCustomer);
         }
-        return registeredUser;
-    }
-
-    private TestUser uniqueUser() {
-        String uniqueId = String.valueOf(Instant.now().toEpochMilli());
-        return new TestUser(
-                "Selenium User " + uniqueId,
-                "selenium.user." + uniqueId + "@example.com"
-        );
-    }
-
-    private record TestUser(String fullName, String email) {
+        return registeredCustomer;
     }
 }

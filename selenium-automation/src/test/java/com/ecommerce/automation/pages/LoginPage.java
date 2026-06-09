@@ -63,6 +63,10 @@ public class LoginPage {
         return driver.getCurrentUrl().contains("/login");
     }
 
+    public AdminDashboardPage adminDashboard() {
+        return new AdminDashboardPage(driver).waitUntilOpen();
+    }
+
     public String accountName() {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(accountButton)).getText();
     }
