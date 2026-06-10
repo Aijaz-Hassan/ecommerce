@@ -3,13 +3,13 @@
 <suite name="Failed suite [Default suite]" guice-stage="DEVELOPMENT">
   <test thread-count="5" name="Default test(failed)">
     <classes>
-      <class name="com.ecommerce.automation.tests.AuthFlowTests">
+      <class name="com.ecommerce.automation.tests.ProductSearchTests">
         <methods>
           <include name="setUp"/>
-          <include name="adminLoginUsesSharedLoginUtility"/>
+          <include name="productListingShowsVisibleProducts"/>
           <include name="tearDown"/>
         </methods>
-      </class> <!-- com.ecommerce.automation.tests.AuthFlowTests -->
+      </class> <!-- com.ecommerce.automation.tests.ProductSearchTests -->
     </classes>
   </test> <!-- Default test(failed) -->
 </suite> <!-- Failed suite [Default suite] -->
