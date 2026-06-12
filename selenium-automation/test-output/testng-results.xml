@@ -1,45 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testng-results ignored="0" total="3" passed="3" failed="0" skipped="0">
+<testng-results ignored="0" total="4" passed="4" failed="0" skipped="0">
   <reporter-output>
   </reporter-output>
-  <suite started-at="2026-06-10T16:10:33 IST" name="Default suite" finished-at="2026-06-10T16:10:45 IST" duration-ms="12000">
+  <suite started-at="2026-06-12T08:40:59 IST" name="Default suite" finished-at="2026-06-12T08:41:18 IST" duration-ms="18891">
     <groups>
     </groups>
-    <test started-at="2026-06-10T16:10:33 IST" name="Default test" finished-at="2026-06-10T16:10:45 IST" duration-ms="12000">
+    <test started-at="2026-06-12T08:40:59 IST" name="Default test" finished-at="2026-06-12T08:41:18 IST" duration-ms="18891">
       <class name="com.ecommerce.automation.tests.ProductSearchTests">
-        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.ProductSearchTests@1bd4fdd]" started-at="2026-06-10T16:10:33 IST" name="setUp" finished-at="2026-06-10T16:10:36 IST" duration-ms="2323" status="PASS">
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.ProductSearchTests@74e52303]" started-at="2026-06-12T08:41:00 IST" name="setUp" finished-at="2026-06-12T08:41:02 IST" duration-ms="2475" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- setUp -->
-        <test-method signature="productCardsShowRequiredDetails()[pri:0, instance:com.ecommerce.automation.tests.ProductSearchTests@1bd4fdd]" started-at="2026-06-10T16:10:36 IST" name="productCardsShowRequiredDetails" description="Visible product cards should include image, name, price, stock, and details action" finished-at="2026-06-10T16:10:38 IST" duration-ms="2840" status="PASS">
+        <test-method signature="productCardsShowRequiredDetails()[pri:0, instance:com.ecommerce.automation.tests.ProductSearchTests@74e52303]" started-at="2026-06-12T08:41:02 IST" name="productCardsShowRequiredDetails" description="Visible product cards should include image, name, price, stock, and details action" finished-at="2026-06-12T08:41:05 IST" duration-ms="3086" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- productCardsShowRequiredDetails -->
-        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.ProductSearchTests@1bd4fdd]" started-at="2026-06-10T16:10:38 IST" name="tearDown" finished-at="2026-06-10T16:10:39 IST" duration-ms="514" status="PASS">
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.ProductSearchTests@74e52303]" started-at="2026-06-12T08:41:05 IST" name="tearDown" finished-at="2026-06-12T08:41:06 IST" duration-ms="523" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- tearDown -->
-        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.ProductSearchTests@1bd4fdd]" started-at="2026-06-10T16:10:39 IST" name="setUp" finished-at="2026-06-10T16:10:40 IST" duration-ms="1128" status="PASS">
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.ProductSearchTests@74e52303]" started-at="2026-06-12T08:41:06 IST" name="setUp" finished-at="2026-06-12T08:41:07 IST" duration-ms="1321" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- setUp -->
-        <test-method signature="productListingShowsVisibleProducts()[pri:0, instance:com.ecommerce.automation.tests.ProductSearchTests@1bd4fdd]" started-at="2026-06-10T16:10:40 IST" name="productListingShowsVisibleProducts" description="Product listing page should show visible products" finished-at="2026-06-10T16:10:42 IST" duration-ms="1439" status="PASS">
+        <test-method signature="productDetailsPageShowsSelectedProductDetails()[pri:0, instance:com.ecommerce.automation.tests.ProductSearchTests@74e52303]" started-at="2026-06-12T08:41:07 IST" name="productDetailsPageShowsSelectedProductDetails" description="Details button should navigate to product details page with matching product data" finished-at="2026-06-12T08:41:10 IST" duration-ms="2996" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- productDetailsPageShowsSelectedProductDetails -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.ProductSearchTests@74e52303]" started-at="2026-06-12T08:41:10 IST" name="tearDown" finished-at="2026-06-12T08:41:10 IST" duration-ms="398" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.ProductSearchTests@74e52303]" started-at="2026-06-12T08:41:10 IST" name="setUp" finished-at="2026-06-12T08:41:12 IST" duration-ms="1219" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method signature="productListingShowsVisibleProducts()[pri:0, instance:com.ecommerce.automation.tests.ProductSearchTests@74e52303]" started-at="2026-06-12T08:41:12 IST" name="productListingShowsVisibleProducts" description="Product listing page should show visible products" finished-at="2026-06-12T08:41:13 IST" duration-ms="1771" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- productListingShowsVisibleProducts -->
-        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.ProductSearchTests@1bd4fdd]" started-at="2026-06-10T16:10:42 IST" name="tearDown" finished-at="2026-06-10T16:10:42 IST" duration-ms="227" status="PASS">
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.ProductSearchTests@74e52303]" started-at="2026-06-12T08:41:13 IST" name="tearDown" finished-at="2026-06-12T08:41:14 IST" duration-ms="414" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- tearDown -->
-        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.ProductSearchTests@1bd4fdd]" started-at="2026-06-10T16:10:42 IST" name="setUp" finished-at="2026-06-10T16:10:43 IST" duration-ms="1074" status="PASS">
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.ProductSearchTests@74e52303]" started-at="2026-06-12T08:41:14 IST" name="setUp" finished-at="2026-06-12T08:41:15 IST" duration-ms="1408" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- setUp -->
-        <test-method signature="productSearchFindsCategoryProducts()[pri:0, instance:com.ecommerce.automation.tests.ProductSearchTests@1bd4fdd]" started-at="2026-06-10T16:10:43 IST" name="productSearchFindsCategoryProducts" description="Product page search should find products by category" finished-at="2026-06-10T16:10:45 IST" duration-ms="2078" status="PASS">
+        <test-method signature="productSearchFindsCategoryProducts()[pri:0, instance:com.ecommerce.automation.tests.ProductSearchTests@74e52303]" started-at="2026-06-12T08:41:15 IST" name="productSearchFindsCategoryProducts" description="Product page search should find products by category" finished-at="2026-06-12T08:41:18 IST" duration-ms="2662" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- productSearchFindsCategoryProducts -->
-        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.ProductSearchTests@1bd4fdd]" started-at="2026-06-10T16:10:45 IST" name="tearDown" finished-at="2026-06-10T16:10:45 IST" duration-ms="305" status="PASS">
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.ProductSearchTests@74e52303]" started-at="2026-06-12T08:41:18 IST" name="tearDown" finished-at="2026-06-12T08:41:18 IST" duration-ms="508" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- tearDown -->

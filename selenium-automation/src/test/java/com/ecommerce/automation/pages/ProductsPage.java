@@ -3,6 +3,7 @@ package com.ecommerce.automation.pages;
 import java.time.Duration;
 import java.util.List;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
@@ -60,6 +61,22 @@ public class ProductsPage {
         return visibleProducts().stream()
                 .map((product) -> product.findElement(productName).getText())
                 .anyMatch((name) -> name.equalsIgnoreCase(expectedName));
+    }
+
+    public String firstProductName() {
+        return visibleProducts().get(0).findElement(productName).getText().trim();
+    }
+
+    public String firstProductPrice() {
+        return visibleProducts().get(0).findElement(productPrice).getText().trim();
+    }
+
+    public ProductDetailsPage openFirstProductDetails() {
+        WebElement details = visibleProducts().get(0).findElement(detailsButton);
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", details);
+        wait.until(ExpectedConditions.elementToBeClickable(details));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", details);
+        return new ProductDetailsPage(driver).waitUntilOpen();
     }
 
     public boolean firstProductIsVisible() {

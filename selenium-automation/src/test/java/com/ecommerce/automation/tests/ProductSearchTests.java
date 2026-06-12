@@ -1,6 +1,7 @@
 package com.ecommerce.automation.tests;
 
 import com.ecommerce.automation.base.BaseTest;
+import com.ecommerce.automation.pages.ProductDetailsPage;
 import com.ecommerce.automation.pages.ProductsPage;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -34,5 +35,19 @@ public class ProductSearchTests extends BaseTest {
 
         Assert.assertTrue(productsPage.visibleProductCount() > 0, "Category search should show matching products.");
         Assert.assertTrue(productsPage.firstProductIsVisible(), "Category search should show visible product cards.");
+    }
+
+    @Test(description = "Details button should navigate to product details page with matching product data")
+    public void productDetailsPageShowsSelectedProductDetails() {
+        ProductsPage productsPage = new ProductsPage(driver).open(baseUrl);
+        String expectedName = productsPage.firstProductName();
+        String expectedPrice = productsPage.firstProductPrice();
+
+        ProductDetailsPage detailsPage = productsPage.openFirstProductDetails();
+
+        Assert.assertTrue(detailsPage.isOpen(), "Details button should navigate to the product details page.");
+        Assert.assertEquals(detailsPage.productName(), expectedName, "Details page should show the selected product name.");
+        Assert.assertEquals(detailsPage.price(), expectedPrice, "Details page should show the selected product price.");
+        Assert.assertTrue(detailsPage.hasVisibleProductDetails(), "Details page should show image, price, stock, and description.");
     }
 }

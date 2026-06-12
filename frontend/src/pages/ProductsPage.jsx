@@ -350,7 +350,7 @@ export default function ProductsPage() {
                           Add to Cart
                         </button>
                       )}
-                      <button className="ghost-button" type="button" onClick={() => openDetails(product)}>Details</button>
+                      <button className="ghost-button" type="button" onClick={() => navigate(`/products/${product.id}`)}>Details</button>
                     </div>
                   </div>
                 </article>
