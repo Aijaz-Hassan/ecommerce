@@ -23,6 +23,10 @@ public class ProductsPage {
     private final By productPrice = By.cssSelector(".price-row strong");
     private final By stockText = By.cssSelector(".stock-text");
     private final By detailsButton = By.xpath(".//button[normalize-space()='Details']");
+    private final By quickViewButton = By.cssSelector(".quick-view-pill");
+    private final By quickViewModal = By.cssSelector(".product-detail-modal");
+    private final By quickViewTitle = By.cssSelector(".product-detail-modal h2");
+    private final By quickViewCloseButton = By.cssSelector(".quick-view-close");
 
     public ProductsPage(WebDriver driver) {
         this.driver = driver;
@@ -57,6 +61,13 @@ public class ProductsPage {
                 .orElseThrow(() -> new AssertionError("No product categories are available."));
     }
 
+    public ProductsPage filterByCategory(String category) {
+        Select categorySelect = new Select(wait.until(ExpectedConditions.elementToBeClickable(categoryDropdown)));
+        categorySelect.selectByVisibleText(category);
+        wait.until(driver -> !driver.findElements(productCards).isEmpty());
+        return this;
+    }
+
     public boolean hasProductNamed(String expectedName) {
         return visibleProducts().stream()
                 .map((product) -> product.findElement(productName).getText())
@@ -67,16 +78,40 @@ public class ProductsPage {
         return visibleProducts().get(0).findElement(productName).getText().trim();
     }
 
+    public String partialKeywordFromFirstProductName() {
+        String firstWord = firstProductName().split("\\s+")[0];
+        return firstWord.substring(0, Math.min(4, firstWord.length()));
+    }
+
     public String firstProductPrice() {
         return visibleProducts().get(0).findElement(productPrice).getText().trim();
     }
 
     public ProductDetailsPage openFirstProductDetails() {
         WebElement details = visibleProducts().get(0).findElement(detailsButton);
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", details);
-        wait.until(ExpectedConditions.elementToBeClickable(details));
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", details);
+        click(details);
         return new ProductDetailsPage(driver).waitUntilOpen();
+    }
+
+    public ProductsPage openFirstQuickView() {
+        WebElement quickView = visibleProducts().get(0).findElement(quickViewButton);
+        click(quickView);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(quickViewModal));
+        return this;
+    }
+
+    public String quickViewProductName() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(quickViewTitle)).getText().trim();
+    }
+
+    public ProductsPage closeQuickView() {
+        click(wait.until(ExpectedConditions.elementToBeClickable(quickViewCloseButton)));
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(quickViewModal));
+        return this;
+    }
+
+    public boolean isQuickViewClosed() {
+        return driver.findElements(quickViewModal).isEmpty();
     }
 
     public boolean firstProductIsVisible() {
@@ -108,5 +143,10 @@ public class ProductsPage {
     private boolean hasImageSource(WebElement image) {
         String source = image.getAttribute("src");
         return source != null && !source.trim().isEmpty();
+    }
+
+    private void click(WebElement element) {
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", element);
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
     }
 }
