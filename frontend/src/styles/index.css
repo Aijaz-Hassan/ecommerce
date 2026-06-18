@@ -210,6 +210,7 @@ select {
 
 .account-menu {
   position: relative;
+  z-index: 70;
 }
 
 .account-button {
@@ -259,6 +260,7 @@ select {
   position: absolute;
   right: 0;
   top: calc(100% + 0.65rem);
+  z-index: 75;
   width: 14rem;
   display: grid;
   gap: 0.25rem;

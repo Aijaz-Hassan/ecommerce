@@ -23,10 +23,12 @@ public class ProductsPage {
     private final By productPrice = By.cssSelector(".price-row strong");
     private final By stockText = By.cssSelector(".stock-text");
     private final By detailsButton = By.xpath(".//button[normalize-space()='Details']");
+    private final By addToCartButton = By.xpath(".//button[normalize-space()='Add to Cart']");
     private final By quickViewButton = By.cssSelector(".quick-view-pill");
     private final By quickViewModal = By.cssSelector(".product-detail-modal");
     private final By quickViewTitle = By.cssSelector(".product-detail-modal h2");
     private final By quickViewCloseButton = By.cssSelector(".quick-view-close");
+    private final By toastMessage = By.cssSelector(".floating-toast");
 
     public ProductsPage(WebDriver driver) {
         this.driver = driver;
@@ -78,6 +80,10 @@ public class ProductsPage {
         return visibleProducts().get(0).findElement(productName).getText().trim();
     }
 
+    public String firstAddableProductName() {
+        return firstAddableProduct().findElement(productName).getText().trim();
+    }
+
     public String partialKeywordFromFirstProductName() {
         String firstWord = firstProductName().split("\\s+")[0];
         return firstWord.substring(0, Math.min(4, firstWord.length()));
@@ -91,6 +97,18 @@ public class ProductsPage {
         WebElement details = visibleProducts().get(0).findElement(detailsButton);
         click(details);
         return new ProductDetailsPage(driver).waitUntilOpen();
+    }
+
+    public ProductsPage addFirstProductToCart() {
+        String expectedProductName = firstAddableProductName();
+        WebElement button = firstAddableProduct().findElement(addToCartButton);
+        click(button);
+        wait.until(ExpectedConditions.textToBePresentInElementLocated(toastMessage, expectedProductName + " added to cart."));
+        return this;
+    }
+
+    public CartPage openCart(String baseUrl) {
+        return new CartPage(driver).open(baseUrl);
     }
 
     public ProductsPage openFirstQuickView() {
@@ -124,6 +142,14 @@ public class ProductsPage {
 
     private List<WebElement> visibleProducts() {
         return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(productCards));
+    }
+
+    private WebElement firstAddableProduct() {
+        return visibleProducts().stream()
+                .filter((product) -> !product.findElements(addToCartButton).isEmpty())
+                .filter((product) -> product.findElement(addToCartButton).isEnabled())
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("No addable product is available."));
     }
 
     private boolean productHasRequiredDetails(WebElement product) {

@@ -16,6 +16,11 @@ public class LoginPage {
     private final By passwordInput = By.name("password");
     private final By errorMessage = By.cssSelector(".error-text");
     private final By accountButton = By.cssSelector(".account-button");
+    private final By accountDropdown = By.cssSelector(".account-dropdown.open");
+    private final By profileLink = By.xpath("//div[contains(@class,'account-dropdown')]//a[normalize-space()='Profile']");
+    private final By ordersLink = By.xpath("//div[contains(@class,'account-dropdown')]//a[normalize-space()='Orders']");
+    private final By settingsLink = By.xpath("//div[contains(@class,'account-dropdown')]//a[normalize-space()='Settings']");
+    private final By passwordLink = By.xpath("//div[contains(@class,'account-dropdown')]//a[normalize-space()='Password']");
     private final By logoutMenuButton = By.xpath("//div[contains(@class,'account-dropdown')]//button[normalize-space()='Logout']");
     private final By confirmLogoutButton = By.xpath("//div[@role='dialog']//button[normalize-space()='Logout']");
 
@@ -34,6 +39,9 @@ public class LoginPage {
         wait.until(ExpectedConditions.elementToBeClickable(emailInput)).sendKeys(email);
         driver.findElement(passwordInput).sendKeys(password, Keys.ENTER);
         wait.until(driver -> !driver.findElements(accountButton).isEmpty() || !driver.findElements(errorMessage).isEmpty());
+        if (driver.findElements(errorMessage).isEmpty()) {
+            wait.until(driver -> hasStoredSession());
+        }
         return this;
     }
 
@@ -69,6 +77,20 @@ public class LoginPage {
 
     public String accountName() {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(accountButton)).getText();
+    }
+
+    public LoginPage openAccountDropdown() {
+        wait.until(ExpectedConditions.elementToBeClickable(accountButton)).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(accountDropdown));
+        return this;
+    }
+
+    public boolean hasCustomerAccountOptions() {
+        return driver.findElement(profileLink).isDisplayed()
+                && driver.findElement(ordersLink).isDisplayed()
+                && driver.findElement(settingsLink).isDisplayed()
+                && driver.findElement(passwordLink).isDisplayed()
+                && driver.findElement(logoutMenuButton).isDisplayed();
     }
 
     public boolean hasStoredSession() {

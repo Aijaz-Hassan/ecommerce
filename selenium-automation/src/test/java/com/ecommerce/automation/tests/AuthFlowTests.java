@@ -49,6 +49,20 @@ public class AuthFlowTests extends BaseTest {
     }
 
     @Test(priority = 5, description = "Admin login should succeed through the same login utility")
+    public void customerAccountDropdownShowsAllOptions() {
+        TestUser user = ensureRegisteredCustomer();
+
+        LoginPage loginPage = auth()
+                .loginAs(user)
+                .openAccountDropdown();
+
+        Assert.assertTrue(
+                loginPage.hasCustomerAccountOptions(),
+                "Account dropdown should show Profile, Orders, Settings, Password, and Logout options."
+        );
+    }
+
+    @Test(priority = 6, description = "Admin login should succeed through the same login utility")
     public void adminLoginUsesSharedLoginUtility() {
         TestUser admin = AuthTestHelper.defaultAdmin();
 
@@ -60,7 +74,7 @@ public class AuthFlowTests extends BaseTest {
         Assert.assertFalse(adminDashboardPage.profileName().isBlank(), "Admin profile name should be visible.");
     }
 
-    @Test(priority = 6, description = "Logout should end the active user session")
+    @Test(priority = 7, description = "Logout should end the active user session")
     public void logoutClearsSessionAndRedirectsToLogin() {
         TestUser user = ensureRegisteredCustomer();
 
@@ -74,7 +88,7 @@ public class AuthFlowTests extends BaseTest {
         Assert.assertFalse(loginPage.hasStoredSession(), "Logout should clear token and user session data.");
     }
 
-    @Test(priority = 7, description = "Logged-out users should be redirected away from protected pages")
+    @Test(priority = 8, description = "Logged-out users should be redirected away from protected pages")
     public void loggedOutSessionCannotAccessProtectedPage() {
         TestUser user = ensureRegisteredCustomer();
 

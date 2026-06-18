@@ -3,6 +3,7 @@ package com.ecommerce.store.config;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
+import java.util.List;
 import javax.sql.DataSource;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
@@ -23,8 +24,51 @@ public class CartTableMigrationConfig {
                 if (cartExists && !cartsExists) {
                     jdbcTemplate.execute("ALTER TABLE cart RENAME TO carts");
                 }
+
+                repairCartItemsForeignKey(jdbcTemplate);
             }
         };
+    }
+
+    private void repairCartItemsForeignKey(JdbcTemplate jdbcTemplate) {
+        List<String> oldForeignKeys = jdbcTemplate.queryForList(
+            """
+                SELECT CONSTRAINT_NAME
+                FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+                WHERE TABLE_SCHEMA = DATABASE()
+                  AND TABLE_NAME = 'cart_items'
+                  AND COLUMN_NAME = 'cart_id'
+                  AND REFERENCED_TABLE_NAME = 'cart'
+            """,
+            String.class
+        );
+
+        for (String foreignKey : oldForeignKeys) {
+            jdbcTemplate.execute("ALTER TABLE cart_items DROP FOREIGN KEY `" + foreignKey + "`");
+        }
+
+        if (!oldForeignKeys.isEmpty() && !hasCartItemsForeignKeyToCarts(jdbcTemplate)) {
+            jdbcTemplate.execute("""
+                ALTER TABLE cart_items
+                ADD CONSTRAINT fk_cart_items_cart_id
+                FOREIGN KEY (cart_id) REFERENCES carts(id)
+            """);
+        }
+    }
+
+    private boolean hasCartItemsForeignKeyToCarts(JdbcTemplate jdbcTemplate) {
+        Integer count = jdbcTemplate.queryForObject(
+            """
+                SELECT COUNT(*)
+                FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+                WHERE TABLE_SCHEMA = DATABASE()
+                  AND TABLE_NAME = 'cart_items'
+                  AND COLUMN_NAME = 'cart_id'
+                  AND REFERENCED_TABLE_NAME = 'carts'
+            """,
+            Integer.class
+        );
+        return count != null && count > 0;
     }
 
     private boolean tableExists(DatabaseMetaData metaData, String tableName) throws Exception {

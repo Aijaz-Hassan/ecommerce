@@ -22,7 +22,7 @@ public class BaseTest {
         boolean headless = Boolean.parseBoolean(System.getProperty("headless", "false"));
 
         driver = createDriver(browser, headless);
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         driver.manage().window().maximize();
     }
 

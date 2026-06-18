@@ -11,4 +11,19 @@
             <class name="com.ecommerce.automation.tests.ProductSearchTests"/>
         </classes>
     </test>
+    <test name="Cart Tests">
+        <classes>
+            <class name="com.ecommerce.automation.tests.CartTests"/>
+        </classes>
+    </test>
+    <test name="Checkout and Orders Tests">
+        <classes>
+            <class name="com.ecommerce.automation.tests.CheckoutAndOrdersTests"/>
+        </classes>
+    </test>
+    <test name="Customer Account Page Tests">
+        <classes>
+            <class name="com.ecommerce.automation.tests.CustomerAccountPagesTests"/>
+        </classes>
+    </test>
 </suite>

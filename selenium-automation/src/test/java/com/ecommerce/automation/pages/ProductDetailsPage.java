@@ -17,6 +17,8 @@ public class ProductDetailsPage {
     private final By detailsList = By.cssSelector(".details-list");
     private final By stockStatus = By.cssSelector(".buy-box-stock span");
     private final By buyBoxPrice = By.cssSelector(".buy-box-price");
+    private final By addToCartButton = By.xpath("//button[normalize-space()='Add to cart']");
+    private final By viewCartLink = By.xpath("//a[normalize-space()='View cart']");
 
     public ProductDetailsPage(WebDriver driver) {
         this.driver = driver;
@@ -51,6 +53,22 @@ public class ProductDetailsPage {
                 && !text(buyBoxPrice).isBlank()
                 && image.isDisplayed()
                 && hasImageSource(image);
+    }
+
+    public ProductDetailsPage addToCart() {
+        String expectedProductName = productName();
+        wait.until(ExpectedConditions.elementToBeClickable(addToCartButton)).click();
+        String alertText = wait.until(ExpectedConditions.alertIsPresent()).getText();
+        if (!alertText.contains(expectedProductName) || !alertText.contains("added to cart")) {
+            throw new AssertionError("Unexpected add-to-cart alert: " + alertText);
+        }
+        driver.switchTo().alert().accept();
+        return this;
+    }
+
+    public CartPage viewCart() {
+        wait.until(ExpectedConditions.elementToBeClickable(viewCartLink)).click();
+        return new CartPage(driver).waitUntilOpen();
     }
 
     private String text(By locator) {
