@@ -65,4 +65,12 @@ public class AuthTestHelper {
                 "12345678qwerty"
         );
     }
+
+    public static TestUser defaultCustomer() {
+        return new TestUser(
+                System.getProperty("customerFullName", "Lumen Lane Customer"),
+                System.getProperty("customerEmail", "customer@lumenlane.test"),
+                System.getProperty("customerPassword", "Customer12345")
+        );
+    }
 }

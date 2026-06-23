@@ -34,6 +34,12 @@ const hasAddressContent = (address) =>
 const hasRequiredAddressFields = (address) =>
   ["recipientName", "phoneNumber", "addressLine1", "city", "state", "postalCode", "country"].every((field) => String(address?.[field] || "").trim());
 
+const isTenDigitPhone = (value) => /^\d{10}$/.test(String(value || "").trim());
+
+const isValidIndianPincode = (value) => /^[1-9]\d{5}$/.test(String(value || "").trim());
+
+const isSupportedCountry = (value) => String(value || "").trim().toLowerCase() === "india";
+
 const readLegacyAddress = () => {
   try {
     const saved = window.localStorage.getItem(legacyAddressStorageKey);
@@ -188,7 +194,19 @@ export default function CartPage() {
     ];
 
     const missing = requiredFields.find(([field]) => !candidate[field]?.trim());
-    return missing ? missing[1] : "";
+    if (missing) {
+      return missing[1];
+    }
+    if (!isTenDigitPhone(candidate.phoneNumber)) {
+      return "Please enter a 10-digit phone number.";
+    }
+    if (!isValidIndianPincode(candidate.postalCode)) {
+      return "Please enter a valid 6-digit pincode.";
+    }
+    if (!isSupportedCountry(candidate.country)) {
+      return "Delivery is currently available only in India.";
+    }
+    return "";
   };
 
   const useSavedAddress = (savedAddress) => {

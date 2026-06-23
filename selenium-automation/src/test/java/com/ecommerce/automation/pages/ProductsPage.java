@@ -99,6 +99,12 @@ public class ProductsPage {
         return new ProductDetailsPage(driver).waitUntilOpen();
     }
 
+    public ProductDetailsPage openFirstAddableProductDetails() {
+        WebElement details = firstAddableProduct().findElement(detailsButton);
+        click(details);
+        return new ProductDetailsPage(driver).waitUntilOpen();
+    }
+
     public ProductsPage addFirstProductToCart() {
         String expectedProductName = firstAddableProductName();
         WebElement button = firstAddableProduct().findElement(addToCartButton);
