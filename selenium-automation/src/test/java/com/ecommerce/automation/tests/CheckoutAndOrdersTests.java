@@ -59,6 +59,7 @@ public class CheckoutAndOrdersTests extends BaseTest {
 
         cartPage.fillDeliveryAddress(customer.fullName());
         assertDeliveryFormValues(cartPage, customer.fullName());
+        assertOrderSummaryCalculation(cartPage);
 
         String paymentPrompt = cartPage.initiateCheckoutAndCancelPayment();
 
@@ -94,6 +95,21 @@ public class CheckoutAndOrdersTests extends BaseTest {
         Assert.assertEquals(cartPage.state(), "Jammu and Kashmir", "Checkout form should keep the state.");
         Assert.assertEquals(cartPage.postalCode(), "190001", "Checkout form should keep the postal code.");
         Assert.assertEquals(cartPage.country(), "India", "Checkout form should keep the country.");
+    }
+
+    private void assertOrderSummaryCalculation(CartPage cartPage) {
+        double expectedLineTotal = round(cartPage.firstItemUnitPrice() * cartPage.firstItemQuantity());
+        double expectedTax = round((cartPage.subtotal() - cartPage.discount()) * 0.18);
+        double expectedFinalTotal = round(cartPage.subtotal() - cartPage.discount() + cartPage.tax() + cartPage.shipping());
+
+        Assert.assertEquals(cartPage.firstItemLineTotal(), expectedLineTotal, 0.01, "Product line total should match price times quantity.");
+        Assert.assertEquals(cartPage.subtotal(), expectedLineTotal, 0.01, "Order subtotal should match the cart item total.");
+        Assert.assertEquals(cartPage.tax(), expectedTax, 0.01, "Order tax should be 18% of the discounted subtotal.");
+        Assert.assertEquals(cartPage.finalTotal(), expectedFinalTotal, 0.01, "Final total should match subtotal minus discount plus tax and shipping.");
+    }
+
+    private double round(double value) {
+        return Math.round(value * 100.0) / 100.0;
     }
 
     private TestUser loginAsDefaultCustomer() {

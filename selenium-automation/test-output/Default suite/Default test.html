@@ -55,11 +55,11 @@ function toggleAllBoxes() {
 <body>
 <h2 align='center'>Default test</h2><table border='1' align="center">
 <tr>
-<td>Tests passed/Failed/Skipped:</td><td>5/0/0</td>
+<td>Tests passed/Failed/Skipped:</td><td>22/0/0</td>
 </tr><tr>
-<td>Started on:</td><td>Tue Jun 23 18:32:12 IST 2026</td>
+<td>Started on:</td><td>Thu Jun 25 06:40:31 IST 2026</td>
 </tr>
-<tr><td>Total time:</td><td>144 seconds (144763 ms)</td>
+<tr><td>Total time:</td><td>159 seconds (159348 ms)</td>
 </tr><tr>
 <td>Included groups:</td><td></td>
 </tr><tr>
@@ -76,30 +76,115 @@ function toggleAllBoxes() {
 <td><b>Instance</b></td>
 </tr>
 <tr>
-<td title='com.ecommerce.automation.tests.CheckoutAndOrdersTests.checkoutRejectsInvalidPincode()'><b>checkoutRejectsInvalidPincode</b><br>Test class: com.ecommerce.automation.tests.CheckoutAndOrdersTests<br>Test method: Checkout should not start with an invalid pincode</td>
+<td title='com.ecommerce.automation.tests.RegisterExcelTests.validRegisterDataFromExcelShouldSucceed()'><b>validRegisterDataFromExcelShouldSucceed</b><br>Test class: com.ecommerce.automation.tests.RegisterExcelTests<br>Test method: Valid registration data from Excel should create accounts<br>Parameters: RegisterTestData[testCaseId=REG_VALID_003, caseType=positive, scenario=Register with hyphenated name, fullName=Sara-Jane Khan, email=selenium.valid003.1782349831754@example.com, password=Lane1234, expectedResult=success, expectedMessage=Registered successfully., shouldRedirectToLogin=true, notes=Hyphen is acceptable in full name text.]</td>
 <td></td>
-<td>24</td>
-<td>com.ecommerce.automation.tests.CheckoutAndOrdersTests@47af7f3d</td></tr>
+<td>8</td>
+<td>com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc</td></tr>
 <tr>
-<td title='com.ecommerce.automation.tests.CheckoutAndOrdersTests.checkoutRequiresRecipientName()'><b>checkoutRequiresRecipientName</b><br>Test class: com.ecommerce.automation.tests.CheckoutAndOrdersTests<br>Test method: Checkout should not start when recipient name is empty</td>
+<td title='com.ecommerce.automation.tests.RegisterExcelTests.validRegisterDataFromExcelShouldSucceed()'><b>validRegisterDataFromExcelShouldSucceed</b><br>Test class: com.ecommerce.automation.tests.RegisterExcelTests<br>Test method: Valid registration data from Excel should create accounts<br>Parameters: RegisterTestData[testCaseId=REG_VALID_006, caseType=positive, scenario=Register with uppercase email characters, fullName=Imran Dar, email=SELENIUM.VALID006.1782349831754@EXAMPLE.COM, password=Imran2026, expectedResult=success, expectedMessage=Registered successfully., shouldRedirectToLogin=true, notes=Backend normalizes email case.]</td>
 <td></td>
-<td>22</td>
-<td>com.ecommerce.automation.tests.CheckoutAndOrdersTests@47af7f3d</td></tr>
+<td>6</td>
+<td>com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc</td></tr>
 <tr>
-<td title='com.ecommerce.automation.tests.CheckoutAndOrdersTests.customerCanCheckoutAndViewOrderDetails()'><b>customerCanCheckoutAndViewOrderDetails</b><br>Test class: com.ecommerce.automation.tests.CheckoutAndOrdersTests<br>Test method: Customer can checkout and view the order</td>
+<td title='com.ecommerce.automation.tests.RegisterExcelTests.validRegisterDataFromExcelShouldSucceed()'><b>validRegisterDataFromExcelShouldSucceed</b><br>Test class: com.ecommerce.automation.tests.RegisterExcelTests<br>Test method: Valid registration data from Excel should create accounts<br>Parameters: RegisterTestData[testCaseId=REG_VALID_007, caseType=positive, scenario=Register with plus addressing, fullName=Nadia Sheikh, email=selenium.valid007+1782349831754@example.com, password=Nadia2026, expectedResult=success, expectedMessage=Registered successfully., shouldRedirectToLogin=true, notes=Email plus addressing should be valid.]</td>
 <td></td>
-<td>29</td>
-<td>com.ecommerce.automation.tests.CheckoutAndOrdersTests@47af7f3d</td></tr>
+<td>6</td>
+<td>com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc</td></tr>
 <tr>
-<td title='com.ecommerce.automation.tests.CheckoutAndOrdersTests.checkoutRejectsElevenDigitPhoneNumber()'><b>checkoutRejectsElevenDigitPhoneNumber</b><br>Test class: com.ecommerce.automation.tests.CheckoutAndOrdersTests<br>Test method: Checkout should not start with an 11-digit phone number</td>
+<td title='com.ecommerce.automation.tests.RegisterExcelTests.validRegisterDataFromExcelShouldSucceed()'><b>validRegisterDataFromExcelShouldSucceed</b><br>Test class: com.ecommerce.automation.tests.RegisterExcelTests<br>Test method: Valid registration data from Excel should create accounts<br>Parameters: RegisterTestData[testCaseId=REG_VALID_009, caseType=positive, scenario=Register with subdomain email, fullName=Mehak Ali, email=selenium.valid009.1782349831754@qa.example.com, password=Mehak2026, expectedResult=success, expectedMessage=Registered successfully., shouldRedirectToLogin=true, notes=Subdomain email should be valid.]</td>
 <td></td>
-<td>31</td>
-<td>com.ecommerce.automation.tests.CheckoutAndOrdersTests@47af7f3d</td></tr>
+<td>6</td>
+<td>com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc</td></tr>
 <tr>
-<td title='com.ecommerce.automation.tests.CheckoutAndOrdersTests.checkoutRejectsInvalidCountry()'><b>checkoutRejectsInvalidCountry</b><br>Test class: com.ecommerce.automation.tests.CheckoutAndOrdersTests<br>Test method: Checkout should not start with an unsupported country</td>
+<td title='com.ecommerce.automation.tests.RegisterExcelTests.invalidRegisterDataFromExcelShouldFail()'><b>invalidRegisterDataFromExcelShouldFail</b><br>Test class: com.ecommerce.automation.tests.RegisterExcelTests<br>Test method: Invalid registration data from Excel should show validation<br>Parameters: RegisterTestData[testCaseId=REG_INVALID_012, caseType=negative, scenario=Register with invalid email containing spaces, fullName=Space Email User, email=selenium invalid012@example.com, password=Test12345, expectedResult=failure, expectedMessage=Please enter a valid email, shouldRedirectToLogin=false, notes=Email cannot contain spaces.]</td>
 <td></td>
-<td>22</td>
-<td>com.ecommerce.automation.tests.CheckoutAndOrdersTests@47af7f3d</td></tr>
+<td>14</td>
+<td>com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc</td></tr>
+<tr>
+<td title='com.ecommerce.automation.tests.RegisterExcelTests.invalidRegisterDataFromExcelShouldFail()'><b>invalidRegisterDataFromExcelShouldFail</b><br>Test class: com.ecommerce.automation.tests.RegisterExcelTests<br>Test method: Invalid registration data from Excel should show validation<br>Parameters: RegisterTestData[testCaseId=REG_INVALID_001, caseType=negative, scenario=Register with empty full name, fullName=, email=selenium.invalid001.1782349831754@example.com, password=Test12345, expectedResult=failure, expectedMessage=Full name is required, shouldRedirectToLogin=false, notes=Required name validation.]</td>
+<td></td>
+<td>2</td>
+<td>com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc</td></tr>
+<tr>
+<td title='com.ecommerce.automation.tests.RegisterExcelTests.invalidRegisterDataFromExcelShouldFail()'><b>invalidRegisterDataFromExcelShouldFail</b><br>Test class: com.ecommerce.automation.tests.RegisterExcelTests<br>Test method: Invalid registration data from Excel should show validation<br>Parameters: RegisterTestData[testCaseId=REG_INVALID_005, caseType=negative, scenario=Register with malformed email missing domain, fullName=Invalid Email User, email=invalid@, password=Test12345, expectedResult=failure, expectedMessage=Please enter a valid email, shouldRedirectToLogin=false, notes=Email format validation.]</td>
+<td></td>
+<td>14</td>
+<td>com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc</td></tr>
+<tr>
+<td title='com.ecommerce.automation.tests.RegisterExcelTests.invalidRegisterDataFromExcelShouldFail()'><b>invalidRegisterDataFromExcelShouldFail</b><br>Test class: com.ecommerce.automation.tests.RegisterExcelTests<br>Test method: Invalid registration data from Excel should show validation<br>Parameters: RegisterTestData[testCaseId=REG_INVALID_009, caseType=negative, scenario=Register with numbers only password, fullName=Numbers Only User, email=selenium.invalid009.1782349831754@example.com, password=12345678, expectedResult=failure, expectedMessage=Password must contain at least one letter and one number, shouldRedirectToLogin=false, notes=Password needs at least one letter.]</td>
+<td></td>
+<td>1</td>
+<td>com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc</td></tr>
+<tr>
+<td title='com.ecommerce.automation.tests.RegisterExcelTests.invalidRegisterDataFromExcelShouldFail()'><b>invalidRegisterDataFromExcelShouldFail</b><br>Test class: com.ecommerce.automation.tests.RegisterExcelTests<br>Test method: Invalid registration data from Excel should show validation<br>Parameters: RegisterTestData[testCaseId=REG_INVALID_003, caseType=negative, scenario=Register with empty email, fullName=Invalid Email User, email=, password=Test12345, expectedResult=failure, expectedMessage=Email is required, shouldRedirectToLogin=false, notes=Required email validation.]</td>
+<td></td>
+<td>1</td>
+<td>com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc</td></tr>
+<tr>
+<td title='com.ecommerce.automation.tests.RegisterExcelTests.validRegisterDataFromExcelShouldSucceed()'><b>validRegisterDataFromExcelShouldSucceed</b><br>Test class: com.ecommerce.automation.tests.RegisterExcelTests<br>Test method: Valid registration data from Excel should create accounts<br>Parameters: RegisterTestData[testCaseId=REG_VALID_010, caseType=positive, scenario=Register with minimum 8-character password, fullName=Bilal Wani, email=selenium.valid010.1782349831754@example.com, password=Abcd1234, expectedResult=success, expectedMessage=Registered successfully., shouldRedirectToLogin=true, notes=Password is exactly 8 chars and contains letters and numbers.]</td>
+<td></td>
+<td>6</td>
+<td>com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc</td></tr>
+<tr>
+<td title='com.ecommerce.automation.tests.RegisterExcelTests.validRegisterDataFromExcelShouldSucceed()'><b>validRegisterDataFromExcelShouldSucceed</b><br>Test class: com.ecommerce.automation.tests.RegisterExcelTests<br>Test method: Valid registration data from Excel should create accounts<br>Parameters: RegisterTestData[testCaseId=REG_VALID_001, caseType=positive, scenario=Register with normal first and last name, fullName=Aaliya Mir, email=selenium.valid001.1782349831754@example.com, password=Test12345, expectedResult=success, expectedMessage=Registered successfully., shouldRedirectToLogin=true, notes=Replace {RUN_ID} with timestamp before running.]</td>
+<td></td>
+<td>7</td>
+<td>com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc</td></tr>
+<tr>
+<td title='com.ecommerce.automation.tests.RegisterExcelTests.validRegisterDataFromExcelShouldSucceed()'><b>validRegisterDataFromExcelShouldSucceed</b><br>Test class: com.ecommerce.automation.tests.RegisterExcelTests<br>Test method: Valid registration data from Excel should create accounts<br>Parameters: RegisterTestData[testCaseId=REG_VALID_004, caseType=positive, scenario=Register with apostrophe in name, fullName=Omar O'Neil, email=selenium.valid004.1782349831754@example.com, password=Cart9876, expectedResult=success, expectedMessage=Registered successfully., shouldRedirectToLogin=true, notes=Apostrophe is acceptable in full name text.]</td>
+<td></td>
+<td>6</td>
+<td>com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc</td></tr>
+<tr>
+<td title='com.ecommerce.automation.tests.RegisterExcelTests.validRegisterDataFromExcelShouldSucceed()'><b>validRegisterDataFromExcelShouldSucceed</b><br>Test class: com.ecommerce.automation.tests.RegisterExcelTests<br>Test method: Valid registration data from Excel should create accounts<br>Parameters: RegisterTestData[testCaseId=REG_VALID_008, caseType=positive, scenario=Register with dot in local email part, fullName=Kabir Hussain, email=selenium.valid.008.1782349831754@example.com, password=Kabir2026, expectedResult=success, expectedMessage=Registered successfully., shouldRedirectToLogin=true, notes=Dot in email local part should be valid.]</td>
+<td></td>
+<td>6</td>
+<td>com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc</td></tr>
+<tr>
+<td title='com.ecommerce.automation.tests.RegisterExcelTests.invalidRegisterDataFromExcelShouldFail()'><b>invalidRegisterDataFromExcelShouldFail</b><br>Test class: com.ecommerce.automation.tests.RegisterExcelTests<br>Test method: Invalid registration data from Excel should show validation<br>Parameters: RegisterTestData[testCaseId=REG_INVALID_002, caseType=negative, scenario=Register with spaces only in full name, fullName=, email=selenium.invalid002.1782349831754@example.com, password=Test12345, expectedResult=failure, expectedMessage=Full name is required, shouldRedirectToLogin=false, notes=NotBlank should reject spaces only.]</td>
+<td></td>
+<td>1</td>
+<td>com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc</td></tr>
+<tr>
+<td title='com.ecommerce.automation.tests.RegisterExcelTests.validRegisterDataFromExcelShouldSucceed()'><b>validRegisterDataFromExcelShouldSucceed</b><br>Test class: com.ecommerce.automation.tests.RegisterExcelTests<br>Test method: Valid registration data from Excel should create accounts<br>Parameters: RegisterTestData[testCaseId=REG_VALID_002, caseType=positive, scenario=Register with three-word full name, fullName=Rahul Kumar Sharma, email=selenium.valid002.1782349831754@example.com, password=Shop2026, expectedResult=success, expectedMessage=Registered successfully., shouldRedirectToLogin=true, notes=Valid password has letters and numbers.]</td>
+<td></td>
+<td>7</td>
+<td>com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc</td></tr>
+<tr>
+<td title='com.ecommerce.automation.tests.RegisterExcelTests.validRegisterDataFromExcelShouldSucceed()'><b>validRegisterDataFromExcelShouldSucceed</b><br>Test class: com.ecommerce.automation.tests.RegisterExcelTests<br>Test method: Valid registration data from Excel should create accounts<br>Parameters: RegisterTestData[testCaseId=REG_VALID_005, caseType=positive, scenario=Register with long readable name, fullName=Zoya Fatima Abdullah, email=selenium.valid005.1782349831754@example.com, password=Secure2026, expectedResult=success, expectedMessage=Registered successfully., shouldRedirectToLogin=true, notes=Long but realistic full name.]</td>
+<td></td>
+<td>6</td>
+<td>com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc</td></tr>
+<tr>
+<td title='com.ecommerce.automation.tests.RegisterExcelTests.invalidRegisterDataFromExcelShouldFail()'><b>invalidRegisterDataFromExcelShouldFail</b><br>Test class: com.ecommerce.automation.tests.RegisterExcelTests<br>Test method: Invalid registration data from Excel should show validation<br>Parameters: RegisterTestData[testCaseId=REG_INVALID_004, caseType=negative, scenario=Register with malformed email missing at sign, fullName=Invalid Email User, email=invalid.email.example.com, password=Test12345, expectedResult=failure, expectedMessage=Please enter a valid email, shouldRedirectToLogin=false, notes=Email format validation.]</td>
+<td></td>
+<td>14</td>
+<td>com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc</td></tr>
+<tr>
+<td title='com.ecommerce.automation.tests.RegisterExcelTests.invalidRegisterDataFromExcelShouldFail()'><b>invalidRegisterDataFromExcelShouldFail</b><br>Test class: com.ecommerce.automation.tests.RegisterExcelTests<br>Test method: Invalid registration data from Excel should show validation<br>Parameters: RegisterTestData[testCaseId=REG_INVALID_006, caseType=negative, scenario=Register with empty password, fullName=No Password User, email=selenium.invalid006.1782349831754@example.com, password=, expectedResult=failure, expectedMessage=Password, shouldRedirectToLogin=false, notes=Empty password should show any password validation message.]</td>
+<td></td>
+<td>1</td>
+<td>com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc</td></tr>
+<tr>
+<td title='com.ecommerce.automation.tests.RegisterExcelTests.invalidRegisterDataFromExcelShouldFail()'><b>invalidRegisterDataFromExcelShouldFail</b><br>Test class: com.ecommerce.automation.tests.RegisterExcelTests<br>Test method: Invalid registration data from Excel should show validation<br>Parameters: RegisterTestData[testCaseId=REG_INVALID_010, caseType=negative, scenario=Register with already existing seeded customer email, fullName=Duplicate User, email=customer@lumenlane.test, password=Test12345, expectedResult=failure, expectedMessage=An account with this email already exists, shouldRedirectToLogin=false, notes=Requires seeded customer to exist.]</td>
+<td></td>
+<td>1</td>
+<td>com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc</td></tr>
+<tr>
+<td title='com.ecommerce.automation.tests.RegisterExcelTests.invalidRegisterDataFromExcelShouldFail()'><b>invalidRegisterDataFromExcelShouldFail</b><br>Test class: com.ecommerce.automation.tests.RegisterExcelTests<br>Test method: Invalid registration data from Excel should show validation<br>Parameters: RegisterTestData[testCaseId=REG_INVALID_011, caseType=negative, scenario=Register with already existing admin email, fullName=Duplicate Admin, email=miraijazhassan@gmail.com, password=Test12345, expectedResult=failure, expectedMessage=An account with this email already exists, shouldRedirectToLogin=false, notes=Uses the hardcoded seeded admin email.]</td>
+<td></td>
+<td>1</td>
+<td>com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc</td></tr>
+<tr>
+<td title='com.ecommerce.automation.tests.RegisterExcelTests.invalidRegisterDataFromExcelShouldFail()'><b>invalidRegisterDataFromExcelShouldFail</b><br>Test class: com.ecommerce.automation.tests.RegisterExcelTests<br>Test method: Invalid registration data from Excel should show validation<br>Parameters: RegisterTestData[testCaseId=REG_INVALID_007, caseType=negative, scenario=Register with short password, fullName=Short Password User, email=selenium.invalid007.1782349831754@example.com, password=Short1, expectedResult=failure, expectedMessage=Password must be at least 8 characters, shouldRedirectToLogin=false, notes=Password length validation.]</td>
+<td></td>
+<td>1</td>
+<td>com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc</td></tr>
+<tr>
+<td title='com.ecommerce.automation.tests.RegisterExcelTests.invalidRegisterDataFromExcelShouldFail()'><b>invalidRegisterDataFromExcelShouldFail</b><br>Test class: com.ecommerce.automation.tests.RegisterExcelTests<br>Test method: Invalid registration data from Excel should show validation<br>Parameters: RegisterTestData[testCaseId=REG_INVALID_008, caseType=negative, scenario=Register with letters only password, fullName=Letters Only User, email=selenium.invalid008.1782349831754@example.com, password=PasswordOnly, expectedResult=failure, expectedMessage=Password must contain at least one letter and one number, shouldRedirectToLogin=false, notes=Password needs at least one number.]</td>
+<td></td>
+<td>1</td>
+<td>com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc</td></tr>
 </table><p>
 </body>
 </html>

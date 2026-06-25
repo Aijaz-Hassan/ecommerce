@@ -50,6 +50,9 @@ public class CartService {
     @Value("${payment.razorpay.key-secret:}")
     private String razorpayKeySecret;
 
+    @Value("${payment.razorpay.enabled:false}")
+    private boolean razorpayEnabled;
+
     public CartService(
         CartRepository cartRepository,
         CartItemRepository cartItemRepository,
@@ -349,7 +352,7 @@ public class CartService {
     }
 
     private boolean hasRazorpayKeys() {
-        return !isBlank(razorpayKeyId) && !isBlank(razorpayKeySecret);
+        return razorpayEnabled && !isBlank(razorpayKeyId) && !isBlank(razorpayKeySecret);
     }
 
     private Purchase createPurchaseSnapshot(Cart cart, CheckoutConfirmRequest request) {

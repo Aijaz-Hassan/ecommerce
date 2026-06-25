@@ -1,73 +1,431 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testng-results ignored="0" total="5" passed="5" failed="0" skipped="0">
+<testng-results ignored="0" total="22" passed="22" failed="0" skipped="0">
   <reporter-output>
   </reporter-output>
-  <suite started-at="2026-06-23T18:32:12 IST" name="Default suite" finished-at="2026-06-23T18:34:37 IST" duration-ms="144763">
+  <suite started-at="2026-06-25T06:40:31 IST" name="Default suite" finished-at="2026-06-25T06:43:11 IST" duration-ms="159348">
     <groups>
     </groups>
-    <test started-at="2026-06-23T18:32:12 IST" name="Default test" finished-at="2026-06-23T18:34:37 IST" duration-ms="144763">
-      <class name="com.ecommerce.automation.tests.CheckoutAndOrdersTests">
-        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.CheckoutAndOrdersTests@47af7f3d]" started-at="2026-06-23T18:32:12 IST" name="setUp" finished-at="2026-06-23T18:32:14 IST" duration-ms="1748" status="PASS">
+    <test started-at="2026-06-25T06:40:31 IST" name="Default test" finished-at="2026-06-25T06:43:11 IST" duration-ms="159348">
+      <class name="com.ecommerce.automation.tests.RegisterExcelTests">
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:40:32 IST" name="setUp" finished-at="2026-06-25T06:40:34 IST" duration-ms="1927" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- setUp -->
-        <test-method signature="checkoutRejectsElevenDigitPhoneNumber()[pri:0, instance:com.ecommerce.automation.tests.CheckoutAndOrdersTests@47af7f3d]" started-at="2026-06-23T18:32:14 IST" name="checkoutRejectsElevenDigitPhoneNumber" description="Checkout should not start with an 11-digit phone number" finished-at="2026-06-23T18:32:45 IST" duration-ms="31448" status="PASS">
+        <test-method signature="invalidRegisterDataFromExcelShouldFail(com.ecommerce.automation.support.RegisterTestData)[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:40:34 IST" name="invalidRegisterDataFromExcelShouldFail" description="Invalid registration data from Excel should show validation" data-provider="invalidRegisterRows" finished-at="2026-06-25T06:40:36 IST" duration-ms="2495" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[RegisterTestData[testCaseId=REG_INVALID_001, caseType=negative, scenario=Register with empty full name, fullName=, email=selenium.invalid001.1782349831754@example.com, password=Test12345, expectedResult=failure, expectedMessage=Full name is required, shouldRedirectToLogin=false, notes=Required name validation.]]]>
+              </value>
+            </param>
+          </params>
           <reporter-output>
           </reporter-output>
-        </test-method> <!-- checkoutRejectsElevenDigitPhoneNumber -->
-        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.CheckoutAndOrdersTests@47af7f3d]" started-at="2026-06-23T18:32:45 IST" name="tearDown" finished-at="2026-06-23T18:32:46 IST" duration-ms="500" status="PASS">
+        </test-method> <!-- invalidRegisterDataFromExcelShouldFail -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:40:36 IST" name="tearDown" finished-at="2026-06-25T06:40:37 IST" duration-ms="289" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- tearDown -->
-        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.CheckoutAndOrdersTests@47af7f3d]" started-at="2026-06-23T18:32:46 IST" name="setUp" finished-at="2026-06-23T18:32:47 IST" duration-ms="1194" status="PASS">
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:40:37 IST" name="setUp" finished-at="2026-06-25T06:40:38 IST" duration-ms="1038" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- setUp -->
-        <test-method signature="checkoutRejectsInvalidCountry()[pri:0, instance:com.ecommerce.automation.tests.CheckoutAndOrdersTests@47af7f3d]" started-at="2026-06-23T18:32:47 IST" name="checkoutRejectsInvalidCountry" description="Checkout should not start with an unsupported country" finished-at="2026-06-23T18:33:10 IST" duration-ms="22709" status="PASS">
+        <test-method signature="invalidRegisterDataFromExcelShouldFail(com.ecommerce.automation.support.RegisterTestData)[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:40:38 IST" name="invalidRegisterDataFromExcelShouldFail" description="Invalid registration data from Excel should show validation" data-provider="invalidRegisterRows" finished-at="2026-06-25T06:40:40 IST" duration-ms="1909" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[RegisterTestData[testCaseId=REG_INVALID_002, caseType=negative, scenario=Register with spaces only in full name, fullName=, email=selenium.invalid002.1782349831754@example.com, password=Test12345, expectedResult=failure, expectedMessage=Full name is required, shouldRedirectToLogin=false, notes=NotBlank should reject spaces only.]]]>
+              </value>
+            </param>
+          </params>
           <reporter-output>
           </reporter-output>
-        </test-method> <!-- checkoutRejectsInvalidCountry -->
-        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.CheckoutAndOrdersTests@47af7f3d]" started-at="2026-06-23T18:33:10 IST" name="tearDown" finished-at="2026-06-23T18:33:14 IST" duration-ms="3937" status="PASS">
+        </test-method> <!-- invalidRegisterDataFromExcelShouldFail -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:40:40 IST" name="tearDown" finished-at="2026-06-25T06:40:40 IST" duration-ms="294" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- tearDown -->
-        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.CheckoutAndOrdersTests@47af7f3d]" started-at="2026-06-23T18:33:14 IST" name="setUp" finished-at="2026-06-23T18:33:15 IST" duration-ms="1731" status="PASS">
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:40:40 IST" name="setUp" finished-at="2026-06-25T06:40:41 IST" duration-ms="1070" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- setUp -->
-        <test-method signature="checkoutRejectsInvalidPincode()[pri:0, instance:com.ecommerce.automation.tests.CheckoutAndOrdersTests@47af7f3d]" started-at="2026-06-23T18:33:15 IST" name="checkoutRejectsInvalidPincode" description="Checkout should not start with an invalid pincode" finished-at="2026-06-23T18:33:40 IST" duration-ms="24278" status="PASS">
+        <test-method signature="invalidRegisterDataFromExcelShouldFail(com.ecommerce.automation.support.RegisterTestData)[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:40:41 IST" name="invalidRegisterDataFromExcelShouldFail" description="Invalid registration data from Excel should show validation" data-provider="invalidRegisterRows" finished-at="2026-06-25T06:40:43 IST" duration-ms="1841" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[RegisterTestData[testCaseId=REG_INVALID_003, caseType=negative, scenario=Register with empty email, fullName=Invalid Email User, email=, password=Test12345, expectedResult=failure, expectedMessage=Email is required, shouldRedirectToLogin=false, notes=Required email validation.]]]>
+              </value>
+            </param>
+          </params>
           <reporter-output>
           </reporter-output>
-        </test-method> <!-- checkoutRejectsInvalidPincode -->
-        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.CheckoutAndOrdersTests@47af7f3d]" started-at="2026-06-23T18:33:40 IST" name="tearDown" finished-at="2026-06-23T18:33:40 IST" duration-ms="654" status="PASS">
+        </test-method> <!-- invalidRegisterDataFromExcelShouldFail -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:40:43 IST" name="tearDown" finished-at="2026-06-25T06:40:43 IST" duration-ms="279" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- tearDown -->
-        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.CheckoutAndOrdersTests@47af7f3d]" started-at="2026-06-23T18:33:40 IST" name="setUp" finished-at="2026-06-23T18:33:42 IST" duration-ms="1958" status="PASS">
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:40:43 IST" name="setUp" finished-at="2026-06-25T06:40:44 IST" duration-ms="959" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- setUp -->
-        <test-method signature="checkoutRequiresRecipientName()[pri:0, instance:com.ecommerce.automation.tests.CheckoutAndOrdersTests@47af7f3d]" started-at="2026-06-23T18:33:42 IST" name="checkoutRequiresRecipientName" description="Checkout should not start when recipient name is empty" finished-at="2026-06-23T18:34:05 IST" duration-ms="22913" status="PASS">
+        <test-method signature="invalidRegisterDataFromExcelShouldFail(com.ecommerce.automation.support.RegisterTestData)[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:40:44 IST" name="invalidRegisterDataFromExcelShouldFail" description="Invalid registration data from Excel should show validation" data-provider="invalidRegisterRows" finished-at="2026-06-25T06:40:59 IST" duration-ms="14614" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[RegisterTestData[testCaseId=REG_INVALID_004, caseType=negative, scenario=Register with malformed email missing at sign, fullName=Invalid Email User, email=invalid.email.example.com, password=Test12345, expectedResult=failure, expectedMessage=Please enter a valid email, shouldRedirectToLogin=false, notes=Email format validation.]]]>
+              </value>
+            </param>
+          </params>
           <reporter-output>
           </reporter-output>
-        </test-method> <!-- checkoutRequiresRecipientName -->
-        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.CheckoutAndOrdersTests@47af7f3d]" started-at="2026-06-23T18:34:05 IST" name="tearDown" finished-at="2026-06-23T18:34:06 IST" duration-ms="507" status="PASS">
+        </test-method> <!-- invalidRegisterDataFromExcelShouldFail -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:40:59 IST" name="tearDown" finished-at="2026-06-25T06:40:59 IST" duration-ms="334" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- tearDown -->
-        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.CheckoutAndOrdersTests@47af7f3d]" started-at="2026-06-23T18:34:06 IST" name="setUp" finished-at="2026-06-23T18:34:07 IST" duration-ms="1140" status="PASS">
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:40:59 IST" name="setUp" finished-at="2026-06-25T06:41:00 IST" duration-ms="989" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- setUp -->
-        <test-method signature="customerCanCheckoutAndViewOrderDetails()[pri:0, instance:com.ecommerce.automation.tests.CheckoutAndOrdersTests@47af7f3d]" started-at="2026-06-23T18:34:07 IST" name="customerCanCheckoutAndViewOrderDetails" description="Customer can checkout and view the order" finished-at="2026-06-23T18:34:36 IST" duration-ms="29340" status="PASS">
+        <test-method signature="invalidRegisterDataFromExcelShouldFail(com.ecommerce.automation.support.RegisterTestData)[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:41:00 IST" name="invalidRegisterDataFromExcelShouldFail" description="Invalid registration data from Excel should show validation" data-provider="invalidRegisterRows" finished-at="2026-06-25T06:41:14 IST" duration-ms="14396" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[RegisterTestData[testCaseId=REG_INVALID_005, caseType=negative, scenario=Register with malformed email missing domain, fullName=Invalid Email User, email=invalid@, password=Test12345, expectedResult=failure, expectedMessage=Please enter a valid email, shouldRedirectToLogin=false, notes=Email format validation.]]]>
+              </value>
+            </param>
+          </params>
           <reporter-output>
           </reporter-output>
-        </test-method> <!-- customerCanCheckoutAndViewOrderDetails -->
-        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.CheckoutAndOrdersTests@47af7f3d]" started-at="2026-06-23T18:34:36 IST" name="tearDown" finished-at="2026-06-23T18:34:37 IST" duration-ms="609" status="PASS">
+        </test-method> <!-- invalidRegisterDataFromExcelShouldFail -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:41:14 IST" name="tearDown" finished-at="2026-06-25T06:41:15 IST" duration-ms="319" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- tearDown -->
-      </class> <!-- com.ecommerce.automation.tests.CheckoutAndOrdersTests -->
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:41:15 IST" name="setUp" finished-at="2026-06-25T06:41:16 IST" duration-ms="1228" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method signature="invalidRegisterDataFromExcelShouldFail(com.ecommerce.automation.support.RegisterTestData)[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:41:16 IST" name="invalidRegisterDataFromExcelShouldFail" description="Invalid registration data from Excel should show validation" data-provider="invalidRegisterRows" finished-at="2026-06-25T06:41:18 IST" duration-ms="1900" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[RegisterTestData[testCaseId=REG_INVALID_006, caseType=negative, scenario=Register with empty password, fullName=No Password User, email=selenium.invalid006.1782349831754@example.com, password=, expectedResult=failure, expectedMessage=Password, shouldRedirectToLogin=false, notes=Empty password should show any password validation message.]]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- invalidRegisterDataFromExcelShouldFail -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:41:18 IST" name="tearDown" finished-at="2026-06-25T06:41:18 IST" duration-ms="282" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:41:18 IST" name="setUp" finished-at="2026-06-25T06:41:19 IST" duration-ms="990" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method signature="invalidRegisterDataFromExcelShouldFail(com.ecommerce.automation.support.RegisterTestData)[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:41:19 IST" name="invalidRegisterDataFromExcelShouldFail" description="Invalid registration data from Excel should show validation" data-provider="invalidRegisterRows" finished-at="2026-06-25T06:41:21 IST" duration-ms="1956" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[RegisterTestData[testCaseId=REG_INVALID_007, caseType=negative, scenario=Register with short password, fullName=Short Password User, email=selenium.invalid007.1782349831754@example.com, password=Short1, expectedResult=failure, expectedMessage=Password must be at least 8 characters, shouldRedirectToLogin=false, notes=Password length validation.]]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- invalidRegisterDataFromExcelShouldFail -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:41:21 IST" name="tearDown" finished-at="2026-06-25T06:41:21 IST" duration-ms="279" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:41:21 IST" name="setUp" finished-at="2026-06-25T06:41:22 IST" duration-ms="920" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method signature="invalidRegisterDataFromExcelShouldFail(com.ecommerce.automation.support.RegisterTestData)[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:41:22 IST" name="invalidRegisterDataFromExcelShouldFail" description="Invalid registration data from Excel should show validation" data-provider="invalidRegisterRows" finished-at="2026-06-25T06:41:24 IST" duration-ms="1787" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[RegisterTestData[testCaseId=REG_INVALID_008, caseType=negative, scenario=Register with letters only password, fullName=Letters Only User, email=selenium.invalid008.1782349831754@example.com, password=PasswordOnly, expectedResult=failure, expectedMessage=Password must contain at least one letter and one number, shouldRedirectToLogin=false, notes=Password needs at least one number.]]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- invalidRegisterDataFromExcelShouldFail -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:41:24 IST" name="tearDown" finished-at="2026-06-25T06:41:24 IST" duration-ms="255" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:41:24 IST" name="setUp" finished-at="2026-06-25T06:41:25 IST" duration-ms="995" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method signature="invalidRegisterDataFromExcelShouldFail(com.ecommerce.automation.support.RegisterTestData)[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:41:25 IST" name="invalidRegisterDataFromExcelShouldFail" description="Invalid registration data from Excel should show validation" data-provider="invalidRegisterRows" finished-at="2026-06-25T06:41:27 IST" duration-ms="1888" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[RegisterTestData[testCaseId=REG_INVALID_009, caseType=negative, scenario=Register with numbers only password, fullName=Numbers Only User, email=selenium.invalid009.1782349831754@example.com, password=12345678, expectedResult=failure, expectedMessage=Password must contain at least one letter and one number, shouldRedirectToLogin=false, notes=Password needs at least one letter.]]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- invalidRegisterDataFromExcelShouldFail -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:41:27 IST" name="tearDown" finished-at="2026-06-25T06:41:28 IST" duration-ms="259" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:41:28 IST" name="setUp" finished-at="2026-06-25T06:41:29 IST" duration-ms="1000" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method signature="invalidRegisterDataFromExcelShouldFail(com.ecommerce.automation.support.RegisterTestData)[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:41:29 IST" name="invalidRegisterDataFromExcelShouldFail" description="Invalid registration data from Excel should show validation" data-provider="invalidRegisterRows" finished-at="2026-06-25T06:41:30 IST" duration-ms="1914" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[RegisterTestData[testCaseId=REG_INVALID_010, caseType=negative, scenario=Register with already existing seeded customer email, fullName=Duplicate User, email=customer@lumenlane.test, password=Test12345, expectedResult=failure, expectedMessage=An account with this email already exists, shouldRedirectToLogin=false, notes=Requires seeded customer to exist.]]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- invalidRegisterDataFromExcelShouldFail -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:41:30 IST" name="tearDown" finished-at="2026-06-25T06:41:31 IST" duration-ms="249" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:41:31 IST" name="setUp" finished-at="2026-06-25T06:41:32 IST" duration-ms="1007" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method signature="invalidRegisterDataFromExcelShouldFail(com.ecommerce.automation.support.RegisterTestData)[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:41:32 IST" name="invalidRegisterDataFromExcelShouldFail" description="Invalid registration data from Excel should show validation" data-provider="invalidRegisterRows" finished-at="2026-06-25T06:41:34 IST" duration-ms="1878" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[RegisterTestData[testCaseId=REG_INVALID_011, caseType=negative, scenario=Register with already existing admin email, fullName=Duplicate Admin, email=miraijazhassan@gmail.com, password=Test12345, expectedResult=failure, expectedMessage=An account with this email already exists, shouldRedirectToLogin=false, notes=Uses the hardcoded seeded admin email.]]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- invalidRegisterDataFromExcelShouldFail -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:41:34 IST" name="tearDown" finished-at="2026-06-25T06:41:34 IST" duration-ms="234" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:41:34 IST" name="setUp" finished-at="2026-06-25T06:41:35 IST" duration-ms="888" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method signature="invalidRegisterDataFromExcelShouldFail(com.ecommerce.automation.support.RegisterTestData)[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:41:35 IST" name="invalidRegisterDataFromExcelShouldFail" description="Invalid registration data from Excel should show validation" data-provider="invalidRegisterRows" finished-at="2026-06-25T06:41:49 IST" duration-ms="14408" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[RegisterTestData[testCaseId=REG_INVALID_012, caseType=negative, scenario=Register with invalid email containing spaces, fullName=Space Email User, email=selenium invalid012@example.com, password=Test12345, expectedResult=failure, expectedMessage=Please enter a valid email, shouldRedirectToLogin=false, notes=Email cannot contain spaces.]]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- invalidRegisterDataFromExcelShouldFail -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:41:49 IST" name="tearDown" finished-at="2026-06-25T06:41:51 IST" duration-ms="1975" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:41:51 IST" name="setUp" finished-at="2026-06-25T06:41:52 IST" duration-ms="895" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method signature="validRegisterDataFromExcelShouldSucceed(com.ecommerce.automation.support.RegisterTestData)[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:41:52 IST" name="validRegisterDataFromExcelShouldSucceed" description="Valid registration data from Excel should create accounts" data-provider="validRegisterRows" finished-at="2026-06-25T06:41:59 IST" duration-ms="7157" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[RegisterTestData[testCaseId=REG_VALID_001, caseType=positive, scenario=Register with normal first and last name, fullName=Aaliya Mir, email=selenium.valid001.1782349831754@example.com, password=Test12345, expectedResult=success, expectedMessage=Registered successfully., shouldRedirectToLogin=true, notes=Replace {RUN_ID} with timestamp before running.]]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- validRegisterDataFromExcelShouldSucceed -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:41:59 IST" name="tearDown" finished-at="2026-06-25T06:41:59 IST" duration-ms="232" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:41:59 IST" name="setUp" finished-at="2026-06-25T06:42:00 IST" duration-ms="819" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method signature="validRegisterDataFromExcelShouldSucceed(com.ecommerce.automation.support.RegisterTestData)[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:42:00 IST" name="validRegisterDataFromExcelShouldSucceed" description="Valid registration data from Excel should create accounts" data-provider="validRegisterRows" finished-at="2026-06-25T06:42:07 IST" duration-ms="7072" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[RegisterTestData[testCaseId=REG_VALID_002, caseType=positive, scenario=Register with three-word full name, fullName=Rahul Kumar Sharma, email=selenium.valid002.1782349831754@example.com, password=Shop2026, expectedResult=success, expectedMessage=Registered successfully., shouldRedirectToLogin=true, notes=Valid password has letters and numbers.]]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- validRegisterDataFromExcelShouldSucceed -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:42:07 IST" name="tearDown" finished-at="2026-06-25T06:42:08 IST" duration-ms="241" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:42:08 IST" name="setUp" finished-at="2026-06-25T06:42:08 IST" duration-ms="892" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method signature="validRegisterDataFromExcelShouldSucceed(com.ecommerce.automation.support.RegisterTestData)[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:42:08 IST" name="validRegisterDataFromExcelShouldSucceed" description="Valid registration data from Excel should create accounts" data-provider="validRegisterRows" finished-at="2026-06-25T06:42:17 IST" duration-ms="8308" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[RegisterTestData[testCaseId=REG_VALID_003, caseType=positive, scenario=Register with hyphenated name, fullName=Sara-Jane Khan, email=selenium.valid003.1782349831754@example.com, password=Lane1234, expectedResult=success, expectedMessage=Registered successfully., shouldRedirectToLogin=true, notes=Hyphen is acceptable in full name text.]]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- validRegisterDataFromExcelShouldSucceed -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:42:17 IST" name="tearDown" finished-at="2026-06-25T06:42:17 IST" duration-ms="288" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:42:17 IST" name="setUp" finished-at="2026-06-25T06:42:18 IST" duration-ms="895" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method signature="validRegisterDataFromExcelShouldSucceed(com.ecommerce.automation.support.RegisterTestData)[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:42:18 IST" name="validRegisterDataFromExcelShouldSucceed" description="Valid registration data from Excel should create accounts" data-provider="validRegisterRows" finished-at="2026-06-25T06:42:25 IST" duration-ms="6756" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[RegisterTestData[testCaseId=REG_VALID_004, caseType=positive, scenario=Register with apostrophe in name, fullName=Omar O'Neil, email=selenium.valid004.1782349831754@example.com, password=Cart9876, expectedResult=success, expectedMessage=Registered successfully., shouldRedirectToLogin=true, notes=Apostrophe is acceptable in full name text.]]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- validRegisterDataFromExcelShouldSucceed -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:42:25 IST" name="tearDown" finished-at="2026-06-25T06:42:25 IST" duration-ms="227" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:42:25 IST" name="setUp" finished-at="2026-06-25T06:42:26 IST" duration-ms="829" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method signature="validRegisterDataFromExcelShouldSucceed(com.ecommerce.automation.support.RegisterTestData)[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:42:26 IST" name="validRegisterDataFromExcelShouldSucceed" description="Valid registration data from Excel should create accounts" data-provider="validRegisterRows" finished-at="2026-06-25T06:42:32 IST" duration-ms="6490" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[RegisterTestData[testCaseId=REG_VALID_005, caseType=positive, scenario=Register with long readable name, fullName=Zoya Fatima Abdullah, email=selenium.valid005.1782349831754@example.com, password=Secure2026, expectedResult=success, expectedMessage=Registered successfully., shouldRedirectToLogin=true, notes=Long but realistic full name.]]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- validRegisterDataFromExcelShouldSucceed -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:42:32 IST" name="tearDown" finished-at="2026-06-25T06:42:32 IST" duration-ms="203" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:42:32 IST" name="setUp" finished-at="2026-06-25T06:42:33 IST" duration-ms="852" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method signature="validRegisterDataFromExcelShouldSucceed(com.ecommerce.automation.support.RegisterTestData)[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:42:33 IST" name="validRegisterDataFromExcelShouldSucceed" description="Valid registration data from Excel should create accounts" data-provider="validRegisterRows" finished-at="2026-06-25T06:42:40 IST" duration-ms="6619" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[RegisterTestData[testCaseId=REG_VALID_006, caseType=positive, scenario=Register with uppercase email characters, fullName=Imran Dar, email=SELENIUM.VALID006.1782349831754@EXAMPLE.COM, password=Imran2026, expectedResult=success, expectedMessage=Registered successfully., shouldRedirectToLogin=true, notes=Backend normalizes email case.]]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- validRegisterDataFromExcelShouldSucceed -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:42:40 IST" name="tearDown" finished-at="2026-06-25T06:42:40 IST" duration-ms="252" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:42:40 IST" name="setUp" finished-at="2026-06-25T06:42:41 IST" duration-ms="855" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method signature="validRegisterDataFromExcelShouldSucceed(com.ecommerce.automation.support.RegisterTestData)[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:42:41 IST" name="validRegisterDataFromExcelShouldSucceed" description="Valid registration data from Excel should create accounts" data-provider="validRegisterRows" finished-at="2026-06-25T06:42:48 IST" duration-ms="6495" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[RegisterTestData[testCaseId=REG_VALID_007, caseType=positive, scenario=Register with plus addressing, fullName=Nadia Sheikh, email=selenium.valid007+1782349831754@example.com, password=Nadia2026, expectedResult=success, expectedMessage=Registered successfully., shouldRedirectToLogin=true, notes=Email plus addressing should be valid.]]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- validRegisterDataFromExcelShouldSucceed -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:42:48 IST" name="tearDown" finished-at="2026-06-25T06:42:48 IST" duration-ms="222" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:42:48 IST" name="setUp" finished-at="2026-06-25T06:42:49 IST" duration-ms="851" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method signature="validRegisterDataFromExcelShouldSucceed(com.ecommerce.automation.support.RegisterTestData)[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:42:49 IST" name="validRegisterDataFromExcelShouldSucceed" description="Valid registration data from Excel should create accounts" data-provider="validRegisterRows" finished-at="2026-06-25T06:42:55 IST" duration-ms="6695" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[RegisterTestData[testCaseId=REG_VALID_008, caseType=positive, scenario=Register with dot in local email part, fullName=Kabir Hussain, email=selenium.valid.008.1782349831754@example.com, password=Kabir2026, expectedResult=success, expectedMessage=Registered successfully., shouldRedirectToLogin=true, notes=Dot in email local part should be valid.]]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- validRegisterDataFromExcelShouldSucceed -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:42:55 IST" name="tearDown" finished-at="2026-06-25T06:42:56 IST" duration-ms="222" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:42:56 IST" name="setUp" finished-at="2026-06-25T06:42:56 IST" duration-ms="821" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method signature="validRegisterDataFromExcelShouldSucceed(com.ecommerce.automation.support.RegisterTestData)[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:42:56 IST" name="validRegisterDataFromExcelShouldSucceed" description="Valid registration data from Excel should create accounts" data-provider="validRegisterRows" finished-at="2026-06-25T06:43:03 IST" duration-ms="6480" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[RegisterTestData[testCaseId=REG_VALID_009, caseType=positive, scenario=Register with subdomain email, fullName=Mehak Ali, email=selenium.valid009.1782349831754@qa.example.com, password=Mehak2026, expectedResult=success, expectedMessage=Registered successfully., shouldRedirectToLogin=true, notes=Subdomain email should be valid.]]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- validRegisterDataFromExcelShouldSucceed -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:43:03 IST" name="tearDown" finished-at="2026-06-25T06:43:03 IST" duration-ms="220" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:43:03 IST" name="setUp" finished-at="2026-06-25T06:43:04 IST" duration-ms="858" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method signature="validRegisterDataFromExcelShouldSucceed(com.ecommerce.automation.support.RegisterTestData)[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:43:04 IST" name="validRegisterDataFromExcelShouldSucceed" description="Valid registration data from Excel should create accounts" data-provider="validRegisterRows" finished-at="2026-06-25T06:43:10 IST" duration-ms="6447" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[RegisterTestData[testCaseId=REG_VALID_010, caseType=positive, scenario=Register with minimum 8-character password, fullName=Bilal Wani, email=selenium.valid010.1782349831754@example.com, password=Abcd1234, expectedResult=success, expectedMessage=Registered successfully., shouldRedirectToLogin=true, notes=Password is exactly 8 chars and contains letters and numbers.]]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- validRegisterDataFromExcelShouldSucceed -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.ecommerce.automation.tests.RegisterExcelTests@2d7275fc]" started-at="2026-06-25T06:43:10 IST" name="tearDown" finished-at="2026-06-25T06:43:11 IST" duration-ms="216" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+      </class> <!-- com.ecommerce.automation.tests.RegisterExcelTests -->
     </test> <!-- Default test -->
   </suite> <!-- Default suite -->
 </testng-results>

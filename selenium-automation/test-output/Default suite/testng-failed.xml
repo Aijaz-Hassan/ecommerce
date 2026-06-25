@@ -3,13 +3,13 @@
 <suite name="Failed suite [Default suite]" guice-stage="DEVELOPMENT">
   <test thread-count="5" name="Default test(failed)">
     <classes>
-      <class name="com.ecommerce.automation.tests.CheckoutAndOrdersTests">
+      <class name="com.ecommerce.automation.tests.RegisterExcelTests">
         <methods>
-          <include name="checkoutRequiresRecipientName"/>
           <include name="setUp"/>
+          <include name="invalidRegisterDataFromExcelShouldFail" invocation-numbers="5"/>
           <include name="tearDown"/>
         </methods>
-      </class> <!-- com.ecommerce.automation.tests.CheckoutAndOrdersTests -->
+      </class> <!-- com.ecommerce.automation.tests.RegisterExcelTests -->
     </classes>
   </test> <!-- Default test(failed) -->
 </suite> <!-- Failed suite [Default suite] -->

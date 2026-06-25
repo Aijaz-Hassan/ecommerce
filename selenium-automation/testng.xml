@@ -4,6 +4,7 @@
     <test name="Register and Login Tests">
         <classes>
             <class name="com.ecommerce.automation.tests.AuthFlowTests"/>
+            <class name="com.ecommerce.automation.tests.RegisterExcelTests"/>
         </classes>
     </test>
     <test name="Product Search Tests">

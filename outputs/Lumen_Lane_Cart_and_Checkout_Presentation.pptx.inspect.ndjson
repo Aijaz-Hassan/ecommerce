@@ -1,0 +1,141 @@
+{"kind":"deck","id":"pr/axl2i1","name":"Deck"}
+{"kind":"layout","layoutId":"7453fac6-ca0f-42fa-b964-02b585fc908f","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"6e116bb3-aee6-4b56-852e-0d79200c5a1d","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/7be10d","slide":1,"title":"Lumen Lane","textShapes":13}
+{"kind":"textbox","id":"sh/je9cvixc","slide":1,"text":"Lumen Lane","textPreview":"Lumen Lane","textChars":10,"textLines":1,"bbox":[42,42,300,48]}
+{"kind":"textbox","id":"sh/8z25kb6x","slide":1,"text":"Ecommerce presentation","textPreview":"Ecommerce presentation","textChars":22,"textLines":1,"bbox":[920,48,318,34]}
+{"kind":"textbox","id":"sh/1gvy90je","slide":1,"text":"Cart and Checkout","textPreview":"Cart and Checkout","textChars":17,"textLines":1,"bbox":[42,180,910,104]}
+{"kind":"textbox","id":"sh/q1orytsv","slide":1,"text":"How users collect products, review totals, validate delivery details, complete payment, and create confirmed orders.","textPreview":"How users collect products, review totals, validate delivery details, complete payment, and create confirmed orders.","textChars":116,"textLines":1,"bbox":[45,314,610,108]}
+{"kind":"shape","id":"sh/fmlkjm1c","slide":1,"bbox":[720,170,210,150]}
+{"kind":"textbox","id":"sh/87ed8bat","slide":1,"text":"Cart","textPreview":"Cart","textChars":4,"textLines":1,"bbox":[750,212,150,38]}
+{"kind":"textbox","id":"sh/xs72x4na","slide":1,"text":"Items, quantity, stock, totals","textPreview":"Items, quantity, stock, totals","textChars":30,"textLines":1,"bbox":[748,260,154,44]}
+{"kind":"shape","id":"sh/qd4vmtwr","slide":1,"bbox":[974,170,210,150]}
+{"kind":"textbox","id":"sh/fyxobm58","slide":1,"text":"Checkout","textPreview":"Checkout","textChars":8,"textLines":1,"bbox":[996,212,166,38]}
+{"kind":"textbox","id":"sh/7mp0bi9s","slide":1,"text":"Address, payment, order","textPreview":"Address, payment, order","textChars":23,"textLines":1,"bbox":[1000,260,158,44]}
+{"kind":"shape","id":"sh/e1w7mp0b","slide":1,"bbox":[900,231,96,0]}
+{"kind":"shape","id":"sh/psfil0rq","slide":1,"bbox":[45,498,9,9]}
+{"kind":"textbox","id":"sh/w7mp0bi9","slide":1,"text":"Customer-only flow: login is required and admin accounts are blocked.","textPreview":"Customer-only flow: login is required and admin accounts are blocked.","textChars":69,"textLines":1,"bbox":[69,490,816,63]}
+{"kind":"shape","id":"sh/7adsji5s","slide":1,"bbox":[45,553,9,9]}
+{"kind":"textbox","id":"sh/epkzupwb","slide":1,"text":"Frontend cart state is refreshed from backend APIs after every cart action.","textPreview":"Frontend cart state is refreshed from backend APIs after every cart action.","textChars":75,"textLines":1,"bbox":[69,545,816,63]}
+{"kind":"shape","id":"sh/pg3ex0nu","slide":1,"bbox":[45,608,9,9]}
+{"kind":"textbox","id":"sh/wval87ed","slide":1,"text":"Checkout uses Razorpay when configured; otherwise it falls back to demo payment.","textPreview":"Checkout uses Razorpay when configured; otherwise it falls back to demo payment.","textChars":80,"textLines":1,"bbox":[69,600,816,63]}
+{"kind":"textbox","id":"sh/36hcrmhk","slide":1,"text":"Lumen Lane ecommerce | Cart & checkout","textPreview":"Lumen Lane ecommerce | Cart & checkout","textChars":38,"textLines":1,"bbox":[42,666,520,26]}
+{"kind":"textbox","id":"sh/eloj2t83","slide":1,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[1178,660,60,30]}
+{"kind":"notes","id":"nt/7be10d","slide":1,"text":""}
+{"kind":"slide","id":"sl/vbxo7d","slide":2,"title":"Cart and checkout module","textShapes":17}
+{"kind":"textbox","id":"sh/czed8v6p","slide":2,"text":"Cart and checkout module","textPreview":"Cart and checkout module","textChars":24,"textLines":1,"bbox":[42,38,360,34]}
+{"kind":"textbox","id":"sh/neloj2t8","slide":2,"text":"Cart Module: What It Does","textPreview":"Cart Module: What It Does","textChars":25,"textLines":1,"bbox":[42,78,1000,78]}
+{"kind":"textbox","id":"sh/ytsvu9kn","slide":2,"text":"The cart acts as the temporary purchase workspace between product browsing and checkout.","textPreview":"The cart acts as the temporary purchase workspace between product browsing and checkout.","textChars":88,"textLines":1,"bbox":[42,168,590,74]}
+{"kind":"shape","id":"sh/5sneloj2","slide":2,"bbox":[42,273,9,9]}
+{"kind":"textbox","id":"sh/cbulwval","slide":2,"text":"Loads the authenticated customer's cart with GET /cart and keeps a local snapshot for faster UI recovery.","textPreview":"Loads the authenticated customer's cart with GET /cart and keeps a local snapshot for faster UI recovery.","textChars":105,"textLines":1,"bbox":[66,265,568,55]}
+{"kind":"shape","id":"sh/nqxs72x4","slide":2,"bbox":[42,320,9,9]}
+{"kind":"textbox","id":"sh/u54zidon","slide":2,"text":"Adds products with POST /cart/items; duplicate products are merged by increasing quantity.","textPreview":"Adds products with POST /cart/items; duplicate products are merged by increasing quantity.","textChars":90,"textLines":1,"bbox":[66,312,568,55]}
+{"kind":"shape","id":"sh/5wjudg7a","slide":2,"bbox":[42,367,9,9]}
+{"kind":"textbox","id":"sh/gbq1oryt","slide":2,"text":"Updates quantity with PUT /cart/items/{id}; decreasing below 1 removes the item.","textPreview":"Updates quantity with PUT /cart/items/{id}; decreasing below 1 removes the item.","textChars":80,"textLines":1,"bbox":[66,359,568,55]}
+{"kind":"shape","id":"sh/qxs72x4n","slide":2,"bbox":[42,414,9,9]}
+{"kind":"textbox","id":"sh/fil0rqd4","slide":2,"text":"Validates product existence, positive quantity, and available stock on the backend.","textPreview":"Validates product existence, positive quantity, and available stock on the backend.","textChars":83,"textLines":1,"bbox":[66,406,568,55]}
+{"kind":"shape","id":"sh/83itgfml","slide":2,"bbox":[42,461,9,9]}
+{"kind":"textbox","id":"sh/xobm58z2","slide":2,"text":"Calculates line totals and cart total from product price multiplied by quantity.","textPreview":"Calculates line totals and cart total from product price multiplied by quantity.","textChars":80,"textLines":1,"bbox":[66,453,568,55]}
+{"kind":"shape","id":"sh/m94fu18j","slide":2,"bbox":[42,508,9,9]}
+{"kind":"textbox","id":"sh/fu18jqh0","slide":2,"text":"Supports remove all, save for later, coupon display, shipping estimate, and tax preview in the UI.","textPreview":"Supports remove all, save for later, coupon display, shipping estimate, and tax preview in the UI.","textChars":98,"textLines":1,"bbox":[66,500,568,55]}
+{"kind":"shape","id":"sh/4fu18jqh","slide":2,"bbox":[700,176,224,128]}
+{"kind":"textbox","id":"sh/x0nuxc3y","slide":2,"text":"Frontend","textPreview":"Frontend","textChars":8,"textLines":1,"bbox":[730,205,164,30]}
+{"kind":"textbox","id":"sh/mlkjm1cf","slide":2,"text":"CartContext + CartPage","textPreview":"CartContext + CartPage","textChars":22,"textLines":1,"bbox":[735,248,154,44]}
+{"kind":"shape","id":"sh/f6dcbulw","slide":2,"bbox":[972,176,224,128]}
+{"kind":"textbox","id":"sh/36hcrmhk","slide":2,"text":"Backend","textPreview":"Backend","textChars":7,"textLines":1,"bbox":[1004,205,160,30]}
+{"kind":"textbox","id":"sh/eloj2t83","slide":2,"text":"CartController + CartService","textPreview":"CartController + CartService","textChars":28,"textLines":1,"bbox":[994,248,180,44]}
+{"kind":"shape","id":"sh/lc7u54zi","slide":2,"bbox":[894,220,110,0]}
+{"kind":"textbox","id":"sh/wra5gbq1","slide":2,"text":"Key cart APIs","textPreview":"Key cart APIs","textChars":13,"textLines":1,"bbox":[700,360,495,32]}
+{"kind":"textbox","id":"sh/7u54zido","slide":2,"text":"GET /cart\nPOST /cart/items\nPUT /cart/items/{cartItemId}\nDELETE /cart/items/{cartItemId}\nDELETE /cart","textPreview":"GET /cart | POST /cart/items | PUT /cart/items/{cartItemId} | DELETE /cart/items/{cartItemId} | DELETE /cart","textChars":100,"textLines":5,"bbox":[700,410,496,160]}
+{"kind":"textbox","id":"sh/ed8bat47","slide":2,"text":"Lumen Lane ecommerce | Cart & checkout","textPreview":"Lumen Lane ecommerce | Cart & checkout","textChars":38,"textLines":1,"bbox":[42,666,520,26]}
+{"kind":"textbox","id":"sh/l0rqd4vm","slide":2,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[1178,660,60,30]}
+{"kind":"notes","id":"nt/vbxo7d","slide":2,"text":""}
+{"kind":"slide","id":"sl/8ri2wq","slide":3,"title":"Cart and checkout module","textShapes":21}
+{"kind":"textbox","id":"sh/xc3ylc7u","slide":3,"text":"Cart and checkout module","textPreview":"Cart and checkout module","textChars":24,"textLines":1,"bbox":[42,38,360,34]}
+{"kind":"textbox","id":"sh/mlkjm1cf","slide":3,"text":"Cart Flow Diagram","textPreview":"Cart Flow Diagram","textChars":17,"textLines":1,"bbox":[42,78,1000,78]}
+{"kind":"shape","id":"sh/f6dcbulw","slide":3,"bbox":[54,205,205,178]}
+{"kind":"textbox","id":"sh/4zidonyd","slide":3,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[72,223,72,30]}
+{"kind":"textbox","id":"sh/xkf6dcbu","slide":3,"text":"Browse","textPreview":"Browse","textChars":6,"textLines":1,"bbox":[72,257,169,44]}
+{"kind":"textbox","id":"sh/mtwra5gb","slide":3,"text":"User chooses a product and quantity.","textPreview":"User chooses a product and quantity.","textChars":36,"textLines":1,"bbox":[72,307,169,60]}
+{"kind":"shape","id":"sh/fepkzupw","slide":3,"bbox":[310,205,205,178]}
+{"kind":"textbox","id":"sh/83itgfml","slide":3,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[328,223,72,30]}
+{"kind":"textbox","id":"sh/xobm58z2","slide":3,"text":"Add To Cart","textPreview":"Add To Cart","textChars":11,"textLines":1,"bbox":[328,257,169,44]}
+{"kind":"textbox","id":"sh/dcbulwva","slide":3,"text":"CartContext sends productId and quantity.","textPreview":"CartContext sends productId and quantity.","textChars":41,"textLines":1,"bbox":[328,307,169,60]}
+{"kind":"shape","id":"sh/kre1w7mp","slide":3,"bbox":[566,205,205,178]}
+{"kind":"textbox","id":"sh/val87ed8","slide":3,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[584,223,72,30]}
+{"kind":"textbox","id":"sh/6psfil0r","slide":3,"text":"Validate","textPreview":"Validate","textChars":8,"textLines":1,"bbox":[584,257,169,44]}
+{"kind":"textbox","id":"sh/donyd0z6","slide":3,"text":"Backend checks user, product, quantity, and stock.","textPreview":"Backend checks user, product, quantity, and stock.","textChars":50,"textLines":1,"bbox":[584,307,169,60]}
+{"kind":"shape","id":"sh/k3q5o7qp","slide":3,"bbox":[822,205,205,178]}
+{"kind":"textbox","id":"sh/vixczed8","slide":3,"text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[840,223,72,30]}
+{"kind":"textbox","id":"sh/2x4nap4r","slide":3,"text":"Persist","textPreview":"Persist","textChars":7,"textLines":1,"bbox":[840,257,169,44]}
+{"kind":"textbox","id":"sh/d0z61032","slide":3,"text":"CartService reuses the cart and merges duplicates.","textPreview":"CartService reuses the cart and merges duplicates.","textChars":50,"textLines":1,"bbox":[840,307,169,60]}
+{"kind":"shape","id":"sh/kf6dcbul","slide":3,"bbox":[566,462,205,154]}
+{"kind":"textbox","id":"sh/0bi9s36h","slide":3,"text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[584,480,72,30]}
+{"kind":"textbox","id":"sh/pwb2hwfy","slide":3,"text":"Refresh UI","textPreview":"Refresh UI","textChars":10,"textLines":1,"bbox":[584,514,169,44]}
+{"kind":"textbox","id":"sh/i5sneloj","slide":3,"text":"Frontend syncs items, count, subtotal, and line totals.","textPreview":"Frontend syncs items, count, subtotal, and line totals.","textChars":55,"textLines":1,"bbox":[584,564,169,36]}
+{"kind":"shape","id":"sh/7qpg3ex0","slide":3,"bbox":[259,294,51,0]}
+{"kind":"shape","id":"sh/wjudg7ad","slide":3,"bbox":[515,294,51,0]}
+{"kind":"shape","id":"sh/p4r65wju","slide":3,"bbox":[771,294,51,0]}
+{"kind":"shape","id":"sh/ed8v6psf","slide":3,"bbox":[668.5,383,256,79]}
+{"kind":"shape","id":"sh/7y1kre1w","slide":3,"bbox":[1048,205,168,411]}
+{"kind":"textbox","id":"sh/0nuxc3yl","slide":3,"text":"Protection\nrules","textPreview":"Protection | rules","textChars":16,"textLines":2,"bbox":[1070,248,124,58]}
+{"kind":"textbox","id":"sh/p8nqxs72","slide":3,"text":"Login required\nAdmin blocked\nStock checked\nEmpty cart handled\nCart cleared after order","textPreview":"Login required | Admin blocked | Stock checked | Empty cart handled | Cart cleared after order","textChars":86,"textLines":5,"bbox":[1072,326,120,224]}
+{"kind":"textbox","id":"sh/fepkzupw","slide":3,"text":"Lumen Lane ecommerce | Cart & checkout","textPreview":"Lumen Lane ecommerce | Cart & checkout","textChars":38,"textLines":1,"bbox":[42,666,520,26]}
+{"kind":"textbox","id":"sh/mtwra5gb","slide":3,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[1178,660,60,30]}
+{"kind":"notes","id":"nt/8ri2wq","slide":3,"text":""}
+{"kind":"slide","id":"sl/87tgt9","slide":4,"title":"Cart and checkout module","textShapes":13}
+{"kind":"textbox","id":"sh/ji5snelo","slide":4,"text":"Cart and checkout module","textPreview":"Cart and checkout module","textChars":24,"textLines":1,"bbox":[42,38,360,34]}
+{"kind":"textbox","id":"sh/c3ylc7u5","slide":4,"text":"Checkout Module: From Cart To Order","textPreview":"Checkout Module: From Cart To Order","textChars":35,"textLines":1,"bbox":[42,78,1000,78]}
+{"kind":"textbox","id":"sh/1kre1w7m","slide":4,"text":"Checkout converts the cart into a confirmed order only after address validation and payment confirmation.","textPreview":"Checkout converts the cart into a confirmed order only after address validation and payment confirmation.","textChars":105,"textLines":1,"bbox":[42,162,720,62]}
+{"kind":"shape","id":"sh/ulwval87","slide":4,"bbox":[42,265,374,260]}
+{"kind":"textbox","id":"sh/j6tovaho","slide":4,"text":"Delivery address","textPreview":"Delivery address","textChars":16,"textLines":1,"bbox":[72,300,314,38]}
+{"kind":"textbox","id":"sh/crmhk3q5","slide":4,"text":"Users select, add, edit, or delete saved addresses. Required fields, 10-digit phone numbers, Indian pincode format, and India-only delivery are checked before payment.","textPreview":"Users select, add, edit, or delete saved addresses. Required fields, 10-digit phone numbers, Indian pincode format, and India-only delive...","textChars":167,"textLines":1,"bbox":[72,360,314,130]}
+{"kind":"shape","id":"sh/1cfa9w3m","slide":4,"bbox":[454,265,374,260]}
+{"kind":"textbox","id":"sh/qh0fepkz","slide":4,"text":"Payment session","textPreview":"Payment session","textChars":15,"textLines":1,"bbox":[484,300,314,38]}
+{"kind":"textbox","id":"sh/j2t83itg","slide":4,"text":"The app creates a checkout session from the current cart. Razorpay orders are created when keys are available; otherwise a demo payment simulates success.","textPreview":"The app creates a checkout session from the current cart. Razorpay orders are created when keys are available; otherwise a demo payment s...","textChars":154,"textLines":1,"bbox":[484,360,314,130]}
+{"kind":"shape","id":"sh/byhgn29g","slide":4,"bbox":[866,265,374,260]}
+{"kind":"textbox","id":"sh/idonyd0z","slide":4,"text":"Order creation","textPreview":"Order creation","textChars":14,"textLines":1,"bbox":[896,300,314,38]}
+{"kind":"textbox","id":"sh/t47y1kre","slide":4,"text":"POST /orders/checkout stores order totals, address, payment reference, item snapshot, reduces product stock, and clears the cart.","textPreview":"POST /orders/checkout stores order totals, address, payment reference, item snapshot, reduces product stock, and clears the cart.","textChars":129,"textLines":1,"bbox":[896,360,314,130]}
+{"kind":"textbox","id":"sh/0je9cvix","slide":4,"text":"Totals logic","textPreview":"Totals logic","textChars":12,"textLines":1,"bbox":[42,575,160,28]}
+{"kind":"textbox","id":"sh/b6xkf6dc","slide":4,"text":"subtotal + 18% tax + Rs. 49 shipping when subtotal is below Rs. 500","textPreview":"subtotal + 18% tax + Rs. 49 shipping when subtotal is below Rs. 500","textChars":67,"textLines":1,"bbox":[216,575,720,30]}
+{"kind":"textbox","id":"sh/il0rqd4v","slide":4,"text":"Lumen Lane ecommerce | Cart & checkout","textPreview":"Lumen Lane ecommerce | Cart & checkout","textChars":38,"textLines":1,"bbox":[42,666,520,26]}
+{"kind":"textbox","id":"sh/tcj6tova","slide":4,"text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[1178,660,60,30]}
+{"kind":"notes","id":"nt/87tgt9","slide":4,"text":""}
+{"kind":"slide","id":"sl/b2xp4h","slide":5,"title":"Cart and checkout module","textShapes":24}
+{"kind":"textbox","id":"sh/mlkjm1cf","slide":5,"text":"Cart and checkout module","textPreview":"Cart and checkout module","textChars":24,"textLines":1,"bbox":[42,38,360,34]}
+{"kind":"textbox","id":"sh/xc3ylc7u","slide":5,"text":"Checkout Flow Diagram","textPreview":"Checkout Flow Diagram","textChars":21,"textLines":1,"bbox":[42,78,1000,78]}
+{"kind":"shape","id":"sh/4r65wjud","slide":5,"bbox":[42,210,190,178]}
+{"kind":"textbox","id":"sh/fepkzupw","slide":5,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[60,228,72,30]}
+{"kind":"textbox","id":"sh/mtwra5gb","slide":5,"text":"Review Cart","textPreview":"Review Cart","textChars":11,"textLines":1,"bbox":[60,262,154,44]}
+{"kind":"textbox","id":"sh/xkf6dcbu","slide":5,"text":"Check items, quantities, coupon, tax, and final total.","textPreview":"Check items, quantities, coupon, tax, and final total.","textChars":54,"textLines":1,"bbox":[60,312,154,60]}
+{"kind":"shape","id":"sh/4zidonyd","slide":5,"bbox":[275,210,190,178]}
+{"kind":"textbox","id":"sh/fil0rqd4","slide":5,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[293,228,72,30]}
+{"kind":"textbox","id":"sh/qxs72x4n","slide":5,"text":"Validate Address","textPreview":"Validate Address","textChars":16,"textLines":1,"bbox":[293,262,154,44]}
+{"kind":"textbox","id":"sh/0bi9s36h","slide":5,"text":"Confirm required delivery fields before payment.","textPreview":"Confirm required delivery fields before payment.","textChars":48,"textLines":1,"bbox":[293,312,154,60]}
+{"kind":"shape","id":"sh/pwb2hwfy","slide":5,"bbox":[508,210,190,178]}
+{"kind":"textbox","id":"sh/i5sneloj","slide":5,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[526,228,72,30]}
+{"kind":"textbox","id":"sh/7qpg3ex0","slide":5,"text":"Create Session","textPreview":"Create Session","textChars":14,"textLines":1,"bbox":[526,262,154,44]}
+{"kind":"textbox","id":"sh/wjudg7ad","slide":5,"text":"Backend returns Razorpay or demo payment data.","textPreview":"Backend returns Razorpay or demo payment data.","textChars":46,"textLines":1,"bbox":[526,312,154,60]}
+{"kind":"shape","id":"sh/p4r65wju","slide":5,"bbox":[741,210,190,178]}
+{"kind":"textbox","id":"sh/ed8v6psf","slide":5,"text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[759,228,72,30]}
+{"kind":"textbox","id":"sh/7y1kre1w","slide":5,"text":"Payment","textPreview":"Payment","textChars":7,"textLines":1,"bbox":[759,262,154,44]}
+{"kind":"textbox","id":"sh/0nuxc3yl","slide":5,"text":"Gateway or demo flow returns a payment reference.","textPreview":"Gateway or demo flow returns a payment reference.","textChars":49,"textLines":1,"bbox":[759,312,154,60]}
+{"kind":"shape","id":"sh/p8nqxs72","slide":5,"bbox":[974,210,190,178]}
+{"kind":"textbox","id":"sh/dcbulwva","slide":5,"text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[992,228,72,30]}
+{"kind":"textbox","id":"sh/kre1w7mp","slide":5,"text":"Create Order","textPreview":"Create Order","textChars":12,"textLines":1,"bbox":[992,262,154,44]}
+{"kind":"textbox","id":"sh/val87ed8","slide":5,"text":"Order stores items, address, payment, and totals.","textPreview":"Order stores items, address, payment, and totals.","textChars":49,"textLines":1,"bbox":[992,312,154,60]}
+{"kind":"shape","id":"sh/6psfil0r","slide":5,"bbox":[508,478,424,128]}
+{"kind":"textbox","id":"sh/donyd0z6","slide":5,"text":"06","textPreview":"06","textChars":2,"textLines":1,"bbox":[526,496,72,30]}
+{"kind":"textbox","id":"sh/k3q5o7qp","slide":5,"text":"After Success","textPreview":"After Success","textChars":13,"textLines":1,"bbox":[526,530,388,44]}
+{"kind":"textbox","id":"sh/vixczed8","slide":5,"text":"Stock reduces, cart clears, and the order appears in My Orders.","textPreview":"Stock reduces, cart clears, and the order appears in My Orders.","textChars":63,"textLines":1,"bbox":[526,580,388,10]}
+{"kind":"shape","id":"sh/2x4nap4r","slide":5,"bbox":[232,299,43,0]}
+{"kind":"shape","id":"sh/d0z61032","slide":5,"bbox":[465,299,43,0]}
+{"kind":"shape","id":"sh/kf6dcbul","slide":5,"bbox":[698,299,43,0]}
+{"kind":"shape","id":"sh/y90je9cv","slide":5,"bbox":[931,299,43,0]}
+{"kind":"shape","id":"sh/nuxc3ylc","slide":5,"bbox":[720,388,349,90]}
+{"kind":"shape","id":"sh/gbq1oryt","slide":5,"bbox":[42,470,356,128]}
+{"kind":"textbox","id":"sh/5wjudg7a","slide":5,"text":"Final result","textPreview":"Final result","textChars":12,"textLines":1,"bbox":[68,494,132,28]}
+{"kind":"textbox","id":"sh/yhgn29gr","slide":5,"text":"A temporary cart becomes a permanent order record with payment, address, items, totals, and status.","textPreview":"A temporary cart becomes a permanent order record with payment, address, items, totals, and status.","textChars":99,"textLines":1,"bbox":[68,530,302,58]}
+{"kind":"textbox","id":"sh/n29gr2p8","slide":5,"text":"Lumen Lane ecommerce | Cart & checkout","textPreview":"Lumen Lane ecommerce | Cart & checkout","textChars":38,"textLines":1,"bbox":[42,666,520,26]}
+{"kind":"textbox","id":"sh/gn29gr2p","slide":5,"text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[1178,660,60,30]}
+{"kind":"notes","id":"nt/b2xp4h","slide":5,"text":""}
